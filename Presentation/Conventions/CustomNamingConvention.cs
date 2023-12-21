@@ -6,7 +6,8 @@ namespace Presentation.Conventions;
 public class CustomNamingConvention : DefaultNamingConventions
 {
     public override string GetTypeName(
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] Type type, TypeKind kind)
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        Type type, TypeKind kind)
     {
         if (kind == TypeKind.InputObject && ImplementsIRequest(type))
         {
@@ -18,7 +19,8 @@ public class CustomNamingConvention : DefaultNamingConventions
     }
 
     private static bool ImplementsIRequest(
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] Type type)
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        Type type)
     {
         // Check if the type directly implements IRequest
         if (typeof(IRequest).IsAssignableFrom(type)) return true;

@@ -18,11 +18,14 @@ public class CreateTagCategoryTests : TestBase
 
         var handler = new CreateTagCategory.Handler(tenantRepository, tagCategoryRepository);
 
-        // Act and Assert
-        await Assert.ThrowsExceptionAsync<TenantNotFoundException>(() =>
-            handler.Handle(new CreateTagCategory.Command(_tagCategory.TenantCode, _tagCategory.TagCategoryCode),
+        var action = new Func<Task>(async () =>
+            await handler.Handle(new CreateTagCategory.Command(_tagCategory.TenantCode, _tagCategory.TagCategoryCode),
                 default));
 
+        // Act and Assert
+        await action.Should().ThrowAsync<TenantNotFoundException>();
+
+        await tenantRepository.Received().ExistsByCodeAsync(_tagCategory.TenantCode, default);
         await tagCategoryRepository.DidNotReceive().CreateAsync(_tagCategory, default);
     }
 
@@ -39,9 +42,14 @@ public class CreateTagCategoryTests : TestBase
 
         var handler = new CreateTagCategory.Handler(tenantRepository, tagCategoryRepository);
 
-        // Act and Assert
-        await Assert.ThrowsExceptionAsync<TagCategoryAlreadyExistsException>(() =>
-            handler.Handle(new CreateTagCategory.Command(_tagCategory.TenantCode, _tagCategory.TagCategoryCode),
+        var action = new Func<Task>(async () =>
+            await handler.Handle(new CreateTagCategory.Command(_tagCategory.TenantCode, _tagCategory.TagCategoryCode),
                 default));
+
+        // Act and Assert
+        await action.Should().ThrowAsync<TagCategoryAlreadyExistsException>();
+
+        await tenantRepository.Received().ExistsByCodeAsync(_tagCategory.TenantCode, default);
+        await tagCategoryRepository.DidNotReceive().CreateAsync(_tagCategory, default);
     }
 }

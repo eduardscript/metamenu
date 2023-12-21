@@ -42,32 +42,26 @@ public class IntegrationTestBase : TestBase
         return ServiceProvider.GetRequiredService<TService>();
     }
 
-    private enum OperationType
-    {
-        DropCollection,
-        DeleteMany
-    }
-
     private static async Task OperateInDocumentsFromMongoDbCollections(OperationType operationType)
     {
         var database = ServiceProvider.GetRequiredService<IMongoDatabase>();
 
         using var cursor = await database.ListCollectionNamesAsync();
         while (await cursor.MoveNextAsync())
-        {
             foreach (var collectionName in cursor.Current)
             {
                 var collection = database.GetCollection<BsonDocument>(collectionName);
 
                 if (operationType == OperationType.DropCollection)
-                {
                     await database.DropCollectionAsync(collectionName);
-                }
                 else
-                {
                     await collection.DeleteManyAsync(Builders<BsonDocument>.Filter.Empty);
-                }
             }
-        }
+    }
+
+    private enum OperationType
+    {
+        DropCollection,
+        DeleteMany
     }
 }

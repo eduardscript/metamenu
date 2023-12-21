@@ -16,10 +16,13 @@ public class CreateTenantTests : TestBase
 
         var handler = new CreateTenant.Handler(tenantRepository);
 
-        // Act and Assert
-        await Assert.ThrowsExceptionAsync<TenantAlreadyExistsException>(() =>
-            handler.Handle(new CreateTenant.Command(_tenant.TenantCode, _tenant.Name), default));
+        var action = new Func<Task>(async () =>
+            await handler.Handle(new CreateTenant.Command(_tenant.TenantCode, _tenant.Name), default));
 
+        // Act and Assert
+        await action.Should().ThrowAsync<TenantAlreadyExistsException>();
+
+        await tenantRepository.Received().ExistsByCodeAsync(_tenant.TenantCode, default);
         await tenantRepository.DidNotReceive().CreateAsync(_tenant, default);
     }
 }

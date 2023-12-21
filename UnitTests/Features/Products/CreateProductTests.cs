@@ -20,15 +20,20 @@ public class CreateProductTests : TestBase
 
         var handler = new CreateProduct.Handler(tenantRepository, tagRepository, productRepository);
 
-        // Act and Assert
-        await Assert.ThrowsExceptionAsync<TenantNotFoundException>(() => handler.Handle(new CreateProduct.Command(
-                _product.TenantCode,
-                _product.Name,
-                _product.Description,
-                _product.Price,
-                _product.TagCodes),
-            default));
+        var action = new Func<Task>(async () =>
+            await handler.Handle(new CreateProduct.Command(
+                    _product.TenantCode,
+                    _product.Name,
+                    _product.Description,
+                    _product.Price,
+                    _product.TagCodes),
+                default));
 
+        // Act and Assert
+        await action.Should().ThrowAsync<TenantNotFoundException>();
+
+        await tenantRepository.Received().ExistsByCodeAsync(_product.TenantCode, default);
+        await tagRepository.DidNotReceive().ExistsByCodeAsync(_product.TenantCode, _product.TagCodes, default);
         await productRepository.DidNotReceive().CreateAsync(_product, default);
     }
 
@@ -46,13 +51,20 @@ public class CreateProductTests : TestBase
 
         var handler = new CreateProduct.Handler(tenantRepository, tagRepository, productRepository);
 
+        var action = new Func<Task>(async () =>
+            await handler.Handle(new CreateProduct.Command(
+                    _product.TenantCode,
+                    _product.Name,
+                    _product.Description,
+                    _product.Price,
+                    _product.TagCodes),
+                default));
+
         // Act and Assert
-        await Assert.ThrowsExceptionAsync<TagNotFoundException>(() => handler.Handle(new CreateProduct.Command(
-                _product.TenantCode,
-                _product.Name,
-                _product.Description,
-                _product.Price,
-                _product.TagCodes),
-            default));
+        await action.Should().ThrowAsync<TagNotFoundException>();
+
+        await tenantRepository.Received().ExistsByCodeAsync(_product.TenantCode, default);
+        await tagRepository.Received().ExistsByCodeAsync(_product.TenantCode, _product.TagCodes, default);
+        await productRepository.DidNotReceive().CreateAsync(_product, default);
     }
 }
