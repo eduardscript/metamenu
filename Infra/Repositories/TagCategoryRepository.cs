@@ -11,10 +11,20 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
         return collection.InsertOneAsync(tagCategory, cancellationToken: cancellationToken);
     }
 
-    public Task<bool> ExistsByCodeAsync(string tagCategoryCode, CancellationToken cancellationToken)
+    public Task<IEnumerable<TagCategory>> GetAllTags(int tenantCode, CancellationToken cancellationToken)
     {
         return collection
-            .Find(tc => tc.TagCategoryCode == tagCategoryCode)
+            .Find(tc => tc.TenantCode == tenantCode)
+            .ToListAsync(cancellationToken)
+            .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
+    }
+
+    public Task<bool> ExistsByAsync(int tenantCode, string tagCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .Find(tc =>
+                tc.TenantCode == tenantCode &&
+                tc.TagCategoryCode == tagCode)
             .AnyAsync(cancellationToken);
     }
 }

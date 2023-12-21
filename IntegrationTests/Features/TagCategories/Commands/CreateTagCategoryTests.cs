@@ -1,12 +1,12 @@
-﻿using Core.Features.TagCategories;
+﻿using Core.Features.TagCategories.Commands;
 
-namespace IntegrationTests.Features.TagCategories;
+namespace IntegrationTests.Features.TagCategories.Commands;
 
-[Trait(nameof(Constants.Features), Constants.Features.TagCategories)]
+[TestClass]
 public class CreateTagCategoryTests : IntegrationTestBase
 {
-    private readonly ITenantRepository _tenantRepository;
     private readonly ITagCategoryRepository _tagCategoryRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public CreateTagCategoryTests()
     {
@@ -14,7 +14,7 @@ public class CreateTagCategoryTests : IntegrationTestBase
         _tagCategoryRepository = GetService<ITagCategoryRepository>();
     }
 
-    [Fact]
+    [TestMethod]
     public async Task Handle_CreatesTagCategoryInDatabase()
     {
         // Arrange
@@ -29,7 +29,8 @@ public class CreateTagCategoryTests : IntegrationTestBase
         await handler.Handle(new CreateTagCategory.Command(tenant.TenantCode, tagCategory.TagCategoryCode), default);
 
         // Assert
-        var tagCategoryExists = await _tagCategoryRepository.ExistsByCodeAsync(tagCategory.TagCategoryCode, default);
-        Assert.True(tagCategoryExists);
+        var tagCategoryExists =
+            await _tagCategoryRepository.ExistsByAsync(tenant.TenantCode, tagCategory.TagCategoryCode, default);
+        tagCategoryExists.Should().BeTrue();
     }
 }

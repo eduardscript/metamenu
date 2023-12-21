@@ -5,4 +5,3 @@ public class TagCategoryNotFoundException(string tagCategoryCode)
 
 public class TagCategoryAlreadyExistsException(string tagCategoryCode)
     : Exception($"Tag category with code {tagCategoryCode} already exists.");
-    

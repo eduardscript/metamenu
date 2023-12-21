@@ -1,13 +1,13 @@
-﻿using Core.Features.Products;
+﻿using Core.Features.Products.Commands;
 
 namespace UnitTests.Features.Products;
 
-[Trait(nameof(Constants.Features), Constants.Features.Products)]
+[TestClass]
 public class CreateProductTests : TestBase
 {
     private readonly Product _product = Fixture.Create<Product>();
 
-    [Fact]
+    [TestMethod]
     public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
     {
         // Arrange
@@ -21,7 +21,7 @@ public class CreateProductTests : TestBase
         var handler = new CreateProduct.Handler(tenantRepository, tagRepository, productRepository);
 
         // Act and Assert
-        await Assert.ThrowsAsync<TenantNotFoundException>(() => handler.Handle(new CreateProduct.Command(
+        await Assert.ThrowsExceptionAsync<TenantNotFoundException>(() => handler.Handle(new CreateProduct.Command(
                 _product.TenantCode,
                 _product.Name,
                 _product.Description,
@@ -32,7 +32,7 @@ public class CreateProductTests : TestBase
         await productRepository.DidNotReceive().CreateAsync(_product, default);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task Handle_WhenTagDoesNotExist_ThrowsTagNotFoundException()
     {
         // Arrange
@@ -40,14 +40,14 @@ public class CreateProductTests : TestBase
         tenantRepository.ExistsByCodeAsync(_product.TenantCode, default).Returns(true);
 
         var tagRepository = Substitute.For<ITagRepository>();
-        tagRepository.ExistsByCodeAsync(_product.TagCodes, default).Returns(false);
+        tagRepository.ExistsByCodeAsync(_product.TenantCode, _product.TagCodes, default).Returns(false);
 
         var productRepository = Substitute.For<IProductRepository>();
 
         var handler = new CreateProduct.Handler(tenantRepository, tagRepository, productRepository);
 
         // Act and Assert
-        await Assert.ThrowsAsync<TagNotFoundException>(() => handler.Handle(new CreateProduct.Command(
+        await Assert.ThrowsExceptionAsync<TagNotFoundException>(() => handler.Handle(new CreateProduct.Command(
                 _product.TenantCode,
                 _product.Name,
                 _product.Description,

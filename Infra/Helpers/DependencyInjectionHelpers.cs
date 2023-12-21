@@ -1,11 +1,10 @@
 ﻿using System.Reflection;
+using Core;
 using Core.Entities;
-using Core.Repositories;
 using Humanizer;
 using Infra.Configuration;
-using Infra.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using Tag = Core.Entities.Tag;
 
@@ -25,6 +24,21 @@ public static class DependencyInjectionHelpers
             .AddCollection<Product>();
     }
 
+    private static IServiceCollection AddMongoDb(this IServiceCollection services, MongoConfiguration configuration)
+    {
+        var conventionPack = new ConventionPack { new IgnoreExtraElementsConvention(true) };
+        ConventionRegistry.Register(
+            "IgnoreExtraElements",
+            conventionPack,
+            _ => true);
+
+        services.AddScoped<IMongoClient>(_ => new MongoClient(configuration.ConnectionString));
+        services.AddScoped(provider =>
+            provider.GetRequiredService<IMongoClient>().GetDatabase(configuration.DatabaseName));
+
+        return services;
+    }
+
     private static IServiceCollection AddCollection<TEntity>(
         this IServiceCollection services,
         string? collectionName = null)
@@ -32,7 +46,7 @@ public static class DependencyInjectionHelpers
     {
         collectionName ??= typeof(TEntity).Name.Pluralize();
 
-        var repositoriesAbstractions = Core.AssemblyReference.Assembly
+        var repositoriesAbstractions = AssemblyReference.Assembly
             .GetTypes()
             .Where(x => x.IsInterface && x.Name.EndsWith("Repository"))
             .OrderBy(x => x.Name)
@@ -45,26 +59,15 @@ public static class DependencyInjectionHelpers
             .ToArray();
 
         for (var i = 0; i < repositoriesAbstractions.Length; i++)
-        {
             services.AddScoped(repositoriesAbstractions[i], repositoriesImplementations[i]);
-        }
 
         return services
             .AddSingleton<IMongoCollection<TEntity>>(
                 sp =>
                 {
-                    var mongoDb = sp.GetRequiredService<IMongoDatabase>();
+                    var mongoDb = services.BuildServiceProvider().GetRequiredService<IMongoDatabase>();
 
                     return mongoDb.GetCollection<TEntity>(collectionName);
                 });
-    }
-
-    private static IServiceCollection AddMongoDb(this IServiceCollection services, MongoConfiguration configuration)
-    {
-        services.AddScoped<IMongoClient>(_ => new MongoClient(configuration.ConnectionString));
-        services.AddScoped(provider =>
-            provider.GetRequiredService<IMongoClient>().GetDatabase(configuration.DatabaseName));
-
-        return services;
     }
 }

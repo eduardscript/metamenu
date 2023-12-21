@@ -1,13 +1,13 @@
-﻿using Core.Features.Tags;
+﻿using Core.Features.Tags.Commands;
 
-namespace IntegrationTests.Features.Tags;
+namespace IntegrationTests.Features.Tags.Commands;
 
-[Trait(nameof(Constants.Features), Constants.Features.Tags)]
+[TestClass]
 public class CreateTagTests : IntegrationTestBase
 {
-    private readonly ITenantRepository _tenantRepository;
     private readonly ITagCategoryRepository _tagCategoryRepository;
     private readonly ITagRepository _tagRepository;
+    private readonly ITenantRepository _tenantRepository;
 
     public CreateTagTests()
     {
@@ -16,14 +16,17 @@ public class CreateTagTests : IntegrationTestBase
         _tagRepository = GetService<ITagRepository>();
     }
 
-    [Fact]
+    [TestMethod]
     public async Task Handle_CreatesTagInDatabase()
     {
         // Arrange
         var tenant = Fixture.Create<Tenant>();
         await _tenantRepository.CreateAsync(tenant, default);
 
-        var tagCategory = Fixture.Create<TagCategory>();
+        var tagCategory = Fixture.Build<TagCategory>()
+            .With(tc => tc.TenantCode, tenant.TenantCode)
+            .Create();
+
         await _tagCategoryRepository.CreateAsync(tagCategory, default);
 
         var tag = Fixture.Build<Tag>()
@@ -34,10 +37,10 @@ public class CreateTagTests : IntegrationTestBase
         var handler = new CreateTag.Handler(_tenantRepository, _tagCategoryRepository, _tagRepository);
 
         // Act
-        await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.Code, tag.TagCategoryCode), default);
+        await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCode, tag.TagCategoryCode), default);
 
         // Assert
-        var tagExists = await _tagRepository.ExistsByCodeAsync(tag.Code, default);
-        Assert.True(tagExists);
+        var tagExists = await _tagRepository.ExistsByCodeAsync(tag.TenantCode, tag.TagCode, default);
+        tagExists.Should().BeTrue();
     }
 }

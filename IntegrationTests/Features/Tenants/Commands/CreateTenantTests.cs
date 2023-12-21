@@ -1,9 +1,8 @@
-﻿using Core.Features.Tenants;
-using MongoDB.Driver;
+﻿using Core.Features.Tenants.Commands;
 
-namespace IntegrationTests.Features.Tenants;
+namespace IntegrationTests.Features.Tenants.Commands;
 
-[Trait(nameof(Constants.Features), Constants.Features.Tenants)]
+[TestClass]
 public class CreateTenantTests : IntegrationTestBase
 {
     private readonly ITenantRepository _tenantRepository;
@@ -13,7 +12,7 @@ public class CreateTenantTests : IntegrationTestBase
         _tenantRepository = GetService<ITenantRepository>();
     }
 
-    [Fact]
+    [TestMethod]
     public async Task Handle_CreatesTenantInDatabase()
     {
         // Arrange
@@ -26,6 +25,6 @@ public class CreateTenantTests : IntegrationTestBase
 
         // Assert
         var tenantExists = await _tenantRepository.ExistsByCodeAsync(tenant.TenantCode, default);
-        Assert.True(tenantExists);
+        tenantExists.Should().BeTrue();
     }
 }

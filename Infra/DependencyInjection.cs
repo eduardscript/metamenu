@@ -1,6 +1,7 @@
 ﻿using Infra.Configuration;
 using Infra.Helpers;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace Infra;
 
 public static class DependencyInjection

@@ -1,13 +1,13 @@
-﻿using Core.Features.Tenants;
+﻿using Core.Features.Tenants.Commands;
 
 namespace UnitTests.Features.Tenants;
 
-[Trait(nameof(Constants.Features), Constants.Features.Tenants)]
+[TestClass]
 public class CreateTenantTests : TestBase
 {
     private readonly Tenant _tenant = Fixture.Create<Tenant>();
 
-    [Fact]
+    [TestMethod]
     public async Task Handle_WhenTenantExists_ThrowsTenantAlreadyExistsException()
     {
         // Arrange
@@ -17,7 +17,7 @@ public class CreateTenantTests : TestBase
         var handler = new CreateTenant.Handler(tenantRepository);
 
         // Act and Assert
-        await Assert.ThrowsAsync<TenantAlreadyExistsException>(() =>
+        await Assert.ThrowsExceptionAsync<TenantAlreadyExistsException>(() =>
             handler.Handle(new CreateTenant.Command(_tenant.TenantCode, _tenant.Name), default));
 
         await tenantRepository.DidNotReceive().CreateAsync(_tenant, default);

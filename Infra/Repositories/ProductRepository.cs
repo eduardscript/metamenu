@@ -11,6 +11,14 @@ public class ProductRepository(IMongoCollection<Product> collection) : IProductR
         return collection.InsertOneAsync(product, cancellationToken: cancellationToken);
     }
 
+    public Task<IEnumerable<Product>> GetAllProducts(int tenantCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .Find(t => t.TenantCode == tenantCode)
+            .ToListAsync(cancellationToken)
+            .ContinueWith(tags => tags.Result.AsEnumerable(), cancellationToken);
+    }
+
     public Task<bool> ExistsByNameAsync(string productName, CancellationToken cancellationToken)
     {
         return collection.Find(p => p.Name == productName).AnyAsync(cancellationToken);

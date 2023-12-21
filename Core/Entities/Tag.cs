@@ -4,5 +4,5 @@ namespace Core.Entities;
 
 public record Tag(
     int TenantCode,
-    string Code,
+    string TagCode,
     string TagCategoryCode) : BaseEntity(TenantCode);

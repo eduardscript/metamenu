@@ -1,4 +1,4 @@
-﻿namespace Core.Features.Tenants;
+﻿namespace Core.Features.Tenants.Commands;
 
 public static class CreateTenant
 {
@@ -11,9 +11,7 @@ public static class CreateTenant
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             if (await tenantRepository.ExistsByCodeAsync(request.TenantCode, cancellationToken))
-            {
                 throw new TenantAlreadyExistsException(request.TenantCode);
-            }
 
             var tenant = new Tenant(
                 request.TenantCode,
@@ -23,4 +21,4 @@ public static class CreateTenant
             await tenantRepository.CreateAsync(tenant, cancellationToken);
         }
     }
-} 
+}

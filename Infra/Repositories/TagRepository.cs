@@ -11,17 +11,30 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         return collection.InsertOneAsync(tag, cancellationToken: cancellationToken);
     }
 
-    public Task<bool> ExistsByCodeAsync(IEnumerable<string> tagCodes, CancellationToken cancellationToken)
+    public Task<IEnumerable<Tag>> GetAllTags(int tenantCode, CancellationToken cancellationToken)
     {
         return collection
-            .Find(t => tagCodes.Contains(t.Code))
+            .Find(t => t.TenantCode == tenantCode)
+            .ToListAsync(cancellationToken)
+            .ContinueWith(tags => tags.Result.AsEnumerable(), cancellationToken);
+    }
+
+    public Task<bool> ExistsByCodeAsync(int tenantCode, IEnumerable<string> tagCodes,
+        CancellationToken cancellationToken)
+    {
+        return collection
+            .Find(t =>
+                t.TenantCode == tenantCode &&
+                tagCodes.Contains(t.TagCode))
             .AnyAsync(cancellationToken);
     }
-    
-    public Task<bool> ExistsByCodeAsync(string tagCode, CancellationToken cancellationToken)
+
+    public Task<bool> ExistsByCodeAsync(int tenantCode, string tagCode, CancellationToken cancellationToken)
     {
         return collection
-            .Find(t => t.Code == tagCode)
+            .Find(
+                t => t.TenantCode == tenantCode &&
+                     t.TagCode == tagCode)
             .AnyAsync(cancellationToken);
     }
 }
