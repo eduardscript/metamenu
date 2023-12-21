@@ -11,23 +11,23 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - name: Start MongoDB
+    - name: 🗃️ Start MongoDB
       uses: supercharge/mongodb-github-action@1.10.0
       with:
         mongodb-replica-set: test-rs
         mongodb-port: 27017
     - uses: actions/checkout@v3
-    - name: Setup .NET
+    - name: 🛠️ Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
-    - name: Restore dependencies
+        dotnet-version: 8.0.x
+    - name: 📦 Restore dependencies
       run: dotnet restore
-    - name: Build
+    - name: 🏗️ Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: 🧪 Unit Test
+      run: dotnet test UnitTests --no-build --verbosity normal
+    - name: 🕸️🧪 Integration Tests
+      run: dotnet test IntegrationTests --no-build --verbosity normal
