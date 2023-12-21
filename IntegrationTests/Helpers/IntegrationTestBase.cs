@@ -50,7 +50,7 @@ public abstract class IntegrationTestBase : TestBase, IAsyncLifetime
                 // This delay helps ensure that each delete operation has sufficient time to be 
                 // recognized across the cluster, thereby preventing race conditions or read inconsistencies
                 // that might occur in rapid succession of delete commands, especially in testing scenarios.
-                await Task.Delay(15);
+                await Task.Delay(500);
                 await collection.DeleteManyAsync(Builders<BsonDocument>.Filter.Empty);
             }
         }
