@@ -21,27 +21,16 @@ public class ProductRepository(IMongoCollection<Product> collection) : IProductR
             new("$match", new BsonDocument("TenantCode", productFilter.TenantCode)),
         };
 
-        if (productFilter.TagCategoryCode is not null)
+        if (productFilter.TagCodes is not null)
         {
-            pipeline.Add(new("$lookup", new BsonDocument
-            {
-                { "from", "Tags" },
-                { "localField", "TagCodes" },
-                { "foreignField", "TagCode" },
-                { "as", "TagInfo" }
-            }));
-            pipeline.Add(new("$unwind", "$TagInfo"));
-            pipeline.Add(new("$lookup", new BsonDocument
-            {
-                { "from", "TagCategories" },
-                { "localField", "TagInfo.TagCategoryCode" },
-                { "foreignField", "TagCategoryCode" },
-                { "as", "TagCategoryInfo" }
-            }));
-            pipeline.Add(new("$unwind", "$TagCategoryInfo"));
             pipeline.Add(new("$match", new BsonDocument
             {
-                { "TagCategoryInfo.TagCategoryCode", productFilter.TagCategoryCode }
+                {
+                    "TagCodes", new BsonDocument
+                    {
+                        { "$in", new BsonArray(productFilter.TagCodes) }
+                    }
+                }
             }));
         }
 

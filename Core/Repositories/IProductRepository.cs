@@ -4,7 +4,7 @@ public class ProductFilter
 {
     public int TenantCode { get; init; }
 
-    public string? TagCategoryCode { get; init; } = default!;
+    public IEnumerable<string>? TagCodes { get; init; } = default!;
 }
 
 public interface IProductRepository
