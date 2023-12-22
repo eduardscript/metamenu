@@ -1,8 +1,8 @@
-﻿using Core.Entities.Common;
-
-namespace Core.Entities;
+﻿namespace Core.Entities;
 
 public record Tenant(
-    int TenantCode,
     string Name,
-    bool IsEnabled) : BaseEntity(TenantCode);
+    bool IsEnabled)
+{
+    public int TenantCode { get; init; }
+}

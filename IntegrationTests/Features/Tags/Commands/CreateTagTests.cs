@@ -5,23 +5,15 @@ namespace IntegrationTests.Features.Tags.Commands;
 [TestClass]
 public class CreateTagTests : IntegrationTestBase
 {
-    private readonly ITagCategoryRepository _tagCategoryRepository;
-    private readonly ITagRepository _tagRepository;
-    private readonly ITenantRepository _tenantRepository;
-
-    public CreateTagTests()
-    {
-        _tenantRepository = GetService<ITenantRepository>();
-        _tagCategoryRepository = GetService<ITagCategoryRepository>();
-        _tagRepository = GetService<ITagRepository>();
-    }
+    private readonly ITagCategoryRepository _tagCategoryRepository = GetService<ITagCategoryRepository>();
+    private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
+    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
     public async Task Handle_CreatesTagInDatabase()
     {
         // Arrange
-        var tenant = Fixture.Create<Tenant>();
-        await _tenantRepository.CreateAsync(tenant, default);
+        var tenant = await MongoDbFixture.CreateTenantAsync();
 
         var tagCategory = Fixture.Build<TagCategory>()
             .With(tc => tc.TenantCode, tenant.TenantCode)

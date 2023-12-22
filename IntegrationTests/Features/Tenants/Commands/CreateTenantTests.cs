@@ -5,12 +5,7 @@ namespace IntegrationTests.Features.Tenants.Commands;
 [TestClass]
 public class CreateTenantTests : IntegrationTestBase
 {
-    private readonly ITenantRepository _tenantRepository;
-
-    public CreateTenantTests()
-    {
-        _tenantRepository = GetService<ITenantRepository>();
-    }
+    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
     public async Task Handle_CreatesTenantInDatabase()
@@ -21,10 +16,10 @@ public class CreateTenantTests : IntegrationTestBase
         var handler = new CreateTenant.Handler(_tenantRepository);
 
         // Act
-        await handler.Handle(new CreateTenant.Command(tenant.TenantCode, tenant.Name), default);
+        var tenantDto = await handler.Handle(new CreateTenant.Command(tenant.TenantCode, tenant.Name), default);
 
         // Assert
-        var tenantExists = await _tenantRepository.ExistsByCodeAsync(tenant.TenantCode, default);
+        var tenantExists = await _tenantRepository.ExistsByCodeAsync(tenantDto.TenantCode, default);
         tenantExists.Should().BeTrue();
     }
 }

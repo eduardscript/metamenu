@@ -1,24 +1,26 @@
-﻿namespace Core.Features.Tenants.Commands;
+﻿using Core.Features.Tenants.Queries;
+
+namespace Core.Features.Tenants.Commands;
 
 public static class CreateTenant
 {
     public record Command(
         int TenantCode,
-        string Name) : IRequest;
+        string Name) : IRequest<GetAllTenants.TenantDto>;
 
-    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command>
+    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command, GetAllTenants.TenantDto>
     {
-        public async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task<GetAllTenants.TenantDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (await tenantRepository.ExistsByCodeAsync(request.TenantCode, cancellationToken))
-                throw new TenantAlreadyExistsException(request.TenantCode);
-
             var tenant = new Tenant(
-                request.TenantCode,
                 request.Name,
                 false);
 
-            await tenantRepository.CreateAsync(tenant, cancellationToken);
+            var newTenant = await tenantRepository.CreateAsync(tenant, cancellationToken);
+            
+            return new GetAllTenants.TenantDto(
+                newTenant.TenantCode,
+                newTenant.Name);
         }
     }
 }

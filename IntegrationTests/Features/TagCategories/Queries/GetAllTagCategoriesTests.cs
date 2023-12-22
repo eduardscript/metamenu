@@ -5,12 +5,7 @@ namespace IntegrationTests.Features.TagCategories.Queries;
 [TestClass]
 public class GetAllTagCategoriesTests : IntegrationTestBase
 {
-    private readonly ITagCategoryRepository _tagCategoryRepository;
-
-    public GetAllTagCategoriesTests()
-    {
-        _tagCategoryRepository = GetService<ITagCategoryRepository>();
-    }
+    private readonly ITagCategoryRepository _tagCategoryRepository = GetService<ITagCategoryRepository>();
 
     [TestMethod]
     public async Task Handle_ReturnsAllTagCategoriesForTenant()

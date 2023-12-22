@@ -8,20 +8,29 @@ using MongoDB.Driver;
 namespace IntegrationTests.Helpers;
 
 [TestClass]
-public class IntegrationTestBase : TestBase
+public class IntegrationTestBase
 {
-    private static readonly IServiceProvider ServiceProvider;
+    private static IServiceProvider _serviceProvider = null!;
 
-    static IntegrationTestBase()
+    protected static Fixture Fixture { get; } = new();
+
+    [AssemblyInitialize]
+    public static void Initialize(TestContext testContext)
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.development.json");
 
         var config = configuration.Build();
 
-        ServiceProvider = new ServiceCollection()
+        _serviceProvider = new ServiceCollection()
             .AddInfra(config.GetRequiredSection("MongoDb").Get<MongoConfiguration>()!)
             .BuildServiceProvider();
+    }
+    
+    [AssemblyCleanup]
+    public static Task DropAllMongoDbCollections()
+    {
+        return OperateInDocumentsFromMongoDbCollections(OperationType.DropCollection);
     }
 
     [TestCleanup]
@@ -30,21 +39,15 @@ public class IntegrationTestBase : TestBase
         await OperateInDocumentsFromMongoDbCollections(OperationType.DeleteMany);
     }
 
-    [AssemblyCleanup]
-    public static Task DropAllMongoDbCollections()
-    {
-        return OperateInDocumentsFromMongoDbCollections(OperationType.DropCollection);
-    }
-
-    protected TService GetService<TService>()
+    protected static TService GetService<TService>()
         where TService : notnull
     {
-        return ServiceProvider.GetRequiredService<TService>();
+        return _serviceProvider.GetRequiredService<TService>();
     }
 
     private static async Task OperateInDocumentsFromMongoDbCollections(OperationType operationType)
     {
-        var database = ServiceProvider.GetRequiredService<IMongoDatabase>();
+        var database = _serviceProvider.GetRequiredService<IMongoDatabase>();
 
         using var cursor = await database.ListCollectionNamesAsync();
         while (await cursor.MoveNextAsync())

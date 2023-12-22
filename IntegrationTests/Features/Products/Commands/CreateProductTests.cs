@@ -5,30 +5,25 @@ namespace IntegrationTests.Features.Products.Commands;
 [TestClass]
 public class CreateProductTests : IntegrationTestBase
 {
-    private readonly IProductRepository _productRepository;
-    private readonly ITagRepository _tagRepository;
-    private readonly ITenantRepository _tenantRepository;
-
-    public CreateProductTests()
-    {
-        _tenantRepository = GetService<ITenantRepository>();
-        _tagRepository = GetService<ITagRepository>();
-        _productRepository = GetService<IProductRepository>();
-    }
+    private readonly IProductRepository _productRepository = GetService<IProductRepository>();
+    private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
+    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
     public async Task Handle_CreatesProductInDatabase()
     {
         // Arrange
-        var tenant = Fixture.Create<Tenant>();
-        await _tenantRepository.CreateAsync(tenant, default);
+        var tenant = await MongoDbFixture.CreateTenantAsync();
 
         var tags = Fixture.Build<Tag>()
             .With(t => t.TenantCode, tenant.TenantCode)
             .CreateMany()
             .ToList();
 
-        foreach (var tag in tags) await _tagRepository.CreateAsync(tag, default);
+        foreach (var tag in tags)
+        {
+            await _tagRepository.CreateAsync(tag, default);
+        }
 
         var product = Fixture.Build<Product>()
             .With(p => p.TenantCode, tenant.TenantCode)

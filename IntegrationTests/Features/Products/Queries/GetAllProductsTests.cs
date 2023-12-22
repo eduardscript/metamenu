@@ -6,16 +6,9 @@ namespace IntegrationTests.Features.Products.Queries;
 public class GetAllProductsTests : IntegrationTestBase
 {
     private static readonly Random Random = new();
-    private readonly IProductRepository _productRepository;
-    private readonly ITagRepository _tagRepository;
-    private readonly ITenantRepository _tenantRepository;
-
-    public GetAllProductsTests()
-    {
-        _tenantRepository = GetService<ITenantRepository>();
-        _tagRepository = GetService<ITagRepository>();
-        _productRepository = GetService<IProductRepository>();
-    }
+    private readonly IProductRepository _productRepository = GetService<IProductRepository>();
+    private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
+    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
     public async Task Handle_ReturnsAllProductsForTenant()

@@ -5,20 +5,13 @@ namespace IntegrationTests.Features.Tenants.Queries;
 [TestClass]
 public class GetAllTenantsTests : IntegrationTestBase
 {
-    private readonly ITenantRepository _tenantRepository;
-
-    public GetAllTenantsTests()
-    {
-        _tenantRepository = GetService<ITenantRepository>();
-    }
+    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
     public async Task Handle_ReturnsAllTenants()
     {
         // Arrange
-        var expectedTenants = Fixture.CreateMany<Tenant>().ToList();
-
-        foreach (var tenant in expectedTenants) await _tenantRepository.CreateAsync(tenant, default);
+        await MongoDbFixture.CreateTenantsAsync();
 
         var handler = new GetAllTenants.Handler(_tenantRepository);
 
@@ -28,8 +21,8 @@ public class GetAllTenantsTests : IntegrationTestBase
         // Assert
         var resultList = result.ToList();
 
-        resultList.Should().HaveCount(expectedTenants.Count);
-        foreach (var expectedTenant in expectedTenants)
+        resultList.Should().HaveCount(MongoDbFixture.CreatedTenants.Count);
+        foreach (var expectedTenant in MongoDbFixture.CreatedTenants)
             resultList.Should()
                 .ContainEquivalentOf(new GetAllTenants.TenantDto(expectedTenant.TenantCode, expectedTenant.Name));
     }
