@@ -37,7 +37,7 @@ public class CreateTagTests : IntegrationTestBase
         var handler = new CreateTag.Handler(_tenantRepository, _tagCategoryRepository, _tagRepository);
 
         // Act
-        await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCode, tag.TagCategoryCode), default);
+        await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCategoryCode, tag.TagCode), default);
 
         // Assert
         var tagExists = await _tagRepository.ExistsByCodeAsync(tag.TenantCode, tag.TagCode, default);

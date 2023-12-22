@@ -19,12 +19,22 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
             .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
     }
 
-    public Task<bool> ExistsByAsync(int tenantCode, string tagCode, CancellationToken cancellationToken)
+    public Task<IEnumerable<TagCategory>> GetAllTagsByTagCategoryCode(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {
         return collection
             .Find(tc =>
                 tc.TenantCode == tenantCode &&
-                tc.TagCategoryCode == tagCode)
+                tc.TagCategoryCode == tagCategoryCode)
+            .ToListAsync(cancellationToken)
+            .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
+    }
+
+    public Task<bool> ExistsByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .Find(tc =>
+                tc.TenantCode == tenantCode &&
+                tc.TagCategoryCode == tagCategoryCode)
             .AnyAsync(cancellationToken);
     }
 }

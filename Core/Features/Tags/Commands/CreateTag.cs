@@ -4,8 +4,8 @@ public static class CreateTag
 {
     public record Command(
         int TenantCode,
-        string Code,
-        string TagCategoryCode) : IRequest;
+        string TagCategoryCode,
+        string TagCode) : IRequest;
 
     public class Handler(
         ITenantRepository tenantRepository,
@@ -14,7 +14,7 @@ public static class CreateTag
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            var tag = new Tag(request.TenantCode, request.Code, request.TagCategoryCode);
+            var tag = new Tag(request.TenantCode, request.TagCategoryCode, request.TagCode);
 
             if (!await tenantRepository.ExistsByCodeAsync(tag.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(tag.TenantCode);

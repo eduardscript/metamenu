@@ -56,7 +56,7 @@ public class CreateTagTests : TestBase
         await action.Should().ThrowAsync<TagCategoryNotFoundException>();
 
         await tenantRepository.Received().ExistsByCodeAsync(_tag.TenantCode, default);
-        await tagCategoryRepository.DidNotReceive().ExistsByAsync(_tag.TenantCode, _tag.TagCategoryCode, default);
+        await tagCategoryRepository.Received().ExistsByAsync(_tag.TenantCode, _tag.TagCategoryCode, default);
         await tagRepository.DidNotReceive().CreateAsync(_tag, default);
     }
 }

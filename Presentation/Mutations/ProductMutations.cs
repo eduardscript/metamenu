@@ -1,5 +1,6 @@
 ﻿using Core.Features.Products.Commands;
 using Core.Features.Products.Queries;
+using Core.Repositories;
 
 namespace Presentation.Mutations;
 
@@ -13,6 +14,9 @@ public class ProductMutations
     {
         await mediator.Send(command, cancellationToken);
 
-        return await mediator.Send(new GetAllProducts.Query(command.TenantCode), cancellationToken);
+        return await mediator.Send(new GetAllProducts.Query(new ProductFilter
+        {
+            TenantCode = command.TenantCode,
+        }), cancellationToken);
     }
 }

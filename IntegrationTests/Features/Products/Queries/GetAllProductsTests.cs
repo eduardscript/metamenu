@@ -43,7 +43,10 @@ public class GetAllProductsTests : IntegrationTestBase
         var handler = new GetAllProducts.Handler(_productRepository);
 
         // Act
-        var result = await handler.Handle(new GetAllProducts.Query(tenant.TenantCode), default);
+        var result = await handler.Handle(new GetAllProducts.Query(new ProductFilter
+        {
+            TenantCode = tenant.TenantCode
+        }), default);
 
         // Assert
         var resultList = result.ToList();
