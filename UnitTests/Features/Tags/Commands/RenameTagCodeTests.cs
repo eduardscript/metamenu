@@ -38,7 +38,7 @@ public class RenameTagCodeTests : TestBase<RenameTagCode.Handler>
         // Arrange
         TenantRepositoryMock.ExistsByAsync(_command.TenantCode, Arg.Any<CancellationToken>()).Returns(true);
         TagRepositoryMock
-            .ExistsByAsync(_command.TenantCode, _command.NewTagCode, Arg.Any<CancellationToken>())
+            .ExistsAsync(_command.TenantCode, _command.NewTagCode, Arg.Any<CancellationToken>())
             .Returns(true);
 
         var action = new Func<Task>(async () => await Handler.Handle(_command, default));
@@ -46,7 +46,7 @@ public class RenameTagCodeTests : TestBase<RenameTagCode.Handler>
         // Act & Assert
         await action.Should().ThrowAsync<TagAlreadyExistsException>();
         await TenantRepositoryMock.Received().ExistsByAsync(_command.TenantCode, Arg.Any<CancellationToken>());
-        await TagRepositoryMock.Received().ExistsByAsync(_command.TenantCode,
+        await TagRepositoryMock.Received().ExistsAsync(_command.TenantCode,
             _command.NewTagCode, Arg.Any<CancellationToken>());
         await TagRepositoryMock.DidNotReceive().RenameAsync(_command.TenantCode,
             _command.OldTagCode, _command.NewTagCode, Arg.Any<CancellationToken>());

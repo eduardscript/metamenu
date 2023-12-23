@@ -22,7 +22,7 @@ public static class RenameTagCode
                 throw new TenantNotFoundException(request.TenantCode);
             }
             
-            if (await tagRepository.ExistsByAsync(request.TenantCode, request.NewTagCode, cancellationToken))
+            if (await tagRepository.ExistsAsync(request.TenantCode, request.NewTagCode, cancellationToken))
             {
                 throw new TagAlreadyExistsException(request.NewTagCode);
             }

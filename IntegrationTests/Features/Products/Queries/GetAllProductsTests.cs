@@ -71,7 +71,7 @@ public class GetAllProductsTests : IntegrationTestBase
         AssertProducts(result, productsWithRandomTag);
     }
 
-    private static void AssertProducts(IEnumerable<GetAllProducts.ProductDto> result, List<Product> expectedProducts)
+    private static void AssertProducts(IEnumerable<GetAllProducts.ProductDto> result, List<Product?> expectedProducts)
     {
         var resultList = result.ToList();
         resultList.Count.Should().BeGreaterThan(0);

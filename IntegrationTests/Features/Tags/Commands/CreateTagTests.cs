@@ -32,7 +32,7 @@ public class CreateTagTests : IntegrationTestBase
         await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCategoryCode, tag.TagCode), default);
 
         // Assert
-        var tagExists = await _tagRepository.ExistsByAsync(tag.TenantCode, tag.TagCode, default);
+        var tagExists = await _tagRepository.ExistsAsync(tag.TenantCode, tag.TagCode, default);
         tagExists.Should().BeTrue();
     }
 }

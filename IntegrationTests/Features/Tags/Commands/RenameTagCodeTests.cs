@@ -32,11 +32,11 @@ public class RenameTagCodeTests : IntegrationTestBase
 
         // Assert
         var oldTagCategoryExists =
-            await _tagRepository.ExistsByAsync(tenant.TenantCode, oldTag.TagCode, default);
+            await _tagRepository.ExistsAsync(tenant.TenantCode, oldTag.TagCode, default);
         oldTagCategoryExists.Should().BeFalse();
 
         var newTagCategoryExists =
-            await _tagRepository.ExistsByAsync(tenant.TenantCode, newTagCode, default);
+            await _tagRepository.ExistsAsync(tenant.TenantCode, newTagCode, default);
         newTagCategoryExists.Should().BeTrue();
 
         newTagCode.Should().NotBeEquivalentTo(oldTag.TagCode);

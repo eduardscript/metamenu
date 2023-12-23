@@ -5,11 +5,18 @@ using MongoDB.Driver;
 
 namespace Infra.Repositories;
 
-public class ProductRepository(IMongoCollection<Product> collection) : IProductRepository
+public class ProductRepository(IMongoCollection<Product?> collection) : IProductRepository
 {
-    public Task CreateAsync(Product product, CancellationToken cancellationToken)
+    public Task CreateAsync(Product? product, CancellationToken cancellationToken)
     {
         return collection.InsertOneAsync(product, cancellationToken: cancellationToken);
+    }
+
+    public Task<Product?> GetByAsync(int tenantCode, string productName, CancellationToken cancellationToken)
+    {
+        return collection
+            .Find(p => p!.TenantCode == tenantCode && p.Name == productName)
+            .FirstOrDefaultAsync(cancellationToken);;
     }
 
     public async Task<IEnumerable<Product>> GetAllProducts(
@@ -49,8 +56,19 @@ public class ProductRepository(IMongoCollection<Product> collection) : IProductR
         return await aggregateFluent.ToListAsync(cancellationToken);
     }
 
-    public Task<bool> ExistsByNameAsync(string productName, CancellationToken cancellationToken)
+    public Task<bool> ExistsByNameAsync(int tenantCode, string productName, CancellationToken cancellationToken)
     {
-        return collection.Find(p => p.Name == productName).AnyAsync(cancellationToken);
+        return collection
+            .Find(p => 
+                p!.TenantCode == tenantCode &&
+                p.Name == productName).AnyAsync(cancellationToken);
+    }
+
+    public Task UpdateAsync(string oldProductName, Product product, CancellationToken cancellationToken)
+    {
+        return collection.ReplaceOneAsync(
+            p => p!.TenantCode == product.TenantCode && p.Name == oldProductName,
+            product,
+            cancellationToken: cancellationToken);
     }
 }

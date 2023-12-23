@@ -9,9 +9,13 @@ public class ProductFilter
 
 public interface IProductRepository
 {
-    public Task CreateAsync(Product product, CancellationToken cancellationToken);
+    public Task CreateAsync(Product? product, CancellationToken cancellationToken);
 
+    public Task<Product?> GetByAsync(int tenantCode, string productName, CancellationToken cancellationToken);
+    
     public Task<IEnumerable<Product>> GetAllProducts(ProductFilter productFilter, CancellationToken cancellationToken);
 
-    public Task<bool> ExistsByNameAsync(string productName, CancellationToken cancellationToken);
+    public Task<bool> ExistsByNameAsync(int tenantCode, string productName, CancellationToken cancellationToken);
+    
+    public Task UpdateAsync(string oldProductName, Product product, CancellationToken cancellationToken);
 }

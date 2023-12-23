@@ -3,18 +3,17 @@
 namespace IntegrationTests.Features.Products.Commands;
 
 [TestClass]
-public class CreateProductTests : IntegrationTestBase
+public class UpdateProductTests : IntegrationTestBase
 {
     private readonly IProductRepository _productRepository = GetService<IProductRepository>();
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
     private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
-    public async Task Handle_CreatesProductInDatabase()
+    public async Task Handle_UpdatesProductInDatabase_FullUpdate()
     {
         // Arrange
         var tenant = await MongoDbFixture.CreateTenantAsync();
-
         var tags = Fixture.Build<Tag>()
             .With(t => t.TenantCode, tenant.TenantCode)
             .CreateMany()
@@ -29,16 +28,25 @@ public class CreateProductTests : IntegrationTestBase
             .With(p => p.TenantCode, tenant.TenantCode)
             .With(p => p.TagCodes, tags.Select(t => t.TagCode))
             .Create();
+        
+        await _productRepository.CreateAsync(product, default);
 
-        var handler = new CreateProduct.Handler(_tenantRepository, _tagRepository, _productRepository);
+        var handler = new UpdateProduct.Handler(_tenantRepository, _tagRepository, _productRepository);
 
+        var updateProperties = Fixture.Build<UpdateProduct.UpdateProperties>()
+            .With(p => p.TagCodes, tags.Take(2).Select(t => t.TagCode))
+            .Create();
+        
         // Act
         await handler.Handle(
-            new CreateProduct.Command(tenant.TenantCode, product.Name, product.Description, product.Price,
-                product.TagCodes), default);
+            new UpdateProduct.Command(tenant.TenantCode, product.Name, updateProperties), 
+            default);
 
         // Assert
-        var productExists = await _productRepository.ExistsByNameAsync(product.TenantCode, product.Name, default);
-        productExists.Should().BeTrue();
+        var updatedProduct = await _productRepository.GetByAsync(product.TenantCode, updateProperties.Name!, default);
+        updatedProduct.Should().BeEquivalentTo(updateProperties);
+        
+        var oldProduct = await _productRepository.ExistsByNameAsync(product.TenantCode, product.Name, default);
+        oldProduct.Should().BeFalse();
     }
 }

@@ -9,7 +9,7 @@ public interface ITagRepository
     public Task<bool> ExistsAsync(int tenantCode, IEnumerable<string> tagCodes,
         CancellationToken cancellationToken);
 
-    public Task<bool> ExistsByAsync(int tenantCode, string tagCode, CancellationToken cancellationToken);
+    public Task<bool> ExistsAsync(int tenantCode, string tagCode, CancellationToken cancellationToken);
 
     public Task RenameAsync(int tenantCode, string oldTagCode, string newTagCode, CancellationToken cancellationToken);
 }

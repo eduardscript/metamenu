@@ -29,7 +29,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .AnyAsync(cancellationToken);
     }
 
-    public Task<bool> ExistsByAsync(int tenantCode, string tagCode, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(int tenantCode, string tagCode, CancellationToken cancellationToken)
     {
         return collection
             .Find(
