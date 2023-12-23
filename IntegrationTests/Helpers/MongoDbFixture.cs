@@ -1,6 +1,7 @@
 ﻿namespace IntegrationTests.Helpers;
 
-public class MongoDbFixture : IntegrationTestBase {
+public class MongoDbFixture : IntegrationTestBase
+{
     public static List<Tenant> CreatedTenants { get; } = new();
 
     public static async Task<Tenant> CreateTenantAsync()
@@ -16,14 +17,13 @@ public class MongoDbFixture : IntegrationTestBase {
 
         return tenant;
     }
-    
-    public static async Task<IEnumerable<Tenant>> CreateTenantsAsync(int count = 3)
+
+    public static async Task CreateTenantsAsync(int count = 3)
     {
-        for (var i = 0; i < count; i++)
-        {
-            await CreateTenantAsync();
-        }
-       
-        return CreatedTenants;
+        var tenantTasks = Enumerable
+            .Range(0, count)
+            .Select(_ => CreateTenantAsync());
+
+        await Task.WhenAll(tenantTasks);
     }
 }

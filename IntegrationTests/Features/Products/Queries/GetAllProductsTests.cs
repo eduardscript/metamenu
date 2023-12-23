@@ -26,7 +26,7 @@ public class GetAllProductsTests : IntegrationTestBase
             .ToList();
 
         foreach (var tag in _tags) await _tagRepository.CreateAsync(tag, default);
-        
+
         _expectedProducts = Fixture.Build<Product>()
             .With(p => p.TenantCode, _tenant.TenantCode)
             .With(p => p.TagCodes, () => _tags.Take(Random.Next(_tags.Count)).Select(t => t.TagCode))
@@ -36,7 +36,6 @@ public class GetAllProductsTests : IntegrationTestBase
         foreach (var product in _expectedProducts) await _productRepository.CreateAsync(product, default);
 
         _handler = new GetAllProducts.Handler(_productRepository);
-
     }
 
     [TestMethod]
@@ -52,29 +51,32 @@ public class GetAllProductsTests : IntegrationTestBase
         // Assert
         AssertProducts(result, _expectedProducts);
     }
-    
+
     [TestMethod]
     public async Task Handle_ReturnsAllProductsForTenantAndTagCodes()
     {
         // Arrange
-        var randomTag = _tags.Take(Random.Next(_tags.Count)).ToList();
+        var randomTagCodes = _tags.Take(2).Select(t => t.TagCode).ToList();
 
         // Act
         var result = await _handler.Handle(
             new GetAllProducts.Query(new ProductFilter
             {
                 TenantCode = _tenant.TenantCode,
-                TagCodes = randomTag.Select(t => t.TagCode).ToList()
+                TagCodes = randomTagCodes
             }), default);
 
         // Assert
-        var productsWithRandomTag = _expectedProducts.Where(p => p.TagCodes.Intersect(randomTag.Select(t => t.TagCode)).Any()).ToList();
+        var productsWithRandomTag = _expectedProducts.Where(p => p.TagCodes.Intersect(randomTagCodes).Any()).ToList();
         AssertProducts(result, productsWithRandomTag);
     }
 
     private static void AssertProducts(IEnumerable<GetAllProducts.ProductDto> result, List<Product> expectedProducts)
     {
         var resultList = result.ToList();
+        resultList.Count.Should().BeGreaterThan(0);
+        expectedProducts.Count.Should().BeGreaterThan(0);
+
         resultList.Should().HaveCount(expectedProducts.Count);
         foreach (var expectedProduct in expectedProducts)
             resultList.Should().ContainEquivalentOf(new GetAllProducts.ProductDto(
