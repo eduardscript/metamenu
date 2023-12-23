@@ -7,7 +7,7 @@ namespace Infra.Repositories;
 
 public class ProductRepository(IMongoCollection<Product?> collection) : IProductRepository
 {
-    public Task CreateAsync(Product? product, CancellationToken cancellationToken)
+    public Task CreateAsync(Product product, CancellationToken cancellationToken)
     {
         return collection.InsertOneAsync(product, cancellationToken: cancellationToken);
     }
@@ -16,7 +16,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
     {
         return collection
             .Find(p => p!.TenantCode == tenantCode && p.Name == productName)
-            .FirstOrDefaultAsync(cancellationToken);;
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Product>> GetAllProducts(

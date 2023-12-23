@@ -9,7 +9,7 @@ public class ProductFilter
 
 public interface IProductRepository
 {
-    public Task CreateAsync(Product? product, CancellationToken cancellationToken);
+    public Task CreateAsync(Product product, CancellationToken cancellationToken);
 
     public Task<Product?> GetByAsync(int tenantCode, string productName, CancellationToken cancellationToken);
     

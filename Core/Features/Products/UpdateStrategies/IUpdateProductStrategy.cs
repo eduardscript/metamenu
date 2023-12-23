@@ -13,13 +13,13 @@ public class UpdateNameStrategy(IProductRepository productRepository) : IUpdateP
 {
     public async Task UpdateProductAsync(Product product, UpdateProduct.UpdateProperties command, CancellationToken cancellationToken)
     {
-        var existingProductName = await productRepository.ExistsByNameAsync(product.TenantCode, command.Name, cancellationToken);
+        var existingProductName = await productRepository.ExistsByNameAsync(product.TenantCode, command.Name!, cancellationToken);
         if (existingProductName)
         {
-            throw new ProductAlreadyExistsException(command.Name);
+            throw new ProductAlreadyExistsException(command.Name!);
         }
         
-        product.Name = command.Name;
+        product.Name = command.Name!;
     }
 }
 

@@ -8,7 +8,6 @@ public class GetAllProductsTests : IntegrationTestBase
     private static readonly Random Random = new();
     private readonly IProductRepository _productRepository = GetService<IProductRepository>();
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
-    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     private Tenant _tenant = default!;
     private List<Tag> _tags = default!;
@@ -71,7 +70,7 @@ public class GetAllProductsTests : IntegrationTestBase
         AssertProducts(result, productsWithRandomTag);
     }
 
-    private static void AssertProducts(IEnumerable<GetAllProducts.ProductDto> result, List<Product?> expectedProducts)
+    private static void AssertProducts(IEnumerable<GetAllProducts.ProductDto> result, List<Product> expectedProducts)
     {
         var resultList = result.ToList();
         resultList.Count.Should().BeGreaterThan(0);
