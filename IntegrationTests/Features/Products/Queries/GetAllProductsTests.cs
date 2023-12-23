@@ -6,8 +6,6 @@ namespace IntegrationTests.Features.Products.Queries;
 public class GetAllProductsTests : IntegrationTestBase
 {
     private static readonly Random Random = new();
-    private readonly IProductRepository _productRepository = GetService<IProductRepository>();
-    private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
 
     private Tenant _tenant = default!;
     private List<Tag> _tags = default!;
@@ -24,7 +22,7 @@ public class GetAllProductsTests : IntegrationTestBase
             .CreateMany()
             .ToList();
 
-        foreach (var tag in _tags) await _tagRepository.CreateAsync(tag, default);
+        foreach (var tag in _tags) await TagRepository.CreateAsync(tag, default);
 
         _expectedProducts = Fixture.Build<Product>()
             .With(p => p.TenantCode, _tenant.TenantCode)
@@ -32,9 +30,9 @@ public class GetAllProductsTests : IntegrationTestBase
             .CreateMany()
             .ToList();
 
-        foreach (var product in _expectedProducts) await _productRepository.CreateAsync(product, default);
+        foreach (var product in _expectedProducts) await ProductRepository.CreateAsync(product, default);
 
-        _handler = new GetAllProducts.Handler(_productRepository);
+        _handler = new GetAllProducts.Handler(ProductRepository);
     }
 
     [TestMethod]

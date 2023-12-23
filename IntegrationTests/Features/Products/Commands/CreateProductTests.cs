@@ -5,10 +5,6 @@ namespace IntegrationTests.Features.Products.Commands;
 [TestClass]
 public class CreateProductTests : IntegrationTestBase
 {
-    private readonly IProductRepository _productRepository = GetService<IProductRepository>();
-    private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
-    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
-
     [TestMethod]
     public async Task Handle_CreatesProductInDatabase()
     {
@@ -22,7 +18,7 @@ public class CreateProductTests : IntegrationTestBase
 
         foreach (var tag in tags)
         {
-            await _tagRepository.CreateAsync(tag, default);
+            await TagRepository.CreateAsync(tag, default);
         }
 
         var product = Fixture.Build<Product>()
@@ -30,7 +26,7 @@ public class CreateProductTests : IntegrationTestBase
             .With(p => p.TagCodes, tags.Select(t => t.TagCode))
             .Create();
 
-        var handler = new CreateProduct.Handler(_tenantRepository, _tagRepository, _productRepository);
+        var handler = new CreateProduct.Handler(TenantRepository, TagRepository, ProductRepository);
 
         // Act
         await handler.Handle(
@@ -38,7 +34,7 @@ public class CreateProductTests : IntegrationTestBase
                 product.TagCodes), default);
 
         // Assert
-        var productExists = await _productRepository.ExistsByNameAsync(product.TenantCode, product.Name, default);
+        var productExists = await ProductRepository.ExistsByNameAsync(product.TenantCode, product.Name, default);
         productExists.Should().BeTrue();
     }
 }
