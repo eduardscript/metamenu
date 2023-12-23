@@ -1,4 +1,7 @@
-﻿namespace Core.Features.TagCategories.Commands;
+﻿using Core.Exceptions.TagCategories;
+using Core.Exceptions.Tenants;
+
+namespace Core.Features.TagCategories.Commands;
 
 public static class CreateTagCategory
 {
@@ -14,7 +17,7 @@ public static class CreateTagCategory
         {
             var tagCategory = new TagCategory(request.TenantCode, request.Code);
 
-            if (!await tenantRepository.ExistsByCodeAsync(tagCategory.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsByAsync(tagCategory.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(tagCategory.TenantCode);
 
             if (await tagCategoryRepository.ExistsByAsync(tagCategory.TenantCode, tagCategory.TagCategoryCode,

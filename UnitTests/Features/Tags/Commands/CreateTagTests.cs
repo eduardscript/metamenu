@@ -1,4 +1,6 @@
-﻿using Core.Features.Tags.Commands;
+﻿using Core.Exceptions.TagCategories;
+using Core.Exceptions.Tenants;
+using Core.Features.Tags.Commands;
 
 namespace UnitTests.Features.Tags.Commands;
 
@@ -18,13 +20,13 @@ public class CreateTagTests : TestBase<CreateTag.Handler>
     public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByCodeAsync(Tag.TenantCode, default).Returns(false);
+        TenantRepositoryMock.ExistsByAsync(Tag.TenantCode, default).Returns(false);
 
         var action = new Func<Task>(async () => await Handler.Handle(_command, default));
 
         // Act and Assert
         await action.Should().ThrowAsync<TenantNotFoundException>();
-        await TenantRepositoryMock.Received().ExistsByCodeAsync(Tag.TenantCode, default);
+        await TenantRepositoryMock.Received().ExistsByAsync(Tag.TenantCode, default);
         await TagCategoryRepositoryMock.DidNotReceive().ExistsByAsync(Tag.TenantCode, Tag.TagCategoryCode, default);
         await TagRepositoryMock.DidNotReceive().CreateAsync(Tag, default);
     }
@@ -33,7 +35,7 @@ public class CreateTagTests : TestBase<CreateTag.Handler>
     public async Task Handle_WhenTagCategoryDoesNotExist_ThrowsTagCategoryNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByCodeAsync(Tag.TenantCode, default).Returns(true);
+        TenantRepositoryMock.ExistsByAsync(Tag.TenantCode, default).Returns(true);
         TagCategoryRepositoryMock.ExistsByAsync(Tag.TenantCode, Tag.TagCategoryCode, default)
             .Returns(false);
 
@@ -41,7 +43,7 @@ public class CreateTagTests : TestBase<CreateTag.Handler>
 
         // Act and Assert
         await action.Should().ThrowAsync<TagCategoryNotFoundException>();
-        await TenantRepositoryMock.Received().ExistsByCodeAsync(Tag.TenantCode, default);
+        await TenantRepositoryMock.Received().ExistsByAsync(Tag.TenantCode, default);
         await TagCategoryRepositoryMock.Received().ExistsByAsync(Tag.TenantCode, Tag.TagCategoryCode, default);
         await TagRepositoryMock.DidNotReceive().CreateAsync(Tag, default);
     }

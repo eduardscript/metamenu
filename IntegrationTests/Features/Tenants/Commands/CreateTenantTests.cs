@@ -19,7 +19,7 @@ public class CreateTenantTests : IntegrationTestBase
         var tenantDto = await handler.Handle(new CreateTenant.Command(tenant.TenantCode, tenant.Name), default);
 
         // Assert
-        var tenantExists = await _tenantRepository.ExistsByCodeAsync(tenantDto.TenantCode, default);
+        var tenantExists = await _tenantRepository.ExistsByAsync(tenantDto.TenantCode, default);
         tenantExists.Should().BeTrue();
     }
 }

@@ -6,16 +6,15 @@ namespace Infra.Repositories;
 
 public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : ITagCategoryRepository
 {
-    public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode, CancellationToken cancellationToken)
+    public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode,
+        CancellationToken cancellationToken)
     {
-        var filter = Builders<TagCategory>.Filter
-            .Where(tc =>
-                tc.TenantCode == tenantCode &&
-                tc.TagCategoryCode == oldTagCategoryCode);
-
-        var update = Builders<TagCategory>.Update.Set(tc => tc.TagCategoryCode, newCategoryCode);
-
-        return collection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        return collection
+            .UpdateOneAsync(
+                tc => tc.TenantCode == tenantCode &&
+                      tc.TagCategoryCode == oldTagCategoryCode,
+                Builders<TagCategory>.Update.Set(t => t.TagCategoryCode, newCategoryCode),
+                cancellationToken: cancellationToken);
     }
 
     public Task CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken)

@@ -1,11 +1,14 @@
-﻿namespace Core.Features.TagCategories.Commands;
+﻿using Core.Exceptions.TagCategories;
+using Core.Exceptions.Tenants;
+
+namespace Core.Features.TagCategories.Commands;
 
 public static class RenameTagCategoryCode
 {
     public record Command(
         int TenantCode,
-        string OldTagCategoryCodeName,
-        string NewTagCategoryCodeName) : IRequest;
+        string OldTagCategoryCode,
+        string NewTagCategoryCode) : IRequest;
 
     public class Handler(
         ITenantRepository tenantRepository,
@@ -13,17 +16,17 @@ public static class RenameTagCategoryCode
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await tenantRepository.ExistsByCodeAsync(request.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsByAsync(request.TenantCode, cancellationToken))
             {
                 throw new TenantNotFoundException(request.TenantCode);
             }
 
-            if (await tagCategoryRepository.ExistsByAsync(request.TenantCode, request.NewTagCategoryCodeName, cancellationToken))
+            if (await tagCategoryRepository.ExistsByAsync(request.TenantCode, request.NewTagCategoryCode, cancellationToken))
             {
-                throw new TagCategoryAlreadyExistsException(request.OldTagCategoryCodeName);
+                throw new TagCategoryAlreadyExistsException(request.OldTagCategoryCode);
             }
 
-            await tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCodeName, request.NewTagCategoryCodeName, cancellationToken);
+            await tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCode, request.NewTagCategoryCode, cancellationToken);
         }
     }
 }

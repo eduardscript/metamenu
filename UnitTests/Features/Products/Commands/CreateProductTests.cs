@@ -1,4 +1,6 @@
-﻿using Core.Features.Products.Commands;
+﻿using Core.Exceptions.Tags;
+using Core.Exceptions.Tenants;
+using Core.Features.Products.Commands;
 
 namespace UnitTests.Features.Products.Commands;
 
@@ -23,14 +25,14 @@ public class CreateProductTests : TestBase<CreateProduct.Handler>
     public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByCodeAsync(Product.TenantCode, default).Returns(false);
+        TenantRepositoryMock.ExistsByAsync(Product.TenantCode, default).Returns(false);
 
         var action = new Func<Task>(async () => await Handler.Handle(_command, default));
 
         // Act and Assert
         await action.Should().ThrowAsync<TenantNotFoundException>();
-        await TenantRepositoryMock.Received().ExistsByCodeAsync(Product.TenantCode, default);
-        await TagRepositoryMock.DidNotReceive().ExistsByCodeAsync(Product.TenantCode, Product.TagCodes, default);
+        await TenantRepositoryMock.Received().ExistsByAsync(Product.TenantCode, default);
+        await TagRepositoryMock.DidNotReceive().ExistsAsync(Product.TenantCode, Product.TagCodes, default);
         await ProductRepositoryMock.DidNotReceive().CreateAsync(Product, default);
     }
 
@@ -38,15 +40,15 @@ public class CreateProductTests : TestBase<CreateProduct.Handler>
     public async Task Handle_WhenTagDoesNotExist_ThrowsTagNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByCodeAsync(Product.TenantCode, default).Returns(true);
-        TagRepositoryMock.ExistsByCodeAsync(Product.TenantCode, Product.TagCodes, default).Returns(false);
+        TenantRepositoryMock.ExistsByAsync(Product.TenantCode, default).Returns(true);
+        TagRepositoryMock.ExistsAsync(Product.TenantCode, Product.TagCodes, default).Returns(false);
 
         var action = new Func<Task>(async () => await Handler.Handle(_command, default));
 
         // Act and Assert
         await action.Should().ThrowAsync<TagNotFoundException>();
-        await TenantRepositoryMock.Received().ExistsByCodeAsync(Product.TenantCode, default);
-        await TagRepositoryMock.Received().ExistsByCodeAsync(Product.TenantCode, Product.TagCodes, default);
+        await TenantRepositoryMock.Received().ExistsByAsync(Product.TenantCode, default);
+        await TagRepositoryMock.Received().ExistsAsync(Product.TenantCode, Product.TagCodes, default);
         await ProductRepositoryMock.DidNotReceive().CreateAsync(Product, default);
     }
 }

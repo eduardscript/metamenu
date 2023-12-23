@@ -1,4 +1,7 @@
-﻿namespace Core.Features.Products.Commands;
+﻿using Core.Exceptions.Tags;
+using Core.Exceptions.Tenants;
+
+namespace Core.Features.Products.Commands;
 
 public static class CreateProduct
 {
@@ -23,11 +26,11 @@ public static class CreateProduct
                 request.Price,
                 request.TagCodes);
 
-            if (!await tenantRepository.ExistsByCodeAsync(product.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsByAsync(product.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(product.TenantCode);
 
             var existingTagCodes =
-                await tagRepository.ExistsByCodeAsync(product.TenantCode, product.TagCodes, cancellationToken);
+                await tagRepository.ExistsAsync(product.TenantCode, product.TagCodes, cancellationToken);
             if (!existingTagCodes) throw new TagNotFoundException(product.TagCodes);
 
             await productRepository.CreateAsync(product, cancellationToken);
