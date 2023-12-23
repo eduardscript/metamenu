@@ -9,7 +9,7 @@ public static class GetAllTagCategories
     {
         public async Task<IEnumerable<TagCategoryDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var tags = await tagCategoryRepository.GetAllTags(request.TenantCode, cancellationToken);
+            var tags = await tagCategoryRepository.GetAll(request.TenantCode, cancellationToken);
 
             return tags.Select(tag => new TagCategoryDto(tag.TenantCode, tag.TagCategoryCode));
         }

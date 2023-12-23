@@ -4,4 +4,3 @@ global using Core.Repositories;
 global using FluentAssertions;
 global using IntegrationTests.Helpers;
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
-global using Shared.Helpers;
