@@ -5,18 +5,18 @@ using Core.Features.Users.Commands;
 namespace UnitTests.Features.Users.Commands;
 
 [TestClass]
-public class CreateUserTests : TestBase<CreateUser.Handler>
+public class RegisterUserTests : TestBase<RegisterUser.Handler>
 {
-    public CreateUserTests()
+    public RegisterUserTests()
     {
-        Handler = new CreateUser.Handler(TenantRepositoryMock, UserRepositoryMock);
+        Handler = new RegisterUser.Handler(TenantRepositoryMock, UserRepositoryMock);
     }
 
     [TestMethod]
     public async Task Handle_InvalidTenantCodes_ThrowsException()
     {
         // Arrange
-        var command = Fixture.Create<CreateUser.Command>();
+        var command = Fixture.Create<RegisterUser.Command>();
         var tenants = Fixture.CreateMany<Tenant>(3).ToList();
         TenantRepositoryMock.GetAllAsync(Arg.Any<CancellationToken>()).Returns(tenants);
 

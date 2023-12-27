@@ -14,6 +14,7 @@ public class IntegrationTestBase
     protected static ITagCategoryRepository TagCategoryRepository = default!;
     protected static ITagRepository TagRepository = default!;
     protected static IProductRepository ProductRepository = default!;
+    protected static IUserRepository UserRepository = default!;
 
     public IntegrationTestBase()
     {
@@ -21,6 +22,7 @@ public class IntegrationTestBase
         TagRepository = GetService<ITagRepository>();
         TenantRepository = GetService<ITenantRepository>();
         TagCategoryRepository = GetService<ITagCategoryRepository>();
+        UserRepository = GetService<IUserRepository>();
     }
 
     private static IServiceProvider _serviceProvider = null!;

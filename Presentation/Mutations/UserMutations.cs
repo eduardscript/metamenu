@@ -11,7 +11,7 @@ public class UserMutations
         return mediator.Send(command);
     }
     
-    public Task<UserDto> Register([Service] IMediator mediator, CreateUser.Command command)
+    public Task<UserDto> Register([Service] IMediator mediator, RegisterUser.Command command)
     {
         return mediator.Send(command);
     }

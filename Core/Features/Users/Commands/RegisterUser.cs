@@ -3,7 +3,7 @@ using Core.Features.Users.Shared;
 
 namespace Core.Features.Users.Commands;
 
-public static class CreateUser
+public static class RegisterUser
 {
     public record Command(
         string Username,

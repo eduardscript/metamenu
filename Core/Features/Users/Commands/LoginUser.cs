@@ -35,4 +35,3 @@ public static class LoginUser
     public record UserTokenDto(
         string Token);
 }
-
