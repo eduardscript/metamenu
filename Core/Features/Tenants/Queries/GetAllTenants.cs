@@ -1,4 +1,6 @@
-﻿namespace Core.Features.Tenants.Queries;
+﻿using Core.Features.Tenants.Shared;
+
+namespace Core.Features.Tenants.Queries;
 
 public static class GetAllTenants
 {
@@ -13,6 +15,4 @@ public static class GetAllTenants
             return tenants.Select(tenant => new TenantDto(tenant.TenantCode, tenant.Name));
         }
     }
-
-    public record TenantDto(int TenantCode, string Name);
 }

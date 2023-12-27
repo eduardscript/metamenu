@@ -22,10 +22,8 @@ public class CreateTagCategoryTests : TestBase<CreateTagCategory.Handler>
         // Arrange
         TenantRepositoryMock.ExistsByAsync(TagCategory.TenantCode, default).Returns(false);
 
-        var action = new Func<Task>(async () => await Handler.Handle(_command, default));
-
         // Act and Assert
-        await action.Should().ThrowAsync<TenantNotFoundException>();
+        await AssertThrowsAsync<TenantNotFoundException>(_command);
         await TenantRepositoryMock.Received().ExistsByAsync(TagCategory.TenantCode, default);
         await TagCategoryRepositoryMock.DidNotReceive().CreateAsync(TagCategory, default);
     }
@@ -38,10 +36,8 @@ public class CreateTagCategoryTests : TestBase<CreateTagCategory.Handler>
         TagCategoryRepositoryMock.ExistsByAsync(TagCategory.TenantCode, TagCategory.TagCategoryCode, default)
             .Returns(true);
 
-        var action = new Func<Task>(async () => await Handler.Handle(_command, default));
-
         // Act and Assert
-        await action.Should().ThrowAsync<TagCategoryAlreadyExistsException>();
+        await AssertThrowsAsync<TagCategoryAlreadyExistsException>(_command);
         await TenantRepositoryMock.Received().ExistsByAsync(TagCategory.TenantCode, default);
         await TagCategoryRepositoryMock.DidNotReceive().CreateAsync(TagCategory, default);
     }

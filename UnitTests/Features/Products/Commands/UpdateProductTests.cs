@@ -27,8 +27,7 @@ public class UpdateProductTests : TestBase<UpdateProduct.Handler>
         TenantRepositoryMock.ExistsByAsync(_command.TenantCode, default).Returns(false);
 
         // Act & Assert
-        var action = async () => await Handler.Handle(_command, CancellationToken.None);
-        await action.Should().ThrowAsync<TenantNotFoundException>();
+        await AssertThrowsAsync<TenantNotFoundException>(_command);
     }
 
     [TestMethod]
@@ -39,8 +38,7 @@ public class UpdateProductTests : TestBase<UpdateProduct.Handler>
         ProductRepositoryMock.GetByAsync(_command.TenantCode, _command.Name, default).Returns((Product)null!);
 
         // Act & Assert
-        var action = async () => await Handler.Handle(_command, CancellationToken.None);
-        await action.Should().ThrowAsync<ProductNotFoundException>();
+        await AssertThrowsAsync<ProductNotFoundException>(_command);
     }
     
     [TestMethod]
@@ -52,8 +50,7 @@ public class UpdateProductTests : TestBase<UpdateProduct.Handler>
         ProductRepositoryMock.ExistsByNameAsync(_command.TenantCode, _command.UpdateProperties.Name!, default).Returns(true);
 
         // Act & Assert
-        var action = async () => await Handler.Handle(_command, CancellationToken.None);
-        await action.Should().ThrowAsync<ProductAlreadyExistsException>();
+        await AssertThrowsAsync<ProductAlreadyExistsException>(_command);
     }
 
     [TestMethod]
@@ -65,7 +62,6 @@ public class UpdateProductTests : TestBase<UpdateProduct.Handler>
         TagRepositoryMock.ExistsAsync(_command.TenantCode, _command.UpdateProperties.TagCodes!, default).Returns(false);
 
         // Act & Assert
-        var action = async () => await Handler.Handle(_command, CancellationToken.None);
-        await action.Should().ThrowAsync<TagNotFoundException>();
+        await AssertThrowsAsync<TagNotFoundException>(_command);
     }
 }
