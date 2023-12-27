@@ -4,6 +4,7 @@ using Core.Entities;
 using Humanizer;
 using Infra.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using Tag = Core.Entities.Tag;
@@ -14,14 +15,13 @@ public static class DependencyInjectionHelpers
 {
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        var configuration = services.BuildServiceProvider().GetRequiredService<MongoConfiguration>();
-
         return services
-            .AddMongoDb(configuration)
+            .AddMongoDb(services.BuildServiceProvider().GetRequiredService<IOptions<MongoConfiguration>>().Value)
             .AddCollection<Tenant>()
             .AddCollection<TagCategory>()
             .AddCollection<Tag>()
-            .AddCollection<Product>();
+            .AddCollection<Product>()
+            .AddCollection<User>();
     }
 
     private static IServiceCollection AddMongoDb(this IServiceCollection services, MongoConfiguration configuration)

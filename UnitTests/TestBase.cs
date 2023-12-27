@@ -15,6 +15,10 @@ public class TestBase<THandler> where THandler : class
 
     protected readonly IProductRepository ProductRepositoryMock = Substitute.For<IProductRepository>();
 
+    protected readonly IUserRepository UserRepositoryMock = Substitute.For<IUserRepository>();
+
+    protected readonly ITokenService TokenServiceMock = Substitute.For<ITokenService>();
+
     protected THandler Handler = null!;
 
     protected async Task AssertThrowsAsync<TException>(IBaseRequest command)

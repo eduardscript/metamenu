@@ -1,18 +1,18 @@
 ﻿using Core.Features.Tenants.Commands;
-using Core.Features.Tenants.Queries;
+using Core.Features.Tenants.Shared;
 
 namespace Presentation.Mutations;
 
 [ExtendObjectType(RootTypes.Mutation)]
 public class TenantMutations
 {
-    public async Task<GetAllTenants.TenantDto> CreateTenant(
+    public async Task<TenantDto> CreateTenant(
         [Service] IMediator mediator,
         CreateTenant.Command command,
         CancellationToken cancellationToken)
     {
         await mediator.Send(command, cancellationToken);
 
-        return new GetAllTenants.TenantDto(command.TenantCode, command.Name);
+        return new TenantDto(command.TenantCode, command.Name);
     }
 }

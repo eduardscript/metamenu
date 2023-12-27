@@ -1,4 +1,5 @@
 ﻿using Core.Features.Tenants.Queries;
+using Core.Features.Tenants.Shared;
 
 namespace IntegrationTests.Features.Tenants.Queries;
 
@@ -22,6 +23,6 @@ public class GetAllTenantsTests : IntegrationTestBase
         resultList.Should().HaveCount(MongoDbFixture.CreatedTenants.Count);
         foreach (var expectedTenant in MongoDbFixture.CreatedTenants)
             resultList.Should()
-                .ContainEquivalentOf(new GetAllTenants.TenantDto(expectedTenant.TenantCode, expectedTenant.Name));
+                .ContainEquivalentOf(new TenantDto(expectedTenant.TenantCode, expectedTenant.Name));
     }
 }

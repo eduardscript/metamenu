@@ -31,12 +31,11 @@ public class IntegrationTestBase
     public static void Initialize(TestContext testContext)
     {
         var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.development.json");
-
-        var config = configuration.Build();
+            .AddJsonFile("appsettings.json")
+            .Build();
 
         _serviceProvider = new ServiceCollection()
-            .AddInfra(config.GetRequiredSection("MongoDb").Get<MongoConfiguration>()!)
+            .AddInfra(configuration)
             .BuildServiceProvider();
     }
     
