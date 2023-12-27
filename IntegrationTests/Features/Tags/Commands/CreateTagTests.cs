@@ -5,10 +5,6 @@ namespace IntegrationTests.Features.Tags.Commands;
 [TestClass]
 public class CreateTagTests : IntegrationTestBase
 {
-    private readonly ITagCategoryRepository _tagCategoryRepository = GetService<ITagCategoryRepository>();
-    private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
-    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
-
     [TestMethod]
     public async Task Handle_CreatesTagInDatabase()
     {
@@ -19,20 +15,20 @@ public class CreateTagTests : IntegrationTestBase
             .With(tc => tc.TenantCode, tenant.TenantCode)
             .Create();
 
-        await _tagCategoryRepository.CreateAsync(tagCategory, default);
+        await TagCategoryRepository.CreateAsync(tagCategory, default);
 
         var tag = Fixture.Build<Tag>()
             .With(t => t.TenantCode, tenant.TenantCode)
             .With(t => t.TagCategoryCode, tagCategory.TagCategoryCode)
             .Create();
 
-        var handler = new CreateTag.Handler(_tenantRepository, _tagCategoryRepository, _tagRepository);
+        var handler = new CreateTag.Handler(TenantRepository, TagCategoryRepository, TagRepository);
 
         // Act
         await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCategoryCode, tag.TagCode), default);
 
         // Assert
-        var tagExists = await _tagRepository.ExistsAsync(tag.TenantCode, tag.TagCode, default);
+        var tagExists = await TagRepository.ExistsAsync(tag.TenantCode, tag.TagCode, default);
         tagExists.Should().BeTrue();
     }
 }

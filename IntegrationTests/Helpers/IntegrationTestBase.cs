@@ -10,6 +10,19 @@ namespace IntegrationTests.Helpers;
 [TestClass]
 public class IntegrationTestBase
 {
+    protected static ITenantRepository TenantRepository = default!;
+    protected static ITagCategoryRepository TagCategoryRepository = default!;
+    protected static ITagRepository TagRepository = default!;
+    protected static IProductRepository ProductRepository = default!;
+
+    public IntegrationTestBase()
+    {
+        ProductRepository = GetService<IProductRepository>();
+        TagRepository = GetService<ITagRepository>();
+        TenantRepository = GetService<ITenantRepository>();
+        TagCategoryRepository = GetService<ITagCategoryRepository>();
+    }
+
     private static IServiceProvider _serviceProvider = null!;
 
     protected static Fixture Fixture { get; } = new();

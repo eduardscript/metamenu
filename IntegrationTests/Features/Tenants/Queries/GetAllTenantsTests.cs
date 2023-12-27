@@ -5,15 +5,13 @@ namespace IntegrationTests.Features.Tenants.Queries;
 [TestClass]
 public class GetAllTenantsTests : IntegrationTestBase
 {
-    private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
-
     [TestMethod]
     public async Task Handle_ReturnsAllTenants()
     {
         // Arrange
         await MongoDbFixture.CreateTenantsAsync();
 
-        var handler = new GetAllTenants.Handler(_tenantRepository);
+        var handler = new GetAllTenants.Handler(TenantRepository);
 
         // Act
         var result = await handler.Handle(new GetAllTenants.Query(), default);
