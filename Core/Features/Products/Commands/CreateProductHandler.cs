@@ -3,14 +3,25 @@ using Core.Exceptions.Tenants;
 
 namespace Core.Features.Products.Commands;
 
-public static class CreateProduct
+public static class CreateProductHandler
 {
-    public record Command(
-        int TenantCode,
-        string Name,
-        string? Description,
-        decimal Price,
-        IEnumerable<string> TagCodes) : IRequest;
+    public class Command(
+        int tenantCode,
+        string name,
+        string? description,
+        decimal price,
+        IEnumerable<string> tagCodes) : IRequest
+    {
+        public int TenantCode { get; set; } = tenantCode;
+        
+        public string Name { get; set; } = name;
+        
+        public string? Description { get; set; } = description;
+        
+        public decimal Price { get; set; } = price;
+        
+        public IEnumerable<string> TagCodes { get; set; } = tagCodes;
+    }
 
     public class Handler(
         ITenantRepository tenantRepository,

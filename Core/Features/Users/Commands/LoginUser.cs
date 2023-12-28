@@ -19,9 +19,14 @@ public static class LoginUser
         }
     }
 
-    public record Command(
-        string Username,
-        string Password) : IRequest<UserTokenDto>;
+    public class Command(
+        string username,
+        string password) : IRequest<UserTokenDto>
+    {
+        public string Username { get; set; } = username;
+        
+        public string Password { get; set; } = password;
+    }
 
     public class Handler(
         ITokenService tokenService,

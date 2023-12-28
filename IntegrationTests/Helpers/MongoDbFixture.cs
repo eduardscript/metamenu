@@ -3,6 +3,11 @@
 public class MongoDbFixture : IntegrationTestBase
 {
     public static List<Tenant> CreatedTenants { get; } = new();
+    
+    public static void Reset()
+    {
+        CreatedTenants.Clear();
+    }
 
     public static async Task<Tenant> CreateTenantAsync()
     {

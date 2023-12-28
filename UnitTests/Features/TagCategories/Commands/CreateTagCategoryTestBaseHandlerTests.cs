@@ -1,0 +1,40 @@
+﻿using Core.Exceptions.TagCategories;
+using Core.Exceptions.Tenants;
+using Core.Features.TagCategories.Commands;
+
+namespace UnitTests.Features.TagCategories.Commands;
+
+[TestClass]
+public class CreateTagCategoryTestBaseHandlerTests : TestBaseHandler<CreateTagCategoryHandler.Handler, CreateTagCategoryHandler.Command>
+{
+    public CreateTagCategoryTestBaseHandlerTests()
+    {
+        Handler = new CreateTagCategoryHandler.Handler(TenantRepositoryMock, TagCategoryRepositoryMock);
+    }
+
+    [TestMethod]
+    public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
+    {
+        // Arrange
+        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(false);
+
+        // Act and Assert
+        await AssertThrowsAsync<TenantNotFoundException>(Request);
+        await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, default);
+        await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<TagCategory>(), Arg.Any<CancellationToken>());
+    }
+
+    [TestMethod]
+    public async Task Handle_WhenTagCategoryExists_ThrowsTagCategoryAlreadyExistsException()
+    {
+        // Arrange
+        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(true);
+        TagCategoryRepositoryMock.ExistsByAsync(Request.TenantCode, Request.TagCategoryCode, default)
+            .Returns(true);
+
+        // Act and Assert
+        await AssertThrowsAsync<TagCategoryAlreadyExistsException>(Request);
+        await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, default);
+        await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<TagCategory>(), Arg.Any<CancellationToken>());
+    }
+}

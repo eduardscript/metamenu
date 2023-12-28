@@ -4,7 +4,7 @@ using Core.Features.Products.UpdateStrategies;
 
 namespace Core.Features.Products.Commands;
 
-public static class UpdateProduct
+public static class UpdateProductTestBaseHandler
 {
     public class UpdateProperties
     {

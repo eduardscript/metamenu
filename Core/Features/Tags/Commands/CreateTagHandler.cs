@@ -4,7 +4,7 @@ using Core.Exceptions.Tenants;
 
 namespace Core.Features.Tags.Commands;
 
-public static class CreateTag
+public static class CreateTagHandler
 {
     public record Command(
         int TenantCode,

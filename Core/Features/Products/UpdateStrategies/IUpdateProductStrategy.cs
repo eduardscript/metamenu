@@ -6,12 +6,12 @@ namespace Core.Features.Products.UpdateStrategies;
 
 public interface IUpdateProductStrategy
 {
-    Task UpdateProductAsync(Product product, UpdateProduct.UpdateProperties command, CancellationToken cancellationToken);
+    Task UpdateProductAsync(Product product, UpdateProductTestBaseHandler.UpdateProperties command, CancellationToken cancellationToken);
 }
 
 public class UpdateNameStrategy(IProductRepository productRepository) : IUpdateProductStrategy
 {
-    public async Task UpdateProductAsync(Product product, UpdateProduct.UpdateProperties command, CancellationToken cancellationToken)
+    public async Task UpdateProductAsync(Product product, UpdateProductTestBaseHandler.UpdateProperties command, CancellationToken cancellationToken)
     {
         var existingProductName = await productRepository.ExistsByNameAsync(product.TenantCode, command.Name!, cancellationToken);
         if (existingProductName)
@@ -26,7 +26,7 @@ public class UpdateNameStrategy(IProductRepository productRepository) : IUpdateP
 
 public class UpdatePriceStrategy : IUpdateProductStrategy
 {
-    public Task UpdateProductAsync(Product product, UpdateProduct.UpdateProperties command, CancellationToken cancellationToken)
+    public Task UpdateProductAsync(Product product, UpdateProductTestBaseHandler.UpdateProperties command, CancellationToken cancellationToken)
     {
         product.Price = command.Price!.Value;
 
@@ -36,7 +36,7 @@ public class UpdatePriceStrategy : IUpdateProductStrategy
 
 public class UpdateDescriptionStrategy : IUpdateProductStrategy
 {
-    public Task UpdateProductAsync(Product product, UpdateProduct.UpdateProperties command, CancellationToken cancellationToken)
+    public Task UpdateProductAsync(Product product, UpdateProductTestBaseHandler.UpdateProperties command, CancellationToken cancellationToken)
     {
         product.Description = command.Description;
 
@@ -46,7 +46,7 @@ public class UpdateDescriptionStrategy : IUpdateProductStrategy
 
 public class UpdateTagCodesStrategy(ITagRepository tagRepository) : IUpdateProductStrategy
 {
-    public async Task UpdateProductAsync(Product product, UpdateProduct.UpdateProperties command,
+    public async Task UpdateProductAsync(Product product, UpdateProductTestBaseHandler.UpdateProperties command,
         CancellationToken cancellationToken)
     {
         var existingTagCodes =

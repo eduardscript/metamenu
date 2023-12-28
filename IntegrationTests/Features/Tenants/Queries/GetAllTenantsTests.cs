@@ -6,6 +6,12 @@ namespace IntegrationTests.Features.Tenants.Queries;
 [TestClass]
 public class GetAllTenantsTests : IntegrationTestBase
 {
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        MongoDbFixture.Reset();
+    }
+
     [TestMethod]
     public async Task Handle_ReturnsAllTenants()
     {

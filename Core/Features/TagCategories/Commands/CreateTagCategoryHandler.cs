@@ -3,11 +3,11 @@ using Core.Exceptions.Tenants;
 
 namespace Core.Features.TagCategories.Commands;
 
-public static class CreateTagCategory
+public static class CreateTagCategoryHandler
 {
     public record Command(
         int TenantCode,
-        string Code) : IRequest;
+        string TagCategoryCode) : IRequest;
 
     public class Handler(
         ITenantRepository tenantRepository,
@@ -15,7 +15,7 @@ public static class CreateTagCategory
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            var tagCategory = new TagCategory(request.TenantCode, request.Code);
+            var tagCategory = new TagCategory(request.TenantCode, request.TagCategoryCode);
 
             if (!await tenantRepository.ExistsByAsync(tagCategory.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(tagCategory.TenantCode);

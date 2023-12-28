@@ -4,7 +4,7 @@ using Core.Features.Tags.Commands;
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class RenameTagCodeTests : IntegrationTestBase
+public class RenameTagCodeHandlerTests : IntegrationTestBase
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
     private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
@@ -23,11 +23,11 @@ public class RenameTagCodeTests : IntegrationTestBase
 
         await _tagRepository.CreateAsync(oldTag, default);
 
-        var handler = new RenameTagCode.Handler(_tenantRepository, _tagRepository);
+        var handler = new RenameTagCodeHandler.Handler(_tenantRepository, _tagRepository);
 
         // Act
         await handler.Handle(
-            new RenameTagCode.Command(tenant.TenantCode, oldTag.TagCode, newTagCode),
+            new RenameTagCodeHandler.Command(tenant.TenantCode, oldTag.TagCode, newTagCode),
             default);
 
         // Assert

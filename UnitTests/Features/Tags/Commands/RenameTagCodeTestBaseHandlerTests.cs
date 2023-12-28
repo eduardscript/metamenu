@@ -1,15 +1,16 @@
 ﻿using Core.Exceptions.TagCategories;
+using Core.Exceptions.Tags;
 using Core.Exceptions.Tenants;
-using Core.Features.TagCategories.Commands;
+using Core.Features.Tags.Commands;
 
-namespace UnitTests.Features.TagCategories.Commands;
+namespace UnitTests.Features.Tags.Commands;
 
 [TestClass]
-public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCategoryCode.Handler, RenameTagCategoryCode.Command>
+public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCodeHandler.Handler, RenameTagCodeHandler.Command>
 {
     public RenameTagCodeTestBaseHandlerTests()
     {
-        Handler = new RenameTagCategoryCode.Handler(TenantRepositoryMock, TagCategoryRepositoryMock);
+        Handler = new RenameTagCodeHandler.Handler(TenantRepositoryMock, TagRepositoryMock);
     }
 
     [TestMethod]
@@ -20,24 +21,28 @@ public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCatego
 
         // Act & Assert
         await AssertThrowsAsync<TenantNotFoundException>(Request);
+
         await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceive().ExistsByAsync(Request.TenantCode,
-            Request.NewTagCategoryCode, Arg.Any<CancellationToken>());
+            Request.NewTagCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().RenameAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [TestMethod]
-    public async Task Handle_TagCategoryAlreadyExists_ThrowsTagCategoryAlreadyExistsException()
+    public async Task Handle_TagAlreadyExists_ThrowsTagCategoryAlreadyExistsException()
     {
         // Arrange
         TenantRepositoryMock.ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>()).Returns(true);
-        TagCategoryRepositoryMock
-            .ExistsByAsync(Request.TenantCode, Request.NewTagCategoryCode, Arg.Any<CancellationToken>())
+        TagRepositoryMock
+            .ExistsAsync(Request.TenantCode, Request.NewTagCode, Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act & Assert
-        await AssertThrowsAsync<TagCategoryAlreadyExistsException>(Request);
+        await AssertThrowsAsync<TagAlreadyExistsException>(Request);
         await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>());
+        await TagRepositoryMock.Received().ExistsAsync(Request.TenantCode,
+            Request.NewTagCode, Arg.Any<CancellationToken>());
+        
         await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().RenameAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 }

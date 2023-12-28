@@ -1,14 +1,11 @@
 ﻿using Core.Services;
 using MediatR;
 
-namespace UnitTests;
+namespace UnitTests.Helpers;
 
-public class TestBase
-{
-    protected static readonly Fixture Fixture = new();
-}
-
-public class TestBase<THandler> : TestBase where THandler : class
+public class TestBaseHandler<THandler, TRequest> :
+    TestBase where THandler : class
+    where TRequest : class, IBaseRequest
 {
     protected readonly ITenantRepository TenantRepositoryMock = Substitute.For<ITenantRepository>();
 
@@ -22,7 +19,9 @@ public class TestBase<THandler> : TestBase where THandler : class
 
     protected readonly ITokenService TokenServiceMock = Substitute.For<ITokenService>();
 
-    protected THandler Handler = null!;
+    protected THandler Handler = default!;
+
+    protected static readonly TRequest Request = Fixture.Create<TRequest>();
 
     protected async Task AssertThrowsAsync<TException>(IBaseRequest command)
         where TException : Exception
@@ -36,4 +35,3 @@ public class TestBase<THandler> : TestBase where THandler : class
         ])!);
     }
 }
-

@@ -8,7 +8,7 @@ public class TagMutations
 {
     public async Task<IEnumerable<GetAllTags.TagDto>> CreateTag(
         [Service] IMediator mediator,
-        CreateTag.Command command,
+        CreateTagHandler.Command command,
         CancellationToken cancellationToken)
     {
         await mediator.Send(command, cancellationToken);

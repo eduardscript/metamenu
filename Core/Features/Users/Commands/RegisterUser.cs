@@ -26,10 +26,15 @@ public static class RegisterUser
         }
     }
 
-    public record Command(
-        string Username,
-        string Password,
-        IEnumerable<int> AvailableTenants) : IRequest<UserDto>;
+    public class Command(
+        string username,
+        string password,
+        IEnumerable<int> availableTenants) : IRequest<UserDto>
+    {
+        public string Username { set; get; } = username;
+        public string Password { set; get; } = password;
+        public IEnumerable<int> AvailableTenants { set; get; } = availableTenants;
+    }
 
     public class Handler(
         ITenantRepository tenantRepository,

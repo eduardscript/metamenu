@@ -3,18 +3,18 @@
 namespace IntegrationTests.Features.Products.Commands;
 
 [TestClass]
-public class UpdateProductTests : IntegrationTestBase
+public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
 {
     private static Tenant _tenant = default!;
     private static List<Tag> _tags = default!;
     private static Product _product = default!;
-    private UpdateProduct.Handler _handler = default!;
+    private UpdateProductTestBaseHandler.Handler _handler = default!;
 
     [TestInitialize]
     public async Task TestInitialize()
     {
         _tenant = MongoDbFixture.CreateTenantAsync().GetAwaiter().GetResult();
-        _handler = new UpdateProduct.Handler(TenantRepository, TagRepository, ProductRepository);
+        _handler = new UpdateProductTestBaseHandler.Handler(TenantRepository, TagRepository, ProductRepository);
         
         _tags = Fixture.Build<Tag>()
                        .With(t => t.TenantCode, _tenant.TenantCode)
@@ -38,7 +38,7 @@ public class UpdateProductTests : IntegrationTestBase
     public async Task Handle_UpdatesProductInDatabase_FullUpdate()
     {
         // Arrange
-        var updateProperties = Fixture.Build<UpdateProduct.UpdateProperties>()
+        var updateProperties = Fixture.Build<UpdateProductTestBaseHandler.UpdateProperties>()
             .With(p => p.TagCodes, _tags.Take(2).Select(t => t.TagCode))
             .Create();
         
@@ -57,7 +57,7 @@ public class UpdateProductTests : IntegrationTestBase
     public async Task Handle_UpdatesProductInDatabase_NameUpdate()
     {
         // Arrange
-        var updateProperties = new UpdateProduct.UpdateProperties
+        var updateProperties = new UpdateProductTestBaseHandler.UpdateProperties
         {
             Name = Fixture.Create<string>()
         };
@@ -77,7 +77,7 @@ public class UpdateProductTests : IntegrationTestBase
     public async Task Handle_UpdatesProductInDatabase_DescriptionUpdate()
     {
         // Arrange
-        var updateProperties = new UpdateProduct.UpdateProperties
+        var updateProperties = new UpdateProductTestBaseHandler.UpdateProperties
         {
             Description = Fixture.Create<string>()
         };
@@ -97,7 +97,7 @@ public class UpdateProductTests : IntegrationTestBase
     public async Task Handle_UpdatesProductInDatabase_PriceUpdate()
     {
         // Arrange
-        var updateProperties = new UpdateProduct.UpdateProperties
+        var updateProperties = new UpdateProductTestBaseHandler.UpdateProperties
         {
             Price = Fixture.Create<decimal>()
         };
@@ -117,7 +117,7 @@ public class UpdateProductTests : IntegrationTestBase
     public async Task Handle_UpdatesProductInDatabase_TagCodesUpdate()
     {
         // Arrange
-        var updateProperties = new UpdateProduct.UpdateProperties
+        var updateProperties = new UpdateProductTestBaseHandler.UpdateProperties
         {
             TagCodes = _tags.Take(2).Select(t => t.TagCode)
         };
@@ -137,10 +137,10 @@ public class UpdateProductTests : IntegrationTestBase
     private async Task ActAndAssert(
         Product oldProduct,
         Product updatedProduct,
-        UpdateProduct.UpdateProperties updateProperties)
+        UpdateProductTestBaseHandler.UpdateProperties updateProperties)
     {
         await _handler.Handle(
-            new UpdateProduct.Command(_tenant.TenantCode, _product.Name, updateProperties), 
+            new UpdateProductTestBaseHandler.Command(_tenant.TenantCode, _product.Name, updateProperties), 
             default);
 
         var updatedProductResponse = await ProductRepository.GetByAsync(updatedProduct.TenantCode, updatedProduct.Name!, default);

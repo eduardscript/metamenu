@@ -9,7 +9,7 @@ public class ProductMutations
 {
     public async Task<IEnumerable<GetAllProducts.ProductDto>> CreateProductAsync(
         [Service] IMediator mediator,
-        CreateProduct.Command command,
+        CreateProductHandler.Command command,
         CancellationToken cancellationToken)
     {
         await mediator.Send(command, cancellationToken);

@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class CreateTagTests : IntegrationTestBase
+public class CreateTagHandlerTests : IntegrationTestBase
 {
     [TestMethod]
     public async Task Handle_CreatesTagInDatabase()
@@ -22,10 +22,10 @@ public class CreateTagTests : IntegrationTestBase
             .With(t => t.TagCategoryCode, tagCategory.TagCategoryCode)
             .Create();
 
-        var handler = new CreateTag.Handler(TenantRepository, TagCategoryRepository, TagRepository);
+        var handler = new CreateTagHandler.Handler(TenantRepository, TagCategoryRepository, TagRepository);
 
         // Act
-        await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCategoryCode, tag.TagCode), default);
+        await handler.Handle(new CreateTagHandler.Command(tag.TenantCode, tag.TagCategoryCode, tag.TagCode), default);
 
         // Assert
         var tagExists = await TagRepository.ExistsAsync(tag.TenantCode, tag.TagCode, default);
