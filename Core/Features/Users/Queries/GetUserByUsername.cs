@@ -4,6 +4,16 @@ namespace Core.Features.Users.Queries;
 
 public static class GetUserByUsername
 {
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .WithMessage("Username is required.");
+        }
+    }
+    
     public record Query(
         string Username) : IRequest<UserDto>;
 

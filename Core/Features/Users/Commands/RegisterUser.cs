@@ -1,10 +1,31 @@
 ﻿using Core.Exceptions.Tenants;
 using Core.Features.Users.Shared;
+using Core.Validators;
 
 namespace Core.Features.Users.Commands;
 
 public static class RegisterUser
 {
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .WithMessage("Username is required.");
+            
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .WithMessage("Password is required.");
+
+            RuleFor(x => x.AvailableTenants)
+                .NotEmpty()
+                .WithMessage("Available Tenants must not be empty.")
+                .Unique()
+                .WithMessage("AvailableTenants must be unique. Duplicated ones: {DuplicateItems}.");
+        }
+    }
+
     public record Command(
         string Username,
         string Password,

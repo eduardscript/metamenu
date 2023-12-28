@@ -3,37 +3,93 @@ using Core.Features.Users.Commands;
 
 namespace UnitTests.Features.Users.Commands;
 
-[TestClass]
-public class LoginUserTests : TestBase<LoginUser.Handler>
+public static class LoginUserTests
 {
-    public LoginUserTests()
+    [TestClass]
+    public class ValidatorTests : TestBase
     {
-        Handler = new LoginUser.Handler(TokenServiceMock, UserRepositoryMock);
+        private readonly LoginUser.Validator _validator = new();
+
+        [TestMethod]
+        public void Validate_EmptyUsername_FailsValidation()
+        {
+            // Arrange
+            var command = Fixture.Build<LoginUser.Command>()
+                .With(c => c.Username, string.Empty)
+                .Create();
+
+            // Act
+            var result = _validator.Validate(command);
+
+            // Assert
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.Single().ErrorMessage.Should().Be("Username is required.");
+        }
+
+        [TestMethod]
+        public void Validate_EmptyPassword_FailsValidation()
+        {
+            // Arrange
+            var command = Fixture.Build<LoginUser.Command>()
+                .With(c => c.Password, string.Empty)
+                .Create();
+
+            // Act
+            var result = _validator.Validate(command);
+
+            // Assert
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.Single().ErrorMessage.Should().Be("Password is required.");
+        }
+
+        [TestMethod]
+        public void Validate_ValidCredentials_PassesValidation()
+        {
+            // Arrange
+            var command = Fixture.Create<LoginUser.Command>();
+
+            // Act
+            var result = _validator.Validate(command);
+
+            // Assert
+            result.IsValid.Should().BeTrue();
+        }
     }
 
-    [TestMethod]
-    public async Task Handle_UserDoesNotExist_ThrowsException()
+    [TestClass]
+    public class HandlerTests : TestBase<LoginUser.Handler>
     {
-        // Arrange
-        var command = Fixture.Create<LoginUser.Command>();
+        public HandlerTests()
+        {
+            Handler = new LoginUser.Handler(TokenServiceMock, UserRepositoryMock);
+        }
+
+        [TestMethod]
+        public async Task Handle_UserDoesNotExist_ThrowsException()
+        {
+            // Arrange
+            var command = Fixture.Create<LoginUser.Command>();
             
-        // Act & Assert
-        await AssertThrowsAsync<UserNotFoundException>(command);
+            // Act & Assert
+            await AssertThrowsAsync<UserNotFoundException>(command);
 
-    }
+        }
 
-    [TestMethod]
-    public async Task Handle_IncorrectPassword_ThrowsException()
-    {
-        // Arrange
-        var command = Fixture.Create<LoginUser.Command>();
-        var user = Fixture.Build<User>()
-            .With(u => u.Username, command.Username)
-            .Create();
+        [TestMethod]
+        public async Task Handle_IncorrectPassword_ThrowsException()
+        {
+            // Arrange
+            var command = Fixture.Create<LoginUser.Command>();
+            var user = Fixture.Build<User>()
+                .With(u => u.Username, command.Username)
+                .Create();
 
-        UserRepositoryMock.GetByAsync(command.Username, Arg.Any<CancellationToken>()).Returns(user);
+            UserRepositoryMock.GetByAsync(command.Username, Arg.Any<CancellationToken>()).Returns(user);
 
-        // Act & Assert
-        await AssertThrowsAsync<InvalidPasswordException>(command);
+            // Act & Assert
+            await AssertThrowsAsync<InvalidPasswordException>(command);
+        }
     }
 }

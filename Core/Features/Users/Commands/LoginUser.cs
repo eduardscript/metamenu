@@ -5,6 +5,20 @@ namespace Core.Features.Users.Commands;
 
 public static class LoginUser
 {
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .WithMessage("Username is required.");
+            
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .WithMessage("Password is required.");
+        }
+    }
+
     public record Command(
         string Username,
         string Password) : IRequest<UserTokenDto>;

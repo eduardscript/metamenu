@@ -6,11 +6,13 @@ namespace Infra.Repositories;
 
 public class UserRepository(IMongoCollection<User> collection) : IUserRepository
 {
-    public Task<User> GetByAsync(string username, CancellationToken cancellationToken)
+    public async Task<User?> GetByAsync(string username, CancellationToken cancellationToken)
     {
-        return collection
+        var user = await collection
             .Find(u => u.Username == username)
             .FirstOrDefaultAsync(cancellationToken);
+
+        return user;
     }
 
     public Task<User> CreateAsync(User user, CancellationToken cancellationToken)

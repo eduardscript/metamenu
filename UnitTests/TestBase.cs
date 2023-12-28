@@ -3,10 +3,13 @@ using MediatR;
 
 namespace UnitTests;
 
-public class TestBase<THandler> where THandler : class
+public class TestBase
 {
     protected static readonly Fixture Fixture = new();
+}
 
+public class TestBase<THandler> : TestBase where THandler : class
+{
     protected readonly ITenantRepository TenantRepositoryMock = Substitute.For<ITenantRepository>();
 
     protected readonly ITagCategoryRepository TagCategoryRepositoryMock = Substitute.For<ITagCategoryRepository>();
@@ -33,3 +36,4 @@ public class TestBase<THandler> where THandler : class
         ])!);
     }
 }
+
