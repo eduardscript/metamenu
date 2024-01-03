@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Presentation;
 using Presentation.Configuration;
 using Presentation.Conventions;
+using Presentation.Filters;
 using Presentation.Mutations;
 using Presentation.Queries;
 
@@ -39,7 +40,8 @@ builder.Services
     .AddTypeExtension<TagMutations>()
     .AddTypeExtension<ProductMutations>()
     .AddTypeExtension<UserMutations>()
-    .AddConvention<INamingConventions, CustomNamingConvention>();
+    .AddConvention<INamingConventions, CustomNamingConvention>()
+    .AddErrorFilter<ErrorFilter>();
 
 builder.Services
     .AddApplication()
