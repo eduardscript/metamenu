@@ -4,9 +4,9 @@ using Core.Features.Users.Commands;
 namespace UnitTests.Features.Users.Commands.RegisterUserTests;
 
 [TestClass]
-public class TestBaseHandlerTestBaseHandler : TestBaseHandler<RegisterUser.Handler, RegisterUser.Command>
+public class Handler : TestBaseHandler<RegisterUser.Handler, RegisterUser.Command>
 {
-    public TestBaseHandlerTestBaseHandler()
+    public Handler()
     {
         Handler = new RegisterUser.Handler(TenantRepositoryMock, UserRepositoryMock);
     }

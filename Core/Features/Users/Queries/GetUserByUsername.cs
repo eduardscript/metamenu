@@ -10,8 +10,7 @@ public static class GetUserByUsername
         public Validator()
         {
             RuleFor(x => x.Username)
-                .NotEmpty()
-                .WithMessage("Username is required.");
+                .NotEmptyAndRequired();
         }
     }
 

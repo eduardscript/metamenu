@@ -10,8 +10,6 @@ public class Validator : TestBaseValidator<GetUserByUsername.Validator, GetUserB
     {
         // Arrange
         Command.Username = string.Empty;
-            
-        // Act & Assert
-        ExpectedErrorMessage = "Username is required.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Username));
     }
 }

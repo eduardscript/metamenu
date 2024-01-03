@@ -5,9 +5,9 @@ using NSubstitute.ReturnsExtensions;
 namespace UnitTests.Features.Users.Queries.GetUserByUsernameTests;
 
 [TestClass]
-public class TestBaseHandlerTestBaseHandlerTests : TestBaseHandler<GetUserByUsername.Handler, GetUserByUsername.Query>
+public class Handler : TestBaseHandler<GetUserByUsername.Handler, GetUserByUsername.Query>
 {
-    public TestBaseHandlerTestBaseHandlerTests()
+    public Handler()
     {
         Handler = new GetUserByUsername.Handler(UserRepositoryMock);
     }

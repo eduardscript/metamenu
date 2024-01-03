@@ -1,10 +1,58 @@
-﻿namespace Core.Validators;
+﻿using Humanizer;
+
+namespace Core.Validators;
+
+public static class CustomValidatorsMessages
+{
+    public static string NotEmptyAndRequiredMessage(string propertyName)
+    {
+        return $"'{propertyName}' is required and must not be empty.";
+    }
+    
+    public static string GreaterThanZeroMessage(string propertyName)
+    {
+        var singularPropertyName = propertyName;
+
+        return $"'{singularPropertyName}' must be greater than '0'.";
+    }
+}
 
 public static class CustomValidators
 {
+    public static IRuleBuilderOptions<T, TValue> NotEmptyAndRequired<T, TValue>(this IRuleBuilder<T, TValue> ruleBuilder)
+    {
+        return ruleBuilder
+            .NotEmpty()
+            .WithMessage(CustomValidatorsMessages.NotEmptyAndRequiredMessage("{PropertyName}"));
+    }
+    
+    public static IRuleBuilderOptions<T, IEnumerable<int>> NotEmptyUniqueAndGreaterThanZero<T>(
+        this IRuleBuilder<T, IEnumerable<int>> ruleBuilder)
+    {
+        return ruleBuilder
+            .NotEmpty()
+            .ForEach(p => p
+                .Must((_, value, context) =>
+                {
+                    var propertyName = context.DisplayName.Singularize();
+
+                    if (value > 0)
+                    {
+                        return true;
+                    }
+                    
+                    context.MessageFormatter.AppendArgument("SingularPropertyName", propertyName.Singularize().Humanize(LetterCasing.Title));
+
+                    return false;
+
+                })
+                .WithMessage(CustomValidatorsMessages.GreaterThanZeroMessage("{SingularPropertyName}")))
+            .Unique();
+    }
+
     public static IRuleBuilderOptions<T, IEnumerable<TElement>> Unique<T, TElement>(this IRuleBuilder<T, IEnumerable<TElement>> ruleBuilder)
     {
-        return ruleBuilder.Must((rootObject, list, context) =>
+        return ruleBuilder.Must((_, list, context) =>
             {
                 if (list == null) return true;
 
@@ -21,6 +69,6 @@ public static class CustomValidators
 
                 return true;
             })
-            .WithMessage("Duplicate items found: {DuplicateItems}.");
+            .WithMessage("'{PropertyName}' must be unique. Duplicated items found: '{DuplicateItems}'.");
     }
 }

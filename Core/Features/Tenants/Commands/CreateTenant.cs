@@ -1,13 +1,29 @@
-﻿using Core.Features.Tenants.Queries;
-using Core.Features.Tenants.Shared;
+﻿using Core.Features.Tenants.Shared;
 
 namespace Core.Features.Tenants.Commands;
 
 public static class CreateTenant
 {
-    public record Command(
-        int TenantCode,
-        string Name) : IRequest<TenantDto>;
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.TenantCode)
+                .GreaterThan(0);
+
+            RuleFor(x => x.Name)
+                .NotEmpty();
+        }
+    }
+
+    public class Command(
+        int tenantCode,
+        string name) : IRequest<TenantDto>
+    {
+        public int TenantCode { get; set; } = tenantCode;
+        
+        public string Name { get; set; } = name;
+    }
 
     public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command, TenantDto>
     {
@@ -18,7 +34,7 @@ public static class CreateTenant
                 false);
 
             var newTenant = await tenantRepository.CreateAsync(tenant, cancellationToken);
-            
+
             return new TenantDto(
                 newTenant.TenantCode,
                 newTenant.Name);

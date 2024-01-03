@@ -10,7 +10,7 @@ public class Validator : TestBaseValidator<LoginUser.Validator, LoginUser.Comman
     {
         // Arrange
         Command.Username = string.Empty;
-        ExpectedErrorMessage = "Username is required.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Username));
     }
 
     [TestMethod]
@@ -18,6 +18,6 @@ public class Validator : TestBaseValidator<LoginUser.Validator, LoginUser.Comman
     {
         // Arrange
         Command.Password = string.Empty;
-        ExpectedErrorMessage = "Password is required.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Password));
     }
 }

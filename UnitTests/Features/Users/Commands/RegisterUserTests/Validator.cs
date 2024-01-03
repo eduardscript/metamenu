@@ -1,4 +1,5 @@
 ﻿using Core.Features.Users.Commands;
+using Humanizer;
 
 namespace UnitTests.Features.Users.Commands.RegisterUserTests;
 
@@ -10,7 +11,7 @@ public class Validator : TestBaseValidator<RegisterUser.Validator, RegisterUser.
     {
         // Arrange
         Command.Username = string.Empty;
-        ExpectedErrorMessage = "Username is required.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Username));
     }
 
     [TestMethod]
@@ -18,7 +19,7 @@ public class Validator : TestBaseValidator<RegisterUser.Validator, RegisterUser.
     {
         // Arrange
         Command.Password = string.Empty;
-        ExpectedErrorMessage = "Password is required.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Password));
     }
         
     [TestMethod]
@@ -26,14 +27,24 @@ public class Validator : TestBaseValidator<RegisterUser.Validator, RegisterUser.
     {
         // Arrange
         Command.AvailableTenants = new List<int>();
-        ExpectedErrorMessage = "Available Tenants must not be empty.";
+        ExpectedErrorMessage = "'Available Tenants' must not be empty.";
     }
-        
+    
+    [TestMethod]
+    [DataRow(0)]
+    [DataRow(-1)]
+    public void Validate_EmptyAvailableTenant_FailsValidation(int availableTenant)
+    {
+        // Arrange
+        Command.AvailableTenants = new List<int> { availableTenant };
+        ExpectedErrorMessage = CustomValidatorsMessages.GreaterThanZeroMessage(nameof(Command.AvailableTenants).Singularize().Humanize(LetterCasing.Title));
+    }
+ 
     [TestMethod]
     public void Validate_DuplicateAvailableTenants_FailsValidation()
     {
         // Arrange
-        Command.AvailableTenants = new List<int> { 1, 1 };
-        ExpectedErrorMessage = "AvailableTenants must be unique. Duplicated ones: 1.";
+        Command.AvailableTenants = new List<int> { 1, 1, 2, 2 };
+        ExpectedErrorMessage = "'Available Tenants' must be unique. Duplicated items found: '1, 2'.";
     }
 }
