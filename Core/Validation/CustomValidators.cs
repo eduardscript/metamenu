@@ -1,6 +1,6 @@
 ﻿using Humanizer;
 
-namespace Core.Validators;
+namespace Core.Validation;
 
 public static class CustomValidatorsMessages
 {
@@ -8,7 +8,7 @@ public static class CustomValidatorsMessages
     {
         return $"'{propertyName}' is required and must not be empty.";
     }
-    
+
     public static string GreaterThanZeroMessage(string propertyName)
     {
         var singularPropertyName = propertyName;
@@ -19,13 +19,14 @@ public static class CustomValidatorsMessages
 
 public static class CustomValidators
 {
-    public static IRuleBuilderOptions<T, TValue> NotEmptyAndRequired<T, TValue>(this IRuleBuilder<T, TValue> ruleBuilder)
+    public static IRuleBuilderOptions<T, TValue> NotEmptyAndRequired<T, TValue>(
+        this IRuleBuilder<T, TValue> ruleBuilder)
     {
         return ruleBuilder
             .NotEmpty()
             .WithMessage(CustomValidatorsMessages.NotEmptyAndRequiredMessage("{PropertyName}"));
     }
-    
+
     public static IRuleBuilderOptions<T, IEnumerable<int>> NotEmptyUniqueAndGreaterThanZero<T>(
         this IRuleBuilder<T, IEnumerable<int>> ruleBuilder)
     {
@@ -40,17 +41,18 @@ public static class CustomValidators
                     {
                         return true;
                     }
-                    
-                    context.MessageFormatter.AppendArgument("SingularPropertyName", propertyName.Singularize().Humanize(LetterCasing.Title));
+
+                    context.MessageFormatter.AppendArgument("SingularPropertyName",
+                        propertyName.Singularize().Humanize(LetterCasing.Title));
 
                     return false;
-
                 })
                 .WithMessage(CustomValidatorsMessages.GreaterThanZeroMessage("{SingularPropertyName}")))
             .Unique();
     }
 
-    public static IRuleBuilderOptions<T, IEnumerable<TElement>> Unique<T, TElement>(this IRuleBuilder<T, IEnumerable<TElement>> ruleBuilder)
+    public static IRuleBuilderOptions<T, IEnumerable<TElement>> Unique<T, TElement>(
+        this IRuleBuilder<T, IEnumerable<TElement>> ruleBuilder)
     {
         return ruleBuilder.Must((_, list, context) =>
             {

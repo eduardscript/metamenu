@@ -6,5 +6,5 @@ public interface ITenantRepository
 
     public Task<IEnumerable<Tenant>> GetAllAsync(CancellationToken cancellationToken);
 
-    public Task<bool> ExistsByAsync(int tenantCode, CancellationToken cancellationToken);
+    public Task<bool> ExistsAsync(int tenantCode, CancellationToken cancellationToken);
 }

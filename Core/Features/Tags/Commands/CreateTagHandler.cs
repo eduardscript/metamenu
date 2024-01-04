@@ -19,7 +19,7 @@ public static class CreateTagHandler
         {
             var tag = new Tag(request.TenantCode, request.TagCategoryCode, request.TagCode);
 
-            if (!await tenantRepository.ExistsByAsync(tag.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsAsync(tag.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(tag.TenantCode);
 
             if (!await tagCategoryRepository.ExistsByAsync(tag.TenantCode, tag.TagCategoryCode, cancellationToken))

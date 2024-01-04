@@ -16,11 +16,11 @@ public class CreateProductTestBaseHandlerTests : TestBaseHandler<CreateProductHa
     public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(false);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(false);
 
         // Act and Assert
         await AssertThrowsAsync<TenantNotFoundException>(Request);
-        await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, default);
+        await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, default);
         await TagRepositoryMock.DidNotReceive().ExistsAsync(Request.TenantCode, Request.TagCodes, default);
         await ProductRepositoryMock.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<Product>(), Arg.Any<CancellationToken>());
     }
@@ -29,12 +29,12 @@ public class CreateProductTestBaseHandlerTests : TestBaseHandler<CreateProductHa
     public async Task Handle_WhenTagDoesNotExist_ThrowsTagNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(true);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
         TagRepositoryMock.ExistsAsync(Request.TenantCode, Request.TagCodes, default).Returns(false);
 
         // Act and Assert
         await AssertThrowsAsync<TagNotFoundException>(Request);
-        await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, default);
+        await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, default);
         await TagRepositoryMock.Received().ExistsAsync(Request.TenantCode, Request.TagCodes, default);
         await ProductRepositoryMock.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<Product>(), Arg.Any<CancellationToken>());
     }
