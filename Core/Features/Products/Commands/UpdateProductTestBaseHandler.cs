@@ -43,18 +43,20 @@ public static class UpdateProductTestBaseHandler
 
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await tenantRepository.ExistsByAsync(request.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsAsync(request.TenantCode, cancellationToken))
             {
                 throw new TenantNotFoundException(request.TenantCode);
             }
 
             var product = await productRepository.GetByAsync(request.TenantCode, request.Name, cancellationToken);
+            
             if (product is null)
             {
                 throw new ProductNotFoundException(request.Name);
             }
 
             var nonNullProperties = GetNonNullProperties(request.UpdateProperties, _strategies);
+            
             foreach (var propertyName in nonNullProperties)
             {
                 if (_strategies.TryGetValue(propertyName, out var strategy))

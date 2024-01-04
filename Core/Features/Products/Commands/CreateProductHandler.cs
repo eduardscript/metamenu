@@ -37,7 +37,7 @@ public static class CreateProductHandler
                 request.Price,
                 request.TagCodes);
 
-            if (!await tenantRepository.ExistsByAsync(product.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsAsync(product.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(product.TenantCode);
 
             var existingTagCodes =

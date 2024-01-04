@@ -16,7 +16,7 @@ public static class RenameTagCodeHandler
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await tenantRepository.ExistsByAsync(request.TenantCode, cancellationToken))
+            if (!await tenantRepository.ExistsAsync(request.TenantCode, cancellationToken))
             {
                 throw new TenantNotFoundException(request.TenantCode);
             }

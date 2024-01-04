@@ -22,7 +22,7 @@ public class UpdateProductTestBaseHandlerTests : TestBaseHandler<UpdateProductTe
     public async Task Handle_TenantNotFound_ThrowsTenantNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(false);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(false);
 
         // Act & Assert
         await AssertThrowsAsync<TenantNotFoundException>(Request);
@@ -32,7 +32,7 @@ public class UpdateProductTestBaseHandlerTests : TestBaseHandler<UpdateProductTe
     public async Task Handle_ProductNotFound_ThrowsProductNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(true);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
         ProductRepositoryMock.GetByAsync(Request.TenantCode, Request.Name, default).Returns((Product)null!);
 
         // Act & Assert
@@ -45,7 +45,7 @@ public class UpdateProductTestBaseHandlerTests : TestBaseHandler<UpdateProductTe
     public async Task Handle_ProductNameAlreadyExists_ThrowsProductAlreadyExists()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(true);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
         ProductRepositoryMock.GetByAsync(Request.TenantCode, Request.Name, default).Returns(Product);
         ProductRepositoryMock.ExistsByNameAsync(Request.TenantCode, Request.UpdateProperties.Name!, default).Returns(true);
 
@@ -59,7 +59,7 @@ public class UpdateProductTestBaseHandlerTests : TestBaseHandler<UpdateProductTe
     public async Task Handle_TagNotFound_ThrowsTagNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, default).Returns(true);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
         ProductRepositoryMock.GetByAsync(Request.TenantCode, Request.Name, default).Returns(Product);
         TagRepositoryMock.ExistsAsync(Request.TenantCode, Request.UpdateProperties.TagCodes!, default).Returns(false);
 

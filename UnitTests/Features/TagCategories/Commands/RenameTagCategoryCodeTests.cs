@@ -16,11 +16,11 @@ public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCatego
     public async Task Handle_TenantNotFound_ThrowsTenantNotFoundException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>()).Returns(false);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>()).Returns(false);
 
         // Act & Assert
         await AssertThrowsAsync<TenantNotFoundException>(Request);
-        await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>());
+        await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceive().ExistsByAsync(Request.TenantCode,
             Request.NewTagCategoryCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().RenameAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
@@ -30,14 +30,14 @@ public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCatego
     public async Task Handle_TagCategoryAlreadyExists_ThrowsTagCategoryAlreadyExistsException()
     {
         // Arrange
-        TenantRepositoryMock.ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>()).Returns(true);
+        TenantRepositoryMock.ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>()).Returns(true);
         TagCategoryRepositoryMock
             .ExistsByAsync(Request.TenantCode, Request.NewTagCategoryCode, Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act & Assert
         await AssertThrowsAsync<TagCategoryAlreadyExistsException>(Request);
-        await TenantRepositoryMock.Received().ExistsByAsync(Request.TenantCode, Arg.Any<CancellationToken>());
+        await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().RenameAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 }
