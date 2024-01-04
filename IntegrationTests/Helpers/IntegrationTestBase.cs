@@ -1,5 +1,4 @@
 ﻿using Infra;
-using Infra.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;

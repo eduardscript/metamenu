@@ -1,6 +1,5 @@
 using HotChocolate.Types.Descriptors;
 using Infra;
-using Infra.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Presentation;

@@ -1,5 +1,4 @@
-﻿using Core.Features.TagCategories.Commands;
-using Core.Features.Tags.Commands;
+﻿using Core.Features.Tags.Commands;
 
 namespace IntegrationTests.Features.Tags.Commands;
 

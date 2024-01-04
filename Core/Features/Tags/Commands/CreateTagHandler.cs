@@ -1,5 +1,4 @@
 ﻿using Core.Exceptions.TagCategories;
-using Core.Exceptions.Tags;
 using Core.Exceptions.Tenants;
 
 namespace Core.Features.Tags.Commands;
