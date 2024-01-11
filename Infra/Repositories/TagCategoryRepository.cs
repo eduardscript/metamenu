@@ -22,7 +22,7 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
         return collection.InsertOneAsync(tagCategory, cancellationToken: cancellationToken);
     }
 
-    public Task<IEnumerable<TagCategory>> GetAll(int tenantCode, CancellationToken cancellationToken)
+    public Task<IEnumerable<TagCategory>> GetAllAsync(int tenantCode, CancellationToken cancellationToken)
     {
         return collection
             .Find(tc => tc.TenantCode == tenantCode)
@@ -30,16 +30,15 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
             .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
     }
 
-    public Task<IEnumerable<TagCategory>> GetAllTagsByTagCategoryCode(int tenantCode, string tagCategoryCode,
-        CancellationToken cancellationToken)
+    public Task<TagCategory> GetByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {
         return collection
             .Find(tc =>
                 tc.TenantCode == tenantCode &&
                 tc.Code == tagCategoryCode)
-            .ToListAsync(cancellationToken)
-            .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
     }
+
 
     public Task<bool> ExistsByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {

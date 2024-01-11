@@ -13,4 +13,12 @@ public class TagCategoryQueries
     {
         return mediator.Send(query, cancellationToken);
     }
+    
+    public Task<IEnumerable<GetTagCategoryAssociatedEntities.TagCategoryAssociatedEntitiesDto>> GetTagCategoryAssociatedEntities(
+        [Service] IMediator mediator,
+        GetTagCategoryAssociatedEntities.Query query,
+        CancellationToken cancellationToken)
+    {
+        return mediator.Send(query, cancellationToken);
+    }
 }

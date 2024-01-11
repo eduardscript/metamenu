@@ -1,0 +1,108 @@
+﻿using Core.Exceptions.TagCategories;
+
+namespace Core.Features.TagCategories.Queries;
+
+public static class GetTagCategoryAssociatedEntities
+{
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator(
+            ITenantRepository tenantRepository,
+            ITagCategoryRepository tagCategoryRepository)
+        {
+            RuleFor(q => q.TenantCode)
+                .GreaterThan(0)
+                .TenantExists(tenantRepository);
+            
+            RuleFor(q => q.TagCategoryCode)
+                .NotEmptyAndRequired();
+
+            RuleFor(q => q.TagCategoryCode)
+                .MustAsync(async (query, tagCategoryCode, cancellationToken) =>
+                {
+                    var tagCategory = await tagCategoryRepository.GetByAsync(query.TenantCode, tagCategoryCode, cancellationToken);
+                    
+                    return tagCategory is not null;
+                })
+                .WithMessage((_, tagCategoryCode) => new TagCategoryNotFoundException(tagCategoryCode).Message);
+        }
+    }
+
+    public class Query : IRequest<IEnumerable<TagCategoryAssociatedEntitiesDto>>
+    {
+        public Query(int tenantCode, string tagCategoryCode)
+        {
+            TenantCode = tenantCode;
+            TagCategoryCode = tagCategoryCode;
+        }
+
+        public int TenantCode { get; set; }
+
+        public string TagCategoryCode { get; set; }
+    }
+
+    public class Handler(
+        ITenantRepository tenantRepository,
+        ITagCategoryRepository tagCategoryRepository,
+        ITagRepository tagRepository,
+        IProductRepository productRepository)
+        : IRequestHandler<Query, IEnumerable<TagCategoryAssociatedEntitiesDto>>
+    {
+        public async Task<IEnumerable<TagCategoryAssociatedEntitiesDto>> Handle(Query request,
+            CancellationToken cancellationToken)
+        {
+            await ValidateTagCategory(request.TenantCode, request.TagCategoryCode, tagCategoryRepository, cancellationToken);
+
+            var tags = await tagRepository.GetAll(
+                new ITagRepository.TagFilter(request.TenantCode, request.TagCategoryCode),
+                cancellationToken);
+
+            var tagCodes = tags.Select(t => t.TagCode).ToArray();
+            var products = await GetProductsAsync(request, tagCodes, cancellationToken);
+
+            if (!products.Any())
+            {
+                throw new TagCategoryHasNoAssociatedEntitiesException(request.TagCategoryCode, tagCodes);
+            }
+
+            return CreateProductDtos(tags, products);
+        }
+
+        private async Task ValidateTagCategory(int tenantCode, string tagCategoryCode,
+            ITagCategoryRepository tagCategoryRepository, CancellationToken cancellationToken)
+        {
+            var tagCategory = await tagCategoryRepository.GetByAsync(tenantCode, tagCategoryCode, cancellationToken);
+            if (tagCategory is null)
+            {
+                throw new TagCategoryNotFoundException(tagCategoryCode);
+            }
+        }
+
+        private async Task<IEnumerable<Product>> GetProductsAsync(
+            Query request, 
+            IEnumerable<string> tagCodes, 
+            CancellationToken cancellationToken)
+        {
+            var productFilter = new ProductFilter(request.TenantCode, tagCodes);
+            return await productRepository.GetAllAsync(productFilter, cancellationToken);
+        }
+
+        private IEnumerable<TagCategoryAssociatedEntitiesDto> CreateProductDtos(
+            IEnumerable<Tag> tags,
+            IEnumerable<Product> products)
+        {
+            return tags.Select(t => new TagCategoryAssociatedEntitiesDto
+            {
+                Tag = t.TagCode,
+                Products = products.Where(p => p.TagCodes.Contains(t.TagCode))
+            });
+        }
+    }
+
+    public class TagCategoryAssociatedEntitiesDto
+    {
+        public string Tag { get; set; }
+
+        public IEnumerable<Product> Products { get; set; }
+    }
+}

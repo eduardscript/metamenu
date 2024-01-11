@@ -40,10 +40,7 @@ public class GetAllProductsTests : IntegrationTestBase
     {
         // Act
         var result = await _handler.Handle(
-            new GetAllProducts.Query(new ProductFilter
-            {
-                TenantCode = _tenant.Code
-            }), default);
+            new GetAllProducts.Query(new ProductFilter(_tenant.Code)), default);
 
         // Assert
         AssertProducts(result, _expectedProducts);
@@ -57,11 +54,7 @@ public class GetAllProductsTests : IntegrationTestBase
 
         // Act
         var result = await _handler.Handle(
-            new GetAllProducts.Query(new ProductFilter
-            {
-                TenantCode = _tenant.Code,
-                TagCodes = randomTagCodes
-            }), default);
+            new GetAllProducts.Query(new ProductFilter(_tenant.Code, randomTagCodes)), default);
 
         // Assert
         var productsWithRandomTag = _expectedProducts.Where(p => p.TagCodes.Intersect(randomTagCodes).Any()).ToList();

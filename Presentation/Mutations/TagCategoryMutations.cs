@@ -12,7 +12,5 @@ public class TagCategoryMutations
         CancellationToken cancellationToken)
     {
         return await mediator.Send(command, cancellationToken);
-
-        // return await mediator.Send(new GetAllTagCategories.Query(command.TenantCode), cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Humanizer;
+﻿using Core.Exceptions.Tenants;
+using Humanizer;
 
 namespace Core.Validation;
 
@@ -25,6 +26,14 @@ public static class CustomValidators
         return ruleBuilder
             .NotEmpty()
             .WithMessage(CustomValidatorsMessages.NotEmptyAndRequiredMessage("{PropertyName}"));
+    }
+    
+    public static IRuleBuilderOptions<T, int> TenantExists<T>(
+        this IRuleBuilder<T, int> ruleBuilder, ITenantRepository tenantRepository)
+    {
+        return ruleBuilder
+            .MustAsync(async (tenantCode, cancellationToken) => await tenantRepository.ExistsAsync(tenantCode, cancellationToken))
+            .WithMessage((_, tenantCode) => new TenantNotFoundException(tenantCode).Message);
     }
 
     public static IRuleBuilderOptions<T, IEnumerable<int>> NotEmptyUniqueAndGreaterThanZero<T>(
