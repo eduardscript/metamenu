@@ -23,7 +23,7 @@
     <ItemGroup>
         <PackageReference Include="HotChocolate.AspNetCore" Version="14.0.0-p.22"/>
         <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="14.0.0-p.22" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
     </ItemGroup>
 
 </Project>

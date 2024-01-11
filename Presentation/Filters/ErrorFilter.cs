@@ -1,48 +1,51 @@
-﻿using FluentValidation;
-using Presentation.Constants;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Presentation.Errors.Common;
+using Presentation.Errors.Handlers;
 
 namespace Presentation.Filters;
 
 public class ErrorFilter : IErrorFilter
 {
-    private static readonly string EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!;
-
+    [UnconditionalSuppressMessage(
+        "ReflectionAnalysis", 
+        "IL2026:RequiresUnreferencedCode",
+        Justification = "This method uses reflection to dynamically create instances and invoke methods, which may not be compatible with trimming.")]
     public IError OnError(IError error)
     {
-        if (EnvironmentName == Environments.Development)
-        {
-            return HandleDevelopmentEnvironmentError(error);
-        }
+        var handlerType = GetExceptionHandlerType(error.Exception!.GetType()) ?? typeof(InternalServerErrorHandler);
 
-        if (error.Exception is ValidationException validationException)
-        {
-            return HandleValidationException(error, validationException);
-        }
+        var handlerInstance = Activator.CreateInstance(handlerType);
 
-        return error.WithCode(ErrorFilterCodes.InternalServerError);
+        var handlerExceptionMethod = handlerType.GetMethod("HandleError")!;
+
+        var result = (IError)handlerExceptionMethod.Invoke(handlerInstance, [error, error.Exception])!;
+        
+        return result;
     }
 
-    private static IError HandleDevelopmentEnvironmentError(IError error)
+    [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicMethods)]
+    [RequiresUnreferencedCode("Reflection is used to find types that implement IErrorHandler<T>. This can break if types are trimmed away.")]
+    private static Type? GetExceptionHandlerType(Type exceptionType)
     {
-        return error
-            .WithCode(ErrorFilterCodes.InternalServerError)
-            .WithExtensions(new Dictionary<string, object?>
-            {
-                { "StackTrace", error.Exception?.StackTrace }
-            })
-            .WithMessage(error.Exception?.Message ?? "An error occurred while processing your request.");
-    }
-
-    private static IError HandleValidationException(IError error, ValidationException validationException)
-    {
-        var errorsDictionary = new Dictionary<string, object>
+        return Assembly.GetAssembly(typeof(Program))!
+            .GetTypes()
+            .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
+            .FirstOrDefault(IsExceptionHandlerType(exceptionType));
+        
+        static Func<Type, bool> IsExceptionHandlerType(Type exceptionType)
         {
-            { "Errors", validationException.Errors }
-        };
+            return type =>
+                type.IsClass &&
+                type.GetInterfaces().Any(IsGenericExceptionHandlerForType(exceptionType));
+        }
 
-        return error
-            .WithCode(ErrorFilterCodes.ModelValidationError)
-            .WithExtensions(errorsDictionary)
-            .WithMessage("Validation failed for one or more entity properties. See 'Errors' for more details.");
+        static Func<Type, bool> IsGenericExceptionHandlerForType(Type exceptionType)
+        {
+            return interfaceType =>
+                interfaceType.IsGenericType &&
+                interfaceType.GetGenericTypeDefinition() == typeof(IErrorHandler<>) &&
+                interfaceType.GetGenericArguments()[0] == exceptionType;
+        }
     }
 }
