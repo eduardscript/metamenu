@@ -21,7 +21,7 @@ public static class RenameTagCategoryCode
                 throw new TenantNotFoundException(request.TenantCode);
             }
 
-            if (await tagCategoryRepository.ExistsByAsync(request.TenantCode, request.NewTagCategoryCode, cancellationToken))
+            if (await tagCategoryRepository.ExistsAsync(request.TenantCode, request.NewTagCategoryCode, cancellationToken))
             {
                 throw new TagCategoryAlreadyExistsException(request.OldTagCategoryCode);
             }

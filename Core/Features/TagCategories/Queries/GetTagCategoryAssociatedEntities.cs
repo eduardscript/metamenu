@@ -11,7 +11,9 @@ public static class GetTagCategoryAssociatedEntities
             ITagCategoryRepository tagCategoryRepository)
         {
             RuleFor(q => q.TenantCode)
-                .GreaterThan(0)
+                .NotEmptyAndRequired();
+                
+            RuleFor(q => q.TenantCode)
                 .TenantExists(tenantRepository);
             
             RuleFor(q => q.TagCategoryCode)
@@ -51,46 +53,18 @@ public static class GetTagCategoryAssociatedEntities
         public async Task<IEnumerable<TagCategoryAssociatedEntitiesDto>> Handle(Query request,
             CancellationToken cancellationToken)
         {
-            await ValidateTagCategory(request.TenantCode, request.TagCategoryCode, tagCategoryRepository, cancellationToken);
-
             var tags = await tagRepository.GetAll(
                 new ITagRepository.TagFilter(request.TenantCode, request.TagCategoryCode),
                 cancellationToken);
 
             var tagCodes = tags.Select(t => t.TagCode).ToArray();
-            var products = await GetProductsAsync(request, tagCodes, cancellationToken);
+            var products = await productRepository.GetAllAsync(new(request.TenantCode, tagCodes), cancellationToken);
 
             if (!products.Any())
             {
                 throw new TagCategoryHasNoAssociatedEntitiesException(request.TagCategoryCode, tagCodes);
             }
 
-            return CreateProductDtos(tags, products);
-        }
-
-        private async Task ValidateTagCategory(int tenantCode, string tagCategoryCode,
-            ITagCategoryRepository tagCategoryRepository, CancellationToken cancellationToken)
-        {
-            var tagCategory = await tagCategoryRepository.GetByAsync(tenantCode, tagCategoryCode, cancellationToken);
-            if (tagCategory is null)
-            {
-                throw new TagCategoryNotFoundException(tagCategoryCode);
-            }
-        }
-
-        private async Task<IEnumerable<Product>> GetProductsAsync(
-            Query request, 
-            IEnumerable<string> tagCodes, 
-            CancellationToken cancellationToken)
-        {
-            var productFilter = new ProductFilter(request.TenantCode, tagCodes);
-            return await productRepository.GetAllAsync(productFilter, cancellationToken);
-        }
-
-        private IEnumerable<TagCategoryAssociatedEntitiesDto> CreateProductDtos(
-            IEnumerable<Tag> tags,
-            IEnumerable<Product> products)
-        {
             return tags.Select(t => new TagCategoryAssociatedEntitiesDto
             {
                 Tag = t.TagCode,

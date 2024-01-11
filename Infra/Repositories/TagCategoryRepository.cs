@@ -40,7 +40,7 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
     }
 
 
-    public Task<bool> ExistsByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {
         return collection
             .Find(tc =>

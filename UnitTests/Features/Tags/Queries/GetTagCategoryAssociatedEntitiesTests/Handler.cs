@@ -20,23 +20,6 @@ public class Handler : TestBaseHandler<GetTagCategoryAssociatedEntities.Handler,
     }
 
     [TestMethod]
-    public async Task Handle_WhenTagCategoryDoesNotExist_ThrowsTagCategoryNotFoundException()
-    {
-        // Arrange
-        TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
-        TagCategoryRepositoryMock.GetByAsync(Request.TenantCode, Request.TagCategoryCode, default)
-            .ReturnsNull();
-
-        // Act and Assert
-        await AssertThrowsAsync<TagCategoryNotFoundException>(Request);
-        await TagCategoryRepositoryMock.Received().GetByAsync(Request.TenantCode, Request.TagCategoryCode, default);
-        await TagRepositoryMock.DidNotReceiveWithAnyArgs()
-            .GetAll(Arg.Any<ITagRepository.TagFilter>(), Arg.Any<CancellationToken>());
-        await ProductRepositoryMock.DidNotReceiveWithAnyArgs()
-            .GetAllAsync(Arg.Any<ProductFilter>(), Arg.Any<CancellationToken>());
-    }
-
-    [TestMethod]
     public async Task Handle_WhenTagCategoryHasNoAssociatedEntities_ThrowsTagCategoryHasNoAssociatedEntitiesException()
     {
         // Arrange
