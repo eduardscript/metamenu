@@ -6,7 +6,7 @@ namespace UnitTests.Helpers;
 public class TestBaseValidator<TValidator, TCommand> : TestBase
     where TValidator : AbstractValidator<TCommand>
 {
-    protected TValidator Validator = default!;
+    private TValidator _validator = default!;
 
     protected readonly TCommand Command = Fixture.Create<TCommand>();
 
@@ -46,7 +46,7 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
         
         var validator = Activator.CreateInstance(validatorType, arguments);
 
-        Validator = (TValidator)validator!;
+        _validator = (TValidator)validator!;
     }
 
     [TestCleanup]
@@ -61,7 +61,7 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
 
     private async Task AssertValidationResult(string expectedErrorMessage)
     {
-        var result = await Validator.ValidateAsync(Command);
+        var result = await _validator.ValidateAsync(Command);
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().ContainSingle();
