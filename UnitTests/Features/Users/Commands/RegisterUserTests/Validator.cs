@@ -1,5 +1,4 @@
 ﻿using Core.Features.Users.Commands;
-using Humanizer;
 
 namespace UnitTests.Features.Users.Commands.RegisterUserTests;
 

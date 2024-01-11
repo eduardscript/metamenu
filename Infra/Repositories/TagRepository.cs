@@ -11,10 +11,17 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         return collection.InsertOneAsync(tag, cancellationToken: cancellationToken);
     }
 
-    public Task<IEnumerable<Tag>> GetAll(int tenantCode, CancellationToken cancellationToken)
+    public Task<IEnumerable<Tag>> GetAll(ITagRepository.TagFilter tagFilter, CancellationToken cancellationToken)
     {
+        var filter = Builders<Tag>.Filter.Eq(t => t.TenantCode, tagFilter.TenantCode);
+
+        if (tagFilter.TagCategoryCode is not null)
+        {
+            filter &= Builders<Tag>.Filter.Eq(t => t.TagCategoryCode, tagFilter.TagCategoryCode);
+        }
+
         return collection
-            .Find(t => t.TenantCode == tenantCode)
+            .Find(filter)
             .ToListAsync(cancellationToken)
             .ContinueWith(tags => tags.Result.AsEnumerable(), cancellationToken);
     }

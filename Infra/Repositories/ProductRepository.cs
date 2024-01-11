@@ -19,7 +19,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Product>> GetAllProducts(
+    public async Task<IEnumerable<Product>> GetAllAsync(
         ProductFilter productFilter,
         CancellationToken cancellationToken)
     {

@@ -21,7 +21,7 @@ public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCatego
         // Act & Assert
         await AssertThrowsAsync<TenantNotFoundException>(Request);
         await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>());
-        await TagCategoryRepositoryMock.DidNotReceive().ExistsByAsync(Request.TenantCode,
+        await TagCategoryRepositoryMock.DidNotReceive().ExistsAsync(Request.TenantCode,
             Request.NewTagCategoryCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().RenameAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
@@ -32,7 +32,7 @@ public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCatego
         // Arrange
         TenantRepositoryMock.ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>()).Returns(true);
         TagCategoryRepositoryMock
-            .ExistsByAsync(Request.TenantCode, Request.NewTagCategoryCode, Arg.Any<CancellationToken>())
+            .ExistsAsync(Request.TenantCode, Request.NewTagCategoryCode, Arg.Any<CancellationToken>())
             .Returns(true);
 
         // Act & Assert

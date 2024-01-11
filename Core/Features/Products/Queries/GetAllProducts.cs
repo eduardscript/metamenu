@@ -9,7 +9,7 @@ public static class GetAllProducts
     {
         public async Task<IEnumerable<ProductDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var products = await productRepository.GetAllProducts(
+            var products = await productRepository.GetAllAsync(
                 request.ProductFilter,
                 cancellationToken);
 

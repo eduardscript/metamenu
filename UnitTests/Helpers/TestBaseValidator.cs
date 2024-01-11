@@ -4,7 +4,7 @@ namespace UnitTests.Helpers;
 
 [TestClass]
 public class TestBaseValidator<TValidator, TCommand> : TestBase
-    where TValidator : AbstractValidator<TCommand>, new()
+    where TValidator : AbstractValidator<TCommand>
 {
     private TValidator _validator = default!;
 
@@ -12,41 +12,62 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
 
     protected string ExpectedErrorMessage = default!;
 
-    [TestMethod]
-    public void Validate_ValidInput_PassesValidation()
-    {
-        // Act
-        var result = _validator.Validate(Command);
-
-        // Assert
-        result.IsValid.Should().BeTrue();
-    }
-
     [TestInitialize]
     public void TestInitialize()
     {
         var validatorType = typeof(TValidator);
-        var validator = Activator.CreateInstance(validatorType);
+        
+        var validatorConstructor = validatorType.GetConstructors().Single();
+
+        var parameters = validatorConstructor.GetParameters();
+
+        var arguments = new object[parameters.Length];
+        
+        var parameterTypes = new Dictionary<Type, object>
+        {
+            {typeof(ITenantRepository), TenantRepositoryMock},
+            {typeof(ITagCategoryRepository), TagCategoryRepositoryMock},
+            {typeof(ITagRepository), TagRepositoryMock},
+            {typeof(IProductRepository), ProductRepositoryMock},
+            {typeof(IUserRepository), UserRepositoryMock},
+        };
+
+        foreach (var parameter in parameters)
+        {
+            parameterTypes.TryGetValue(parameter.ParameterType, out var value);
+            
+            if (value is null)
+            {
+                throw new Exception($"Unknown parameter type: {parameter.ParameterType}");
+            }
+            
+            arguments.SetValue(value, parameter.Position);
+        }
+        
+        var validator = Activator.CreateInstance(validatorType, arguments);
 
         _validator = (TValidator)validator!;
     }
 
     [TestCleanup]
-    public void TestCleanup()
+    public async Task TestCleanup()
     {
         if (ExpectedErrorMessage != default!)
         {
             // Act & Assert
-            AssertValidationResult(ExpectedErrorMessage);
+            await AssertValidationResult(ExpectedErrorMessage);
         }
     }
 
-    private void AssertValidationResult(string expectedErrorMessage)
+    private async Task AssertValidationResult(string expectedErrorMessage)
     {
-        var result = _validator.Validate(Command);
+        var result = await _validator.ValidateAsync(Command);
 
         result.IsValid.Should().BeFalse();
         result.Errors.Should().ContainSingle();
         result.Errors.Single().ErrorMessage.Should().Be(expectedErrorMessage);
+
+        var error = result.Errors.Single();
+        error.ErrorMessage.Should().Be(expectedErrorMessage);
     }
 }

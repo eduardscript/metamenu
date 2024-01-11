@@ -20,7 +20,7 @@ public class CreateTagCategoryHandlerTests : IntegrationTestBase
 
         // Assert
         var tagCategoryExists =
-            await TagCategoryRepository.ExistsByAsync(tenant.Code, tagCategory.Code, default);
+            await TagCategoryRepository.ExistsAsync(tenant.Code, tagCategory.Code, default);
         tagCategoryExists.Should().BeTrue();
     }
 }

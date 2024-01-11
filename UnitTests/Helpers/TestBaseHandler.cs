@@ -7,16 +7,6 @@ public class TestBaseHandler<THandler, TRequest> :
     TestBase where THandler : class
     where TRequest : class, IBaseRequest
 {
-    protected readonly ITenantRepository TenantRepositoryMock = Substitute.For<ITenantRepository>();
-
-    protected readonly ITagCategoryRepository TagCategoryRepositoryMock = Substitute.For<ITagCategoryRepository>();
-
-    protected readonly ITagRepository TagRepositoryMock = Substitute.For<ITagRepository>();
-
-    protected readonly IProductRepository ProductRepositoryMock = Substitute.For<IProductRepository>();
-
-    protected readonly IUserRepository UserRepositoryMock = Substitute.For<IUserRepository>();
-
     protected readonly ITokenService TokenServiceMock = Substitute.For<ITokenService>();
 
     protected THandler Handler = default!;

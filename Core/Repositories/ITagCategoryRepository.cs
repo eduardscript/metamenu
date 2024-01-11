@@ -6,7 +6,9 @@ public interface ITagCategoryRepository
 
     public Task CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken);
 
-    Task<IEnumerable<TagCategory>> GetAll(int tenantCode, CancellationToken cancellationToken);
+    Task<IEnumerable<TagCategory>> GetAllAsync(int tenantCode, CancellationToken cancellationToken);
     
-    public Task<bool> ExistsByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
+    Task<TagCategory?> GetByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
+    
+    public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
 }

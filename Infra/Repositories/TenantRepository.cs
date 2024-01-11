@@ -23,7 +23,7 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
 
         var tenantCode = (await aggregateFluent.FirstOrDefaultAsync(cancellationToken))?.Code;
 
-        tenant = tenant with { Code = tenantCode is null ? 1000 : tenantCode!.Value + 1000 };
+        tenant = tenant with { Code = tenantCode is null ? 1000 : tenantCode.Value + 1000 };
 
         await collection.InsertOneAsync(tenant, cancellationToken: cancellationToken);
 

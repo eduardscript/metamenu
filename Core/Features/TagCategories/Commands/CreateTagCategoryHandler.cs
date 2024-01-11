@@ -22,7 +22,7 @@ public static class CreateTagCategoryHandler
             if (!await tenantRepository.ExistsAsync(tagCategory.TenantCode, cancellationToken))
                 throw new TenantNotFoundException(tagCategory.TenantCode);
 
-            if (await tagCategoryRepository.ExistsByAsync(tagCategory.TenantCode, tagCategory.Code,
+            if (await tagCategoryRepository.ExistsAsync(tagCategory.TenantCode, tagCategory.Code,
                     cancellationToken)) throw new TagCategoryAlreadyExistsException(tagCategory.Code);
 
             await tagCategoryRepository.CreateAsync(tagCategory, cancellationToken);

@@ -14,9 +14,6 @@ public class ProductMutations
     {
         await mediator.Send(command, cancellationToken);
 
-        return await mediator.Send(new GetAllProducts.Query(new ProductFilter
-        {
-            TenantCode = command.TenantCode,
-        }), cancellationToken);
+        return await mediator.Send(new GetAllProducts.Query(new ProductFilter(command.TenantCode)), cancellationToken);
     }
 }

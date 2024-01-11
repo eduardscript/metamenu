@@ -22,7 +22,7 @@ public class MongoDbFixture : IntegrationTestBase
 
         return tenant;
     }
-
+    
     public static async Task CreateTenantsAsync(int count = 3)
     {
         var tenantTasks = Enumerable

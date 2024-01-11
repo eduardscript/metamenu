@@ -22,7 +22,7 @@ public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCodeHa
         await AssertThrowsAsync<TenantNotFoundException>(Request);
 
         await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, Arg.Any<CancellationToken>());
-        await TagCategoryRepositoryMock.DidNotReceive().ExistsByAsync(Request.TenantCode,
+        await TagCategoryRepositoryMock.DidNotReceive().ExistsAsync(Request.TenantCode,
             Request.NewTagCode, Arg.Any<CancellationToken>());
         await TagCategoryRepositoryMock.DidNotReceiveWithAnyArgs().RenameAsync(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
