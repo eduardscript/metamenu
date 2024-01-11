@@ -1,4 +1,6 @@
-﻿namespace Core.Features.TagCategories.Queries;
+﻿using Core.Features.TagCategories.Shared;
+
+namespace Core.Features.TagCategories.Queries;
 
 public static class GetAllTagCategories
 {
@@ -11,9 +13,7 @@ public static class GetAllTagCategories
         {
             var tags = await tagCategoryRepository.GetAll(request.TenantCode, cancellationToken);
 
-            return tags.Select(tag => new TagCategoryDto(tag.TenantCode, tag.TagCategoryCode));
+            return tags.Select(tag => new TagCategoryDto(tag.TenantCode, tag.Code));
         }
     }
-
-    public record TagCategoryDto(int TenantCode, string TagCategoryCode);
 }

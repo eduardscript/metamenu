@@ -18,14 +18,14 @@ public class GetAllProductsTests : IntegrationTestBase
         _tenant = await MongoDbFixture.CreateTenantAsync();
         _tags = Fixture
             .Build<Tag>()
-            .With(t => t.TenantCode, _tenant.TenantCode)
+            .With(t => t.TenantCode, _tenant.Code)
             .CreateMany()
             .ToList();
 
         foreach (var tag in _tags) await TagRepository.CreateAsync(tag, default);
 
         _expectedProducts = Fixture.Build<Product>()
-            .With(p => p.TenantCode, _tenant.TenantCode)
+            .With(p => p.TenantCode, _tenant.Code)
             .With(p => p.TagCodes, () => _tags.Take(Random.Next(_tags.Count)).Select(t => t.TagCode))
             .CreateMany()
             .ToList();
@@ -42,7 +42,7 @@ public class GetAllProductsTests : IntegrationTestBase
         var result = await _handler.Handle(
             new GetAllProducts.Query(new ProductFilter
             {
-                TenantCode = _tenant.TenantCode
+                TenantCode = _tenant.Code
             }), default);
 
         // Assert
@@ -59,7 +59,7 @@ public class GetAllProductsTests : IntegrationTestBase
         var result = await _handler.Handle(
             new GetAllProducts.Query(new ProductFilter
             {
-                TenantCode = _tenant.TenantCode,
+                TenantCode = _tenant.Code,
                 TagCodes = randomTagCodes
             }), default);
 

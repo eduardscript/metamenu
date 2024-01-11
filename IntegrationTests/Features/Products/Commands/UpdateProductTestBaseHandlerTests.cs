@@ -17,7 +17,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         _handler = new UpdateProductTestBaseHandler.Handler(TenantRepository, TagRepository, ProductRepository);
         
         _tags = Fixture.Build<Tag>()
-                       .With(t => t.TenantCode, _tenant.TenantCode)
+                       .With(t => t.TenantCode, _tenant.Code)
                        .CreateMany()
                        .ToList();
 
@@ -27,7 +27,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         }
 
         _product = Fixture.Build<Product>()
-                                  .With(p => p.TenantCode, _tenant.TenantCode)
+                                  .With(p => p.TenantCode, _tenant.Code)
                                   .With(p => p.TagCodes, _tags.Select(t => t.TagCode))
                                   .Create();
         
@@ -140,7 +140,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         UpdateProductTestBaseHandler.UpdateProperties updateProperties)
     {
         await _handler.Handle(
-            new UpdateProductTestBaseHandler.Command(_tenant.TenantCode, _product.Name, updateProperties), 
+            new UpdateProductTestBaseHandler.Command(_tenant.Code, _product.Name, updateProperties), 
             default);
 
         var updatedProductResponse = await ProductRepository.GetByAsync(updatedProduct.TenantCode, updatedProduct.Name!, default);

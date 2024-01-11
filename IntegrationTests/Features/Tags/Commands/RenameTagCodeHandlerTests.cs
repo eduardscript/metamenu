@@ -15,7 +15,7 @@ public class RenameTagCodeHandlerTests : IntegrationTestBase
         var tenant = await MongoDbFixture.CreateTenantAsync();
         var oldTag = Fixture
             .Build<Tag>()
-            .With(tc => tc.TenantCode, tenant.TenantCode)
+            .With(tc => tc.TenantCode, tenant.Code)
             .Create();
 
         var newTagCode = Fixture.Create<string>();
@@ -26,16 +26,16 @@ public class RenameTagCodeHandlerTests : IntegrationTestBase
 
         // Act
         await handler.Handle(
-            new RenameTagCodeHandler.Command(tenant.TenantCode, oldTag.TagCode, newTagCode),
+            new RenameTagCodeHandler.Command(tenant.Code, oldTag.TagCode, newTagCode),
             default);
 
         // Assert
         var oldTagCategoryExists =
-            await _tagRepository.ExistsAsync(tenant.TenantCode, oldTag.TagCode, default);
+            await _tagRepository.ExistsAsync(tenant.Code, oldTag.TagCode, default);
         oldTagCategoryExists.Should().BeFalse();
 
         var newTagCategoryExists =
-            await _tagRepository.ExistsAsync(tenant.TenantCode, newTagCode, default);
+            await _tagRepository.ExistsAsync(tenant.Code, newTagCode, default);
         newTagCategoryExists.Should().BeTrue();
 
         newTagCode.Should().NotBeEquivalentTo(oldTag.TagCode);

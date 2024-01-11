@@ -39,7 +39,7 @@ public static class RegisterUser
             var tenants = await tenantRepository.GetAllAsync(cancellationToken);
 
             var invalidTenantCodes = request.AvailableTenants
-                .Except(tenants.Select(t => t.TenantCode))
+                .Except(tenants.Select(t => t.Code))
                 .ToList();
 
             if (invalidTenantCodes.Count > 0)

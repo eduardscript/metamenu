@@ -12,7 +12,7 @@ public class CreateProductHandlerTests : IntegrationTestBase
         var tenant = await MongoDbFixture.CreateTenantAsync();
 
         var tags = Fixture.Build<Tag>()
-            .With(t => t.TenantCode, tenant.TenantCode)
+            .With(t => t.TenantCode, tenant.Code)
             .CreateMany()
             .ToList();
 
@@ -22,7 +22,7 @@ public class CreateProductHandlerTests : IntegrationTestBase
         }
 
         var product = Fixture.Build<Product>()
-            .With(p => p.TenantCode, tenant.TenantCode)
+            .With(p => p.TenantCode, tenant.Code)
             .With(p => p.TagCodes, tags.Select(t => t.TagCode))
             .Create();
 
@@ -30,7 +30,7 @@ public class CreateProductHandlerTests : IntegrationTestBase
 
         // Act
         await handler.Handle(
-            new CreateProductHandler.Command(tenant.TenantCode, product.Name, product.Description, product.Price,
+            new CreateProductHandler.Command(tenant.Code, product.Name, product.Description, product.Price,
                 product.TagCodes), default);
 
         // Assert

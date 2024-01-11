@@ -12,14 +12,14 @@ public class CreateTagHandlerTests : IntegrationTestBase
         var tenant = await MongoDbFixture.CreateTenantAsync();
 
         var tagCategory = Fixture.Build<TagCategory>()
-            .With(tc => tc.TenantCode, tenant.TenantCode)
+            .With(tc => tc.TenantCode, tenant.Code)
             .Create();
 
         await TagCategoryRepository.CreateAsync(tagCategory, default);
 
         var tag = Fixture.Build<Tag>()
-            .With(t => t.TenantCode, tenant.TenantCode)
-            .With(t => t.TagCategoryCode, tagCategory.TagCategoryCode)
+            .With(t => t.TenantCode, tenant.Code)
+            .With(t => t.TagCategoryCode, tagCategory.Code)
             .Create();
 
         var handler = new CreateTagHandler.Handler(TenantRepository, TagCategoryRepository, TagRepository);

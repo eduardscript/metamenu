@@ -12,8 +12,8 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
         return collection
             .UpdateOneAsync(
                 tc => tc.TenantCode == tenantCode &&
-                      tc.TagCategoryCode == oldTagCategoryCode,
-                Builders<TagCategory>.Update.Set(t => t.TagCategoryCode, newCategoryCode),
+                      tc.Code == oldTagCategoryCode,
+                Builders<TagCategory>.Update.Set(t => t.Code, newCategoryCode),
                 cancellationToken: cancellationToken);
     }
 
@@ -36,7 +36,7 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
         return collection
             .Find(tc =>
                 tc.TenantCode == tenantCode &&
-                tc.TagCategoryCode == tagCategoryCode)
+                tc.Code == tagCategoryCode)
             .ToListAsync(cancellationToken)
             .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
     }
@@ -46,7 +46,7 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
         return collection
             .Find(tc =>
                 tc.TenantCode == tenantCode &&
-                tc.TagCategoryCode == tagCategoryCode)
+                tc.Code == tagCategoryCode)
             .AnyAsync(cancellationToken);
     }
 }

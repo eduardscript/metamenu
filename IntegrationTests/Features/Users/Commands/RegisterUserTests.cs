@@ -12,7 +12,7 @@ public class RegisterUserTests : IntegrationTestBase
         var tenant = await MongoDbFixture.CreateTenantAsync();
 
         var user = Fixture.Build<User>()
-            .With(u => u.AvailableTenants, new List<int> { tenant.TenantCode })
+            .With(u => u.AvailableTenants, new List<int> { tenant.Code })
             .Create();
 
         var handler = new RegisterUser.Handler(TenantRepository, UserRepository);

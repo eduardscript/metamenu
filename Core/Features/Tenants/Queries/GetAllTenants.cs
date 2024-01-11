@@ -12,7 +12,7 @@ public static class GetAllTenants
         {
             var tenants = await tenantRepository.GetAllAsync(cancellationToken);
 
-            return tenants.Select(tenant => new TenantDto(tenant.TenantCode, tenant.Name));
+            return tenants.Select(t => t.ToDto());
         }
     }
 }

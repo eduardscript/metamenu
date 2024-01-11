@@ -16,11 +16,11 @@ public class CreateTagCategoryHandlerTests : IntegrationTestBase
         var handler = new CreateTagCategoryHandler.Handler(TenantRepository, TagCategoryRepository);
 
         // Act
-        await handler.Handle(new CreateTagCategoryHandler.Command(tenant.TenantCode, tagCategory.TagCategoryCode), default);
+        await handler.Handle(new CreateTagCategoryHandler.Command(tenant.Code, tagCategory.Code), default);
 
         // Assert
         var tagCategoryExists =
-            await TagCategoryRepository.ExistsByAsync(tenant.TenantCode, tagCategory.TagCategoryCode, default);
+            await TagCategoryRepository.ExistsByAsync(tenant.Code, tagCategory.Code, default);
         tagCategoryExists.Should().BeTrue();
     }
 }

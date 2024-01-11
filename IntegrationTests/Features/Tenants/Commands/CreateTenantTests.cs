@@ -14,10 +14,10 @@ public class CreateTenantTests : IntegrationTestBase
         var handler = new CreateTenant.Handler(TenantRepository);
 
         // Act
-        var tenantDto = await handler.Handle(new CreateTenant.Command(tenant.TenantCode, tenant.Name), default);
+        var tenantDto = await handler.Handle(new CreateTenant.Command(tenant.Name), default);
 
         // Assert
-        var tenantExists = await TenantRepository.ExistsAsync(tenantDto.TenantCode, default);
+        var tenantExists = await TenantRepository.ExistsAsync(tenantDto.Code, default);
         tenantExists.Should().BeTrue();
     }
 }

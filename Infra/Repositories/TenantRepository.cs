@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Repositories;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Infra.Repositories;
@@ -10,23 +11,23 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
     public async Task<Tenant> CreateAsync(Tenant tenant, CancellationToken cancellationToken)
     {
         var aggregateFluent = collection.Aggregate()
-            .Group(new BsonDocument 
-            { 
+            .Group(new BsonDocument
+            {
                 { "_id", BsonNull.Value },
-                { "TenantCode", new BsonDocument("$max", "$TenantCode") }
+                { "Code", new BsonDocument("$max", "$Code") }
             })
-            .Project(new BsonDocument
+            .Project<Tenant>(new BsonDocument
             {
                 { "_id", 0 },
-                { "TenantCode", 1 }
+                { "Code", 1 }
             });
-        
-        var tenantCode = await aggregateFluent.FirstOrDefaultAsync(cancellationToken);
 
-        tenant = tenant with { TenantCode = tenantCode is null ? 1 : + 1 };
+        var tenantCode = (await aggregateFluent.FirstOrDefaultAsync(cancellationToken))?.Code;
+
+        tenant = tenant with { Code = tenantCode is null ? 1000 : tenantCode!.Value + 1000 };
 
         await collection.InsertOneAsync(tenant, cancellationToken: cancellationToken);
-        
+
         return tenant;
     }
 
@@ -41,7 +42,7 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
     public Task<bool> ExistsAsync(int tenantCode, CancellationToken cancellationToken)
     {
         return collection
-            .Find(t => t.TenantCode == tenantCode)
+            .Find(t => t.Code == tenantCode)
             .AnyAsync(cancellationToken);
     }
 }

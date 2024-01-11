@@ -13,7 +13,7 @@ public class LoginUserTests : IntegrationTestBase
         var tenant = await MongoDbFixture.CreateTenantAsync();
 
         var user = Fixture.Build<User>()
-            .With(u => u.AvailableTenants, new List<int> { tenant.TenantCode })
+            .With(u => u.AvailableTenants, new List<int> { tenant.Code })
             .Create();
 
         await UserRepository.CreateAsync(user, default);

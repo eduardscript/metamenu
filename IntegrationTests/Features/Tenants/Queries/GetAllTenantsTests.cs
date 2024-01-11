@@ -29,6 +29,6 @@ public class GetAllTenantsTests : IntegrationTestBase
         resultList.Should().HaveCount(MongoDbFixture.CreatedTenants.Count);
         foreach (var expectedTenant in MongoDbFixture.CreatedTenants)
             resultList.Should()
-                .ContainEquivalentOf(new TenantDto(expectedTenant.TenantCode, expectedTenant.Name));
+                .ContainEquivalentOf(new TenantDto(expectedTenant.Code, expectedTenant.Name));
     }
 }

@@ -7,7 +7,7 @@ public class ValidationRequestPreProcessor<TRequest>(IValidator<TRequest>? valid
 {
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
-        if (validator != null)
+        if (validator is not null)
         {
             await validator.ValidateAndThrowAsync(request, cancellationToken);
         }

@@ -11,8 +11,6 @@ public class TenantMutations
         CreateTenant.Command command,
         CancellationToken cancellationToken)
     {
-        await mediator.Send(command, cancellationToken);
-
-        return new TenantDto(command.TenantCode, command.Name);
+        return await mediator.Send(command, cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Features.TagCategories.Queries;
+using Core.Features.TagCategories.Shared;
 
 namespace IntegrationTests.Features.TagCategories.Queries;
 
@@ -29,6 +30,6 @@ public class GetAllTagCategoriesTests : IntegrationTestBase
         foreach (var expectedTagCategory in expectedTagCategories)
             resultList.Should()
                 .ContainEquivalentOf(
-                    new GetAllTagCategories.TagCategoryDto(tenantCode, expectedTagCategory.TagCategoryCode));
+                    new TagCategoryDto(tenantCode, expectedTagCategory.Code));
     }
 }

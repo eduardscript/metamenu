@@ -29,7 +29,7 @@ public class CreateTagCategoryTestBaseHandlerTests : TestBaseHandler<CreateTagCa
     {
         // Arrange
         TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
-        TagCategoryRepositoryMock.ExistsByAsync(Request.TenantCode, Request.TagCategoryCode, default)
+        TagCategoryRepositoryMock.ExistsByAsync(Request.TenantCode, Request.Code, default)
             .Returns(true);
 
         // Act and Assert

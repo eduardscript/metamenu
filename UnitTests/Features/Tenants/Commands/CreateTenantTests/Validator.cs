@@ -6,16 +6,6 @@ namespace UnitTests.Features.Tenants.Commands.CreateTenantTests;
 public class Validator : TestBaseValidator<CreateTenant.Validator, CreateTenant.Command>
 {
     [TestMethod]
-    [DataRow(0)]
-    [DataRow(-1)]
-    public void Validate_EmptyTenantCode_FailsValidation(int tenantCode)
-    {
-        // Arrange
-        Command.TenantCode = tenantCode;
-        ExpectedErrorMessage = "'Tenant Code' must be greater than '0'.";
-    }
-
-    [TestMethod]
     [DataRow("")]
     [DataRow(" ")]
     [DataRow(null)]

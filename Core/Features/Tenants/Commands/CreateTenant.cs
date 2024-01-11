@@ -8,20 +8,13 @@ public static class CreateTenant
     {
         public Validator()
         {
-            RuleFor(x => x.TenantCode)
-                .GreaterThan(0);
-
             RuleFor(x => x.Name)
                 .NotEmpty();
         }
     }
 
-    public class Command(
-        int tenantCode,
-        string name) : IRequest<TenantDto>
+    public class Command(string name) : IRequest<TenantDto>
     {
-        public int TenantCode { get; set; } = tenantCode;
-        
         public string Name { get; set; } = name;
     }
 
@@ -35,9 +28,7 @@ public static class CreateTenant
 
             var newTenant = await tenantRepository.CreateAsync(tenant, cancellationToken);
 
-            return new TenantDto(
-                newTenant.TenantCode,
-                newTenant.Name);
+            return newTenant.ToDto();
         }
     }
 }
