@@ -25,7 +25,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
     {
         var pipeline = new List<BsonDocument>
         {
-            new("$match", new BsonDocument("TenantCode", productFilter.TenantCode)),
+            new("$match", new BsonDocument(nameof(Product.TenantCode), productFilter.TenantCode)),
         };
 
         if (productFilter.TagCodes is not null)
@@ -33,7 +33,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
             pipeline.Add(new("$match", new BsonDocument
             {
                 {
-                    "TagCodes", new BsonDocument
+                    nameof(Product.TagCodes), new BsonDocument
                     {
                         { "$in", new BsonArray(productFilter.TagCodes) }
                     }
@@ -44,11 +44,11 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
         pipeline.Add(new("$project", new BsonDocument
         {
             { "_id", 1 },
-            { "TenantCode", 1 },
-            { "Name", 1 },
-            { "Description", 1 },
-            { "Price", 1 },
-            { "TagCodes", 1 },
+            { nameof(Product.TenantCode), 1 },
+            { nameof(Product.Name), 1 },
+            { nameof(Product.Description), 1 },
+            { nameof(Product.Price), 1 },
+            { nameof(Product.TagCodes), 1 },
         }));
 
         var aggregateFluent = collection.Aggregate<Product>(pipeline);

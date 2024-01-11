@@ -1,7 +1,6 @@
 ﻿using Core.Entities;
 using Core.Repositories;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Infra.Repositories;
@@ -14,12 +13,12 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
             .Group(new BsonDocument
             {
                 { "_id", BsonNull.Value },
-                { "Code", new BsonDocument("$max", "$Code") }
+                { nameof(Tenant.Code), new BsonDocument("$max", "$Code") }
             })
             .Project<Tenant>(new BsonDocument
             {
                 { "_id", 0 },
-                { "Code", 1 }
+                { nameof(Tenant.Code), 1 }
             });
 
         var tenantCode = (await aggregateFluent.FirstOrDefaultAsync(cancellationToken))?.Code;
