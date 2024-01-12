@@ -15,38 +15,7 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
     [TestInitialize]
     public void TestInitialize()
     {
-        var validatorType = typeof(TValidator);
-        
-        var validatorConstructor = validatorType.GetConstructors().Single();
-
-        var parameters = validatorConstructor.GetParameters();
-
-        var arguments = new object[parameters.Length];
-        
-        var parameterTypes = new Dictionary<Type, object>
-        {
-            {typeof(ITenantRepository), TenantRepositoryMock},
-            {typeof(ITagCategoryRepository), TagCategoryRepositoryMock},
-            {typeof(ITagRepository), TagRepositoryMock},
-            {typeof(IProductRepository), ProductRepositoryMock},
-            {typeof(IUserRepository), UserRepositoryMock},
-        };
-
-        foreach (var parameter in parameters)
-        {
-            parameterTypes.TryGetValue(parameter.ParameterType, out var value);
-            
-            if (value is null)
-            {
-                throw new Exception($"Unknown parameter type: {parameter.ParameterType}");
-            }
-            
-            arguments.SetValue(value, parameter.Position);
-        }
-        
-        var validator = Activator.CreateInstance(validatorType, arguments);
-
-        _validator = (TValidator)validator!;
+        _validator = Build<TValidator>();
     }
 
     [TestCleanup]

@@ -13,11 +13,6 @@ public class UpdateProductTestBaseHandlerTests : TestBaseHandler<UpdateProductTe
         .With(p => p.Name, Request.Name)
         .Create();
 
-    public UpdateProductTestBaseHandlerTests()
-    {
-        Handler = new UpdateProductTestBaseHandler.Handler(TenantRepositoryMock, TagRepositoryMock, ProductRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_TenantNotFound_ThrowsTenantNotFoundException()
     {

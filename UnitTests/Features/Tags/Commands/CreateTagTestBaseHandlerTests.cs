@@ -7,11 +7,6 @@ namespace UnitTests.Features.Tags.Commands;
 [TestClass]
 public class CreateTagTestBaseHandlerTests : TestBaseHandler<CreateTagHandler.Handler, CreateTagHandler.Command>
 {
-    public CreateTagTestBaseHandlerTests()
-    {
-        Handler = new CreateTagHandler.Handler(TenantRepositoryMock, TagCategoryRepositoryMock, TagRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
     {

@@ -26,7 +26,7 @@ public class Validator : TestBaseValidator<RegisterUser.Validator, RegisterUser.
     {
         // Arrange
         Command.AvailableTenants = new List<int>();
-        ExpectedErrorMessage = "'Available Tenants' must not be empty.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.AvailableTenants).Humanize(LetterCasing.Title));
     }
     
     [TestMethod]
@@ -44,6 +44,6 @@ public class Validator : TestBaseValidator<RegisterUser.Validator, RegisterUser.
     {
         // Arrange
         Command.AvailableTenants = new List<int> { 1, 1, 2, 2 };
-        ExpectedErrorMessage = "'Available Tenants' must be unique. Duplicated items found: '1, 2'.";
+        ExpectedErrorMessage = CustomValidatorsMessages.UniqueMessage(nameof(Command.AvailableTenants).Humanize(LetterCasing.Title), "1, 2");
     }
 }

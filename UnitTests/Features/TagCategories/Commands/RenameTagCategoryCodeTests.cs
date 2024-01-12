@@ -7,11 +7,6 @@ namespace UnitTests.Features.TagCategories.Commands;
 [TestClass]
 public class RenameTagCodeTestBaseHandlerTests : TestBaseHandler<RenameTagCategoryCode.Handler, RenameTagCategoryCode.Command>
 {
-    public RenameTagCodeTestBaseHandlerTests()
-    {
-        Handler = new RenameTagCategoryCode.Handler(TenantRepositoryMock, TagCategoryRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_TenantNotFound_ThrowsTenantNotFoundException()
     {

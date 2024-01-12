@@ -6,11 +6,6 @@ namespace UnitTests.Features.Users.Commands.RegisterUserTests;
 [TestClass]
 public class Handler : TestBaseHandler<RegisterUser.Handler, RegisterUser.Command>
 {
-    public Handler()
-    {
-        Handler = new RegisterUser.Handler(TenantRepositoryMock, UserRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_InvalidTenantCodes_ThrowsException()
     {

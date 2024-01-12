@@ -7,11 +7,6 @@ namespace UnitTests.Features.Products.Commands;
 [TestClass]
 public class CreateProductTestBaseHandlerTests : TestBaseHandler<CreateProductHandler.Handler, CreateProductHandler.Command>
 {
-    public CreateProductTestBaseHandlerTests()
-    {
-        Handler = new CreateProductHandler.Handler(TenantRepositoryMock, TagRepositoryMock, ProductRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_WhenTenantDoesNotExist_ThrowsTenantNotFoundException()
     {

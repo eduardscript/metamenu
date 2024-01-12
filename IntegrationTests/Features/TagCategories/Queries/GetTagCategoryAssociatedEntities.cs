@@ -40,8 +40,6 @@ public class GetTagCategoryAssociatedEntitiesTests : IntegrationTestBase
         
         // Act
         var handler = new GetTagCategoryAssociatedEntities.Handler(
-            TenantRepository,
-            TagCategoryRepository,
             TagRepository,
             ProductRepository);
 

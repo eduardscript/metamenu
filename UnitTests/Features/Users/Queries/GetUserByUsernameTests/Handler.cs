@@ -7,11 +7,6 @@ namespace UnitTests.Features.Users.Queries.GetUserByUsernameTests;
 [TestClass]
 public class Handler : TestBaseHandler<GetUserByUsername.Handler, GetUserByUsername.Query>
 {
-    public Handler()
-    {
-        Handler = new GetUserByUsername.Handler(UserRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_InvalidTenantCodes_ThrowsException()
     {

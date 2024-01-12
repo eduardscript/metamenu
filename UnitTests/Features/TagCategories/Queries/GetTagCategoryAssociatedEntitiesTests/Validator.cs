@@ -18,7 +18,7 @@ public class Validator : TestBaseValidator<GetTagCategoryAssociatedEntities.Vali
             .Returns(Fixture.Create<TagCategory>());
 
         Command.TenantCode = 0;
-        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage("Tenant Code");
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.TenantCode).Humanize(LetterCasing.Title));
     }
     
     [TestMethod]

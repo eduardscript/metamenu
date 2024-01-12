@@ -10,15 +10,6 @@ namespace UnitTests.Features.Tags.Queries.GetTagCategoryAssociatedEntitiesTests;
 [TestClass]
 public class Handler : TestBaseHandler<GetTagCategoryAssociatedEntities.Handler, GetTagCategoryAssociatedEntities.Query>
 {
-    public Handler()
-    {
-        Handler = new GetTagCategoryAssociatedEntities.Handler(
-            TenantRepositoryMock,
-            TagCategoryRepositoryMock,
-            TagRepositoryMock,
-            ProductRepositoryMock);
-    }
-
     [TestMethod]
     public async Task Handle_WhenTagCategoryHasNoAssociatedEntities_ThrowsTagCategoryHasNoAssociatedEntitiesException()
     {

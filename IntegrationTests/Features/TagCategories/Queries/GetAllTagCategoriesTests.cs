@@ -17,7 +17,9 @@ public class GetAllTagCategoriesTests : IntegrationTestBase
             .ToList();
 
         foreach (var tagCategory in expectedTagCategories)
+        {
             await TagCategoryRepository.CreateAsync(tagCategory, default);
+        }
 
         var handler = new GetAllTagCategories.Handler(TagCategoryRepository);
 

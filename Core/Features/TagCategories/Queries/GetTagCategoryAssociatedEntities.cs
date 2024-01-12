@@ -11,15 +11,11 @@ public static class GetTagCategoryAssociatedEntities
             ITagCategoryRepository tagCategoryRepository)
         {
             RuleFor(q => q.TenantCode)
-                .NotEmptyAndRequired();
-                
-            RuleFor(q => q.TenantCode)
+                .NotEmptyAndRequired()
                 .TenantExists(tenantRepository);
             
             RuleFor(q => q.TagCategoryCode)
-                .NotEmptyAndRequired();
-
-            RuleFor(q => q.TagCategoryCode)
+                .NotEmptyAndRequired()
                 .MustAsync(async (query, tagCategoryCode, cancellationToken) =>
                 {
                     var tagCategory = await tagCategoryRepository.GetByAsync(query.TenantCode, tagCategoryCode, cancellationToken);
@@ -30,22 +26,14 @@ public static class GetTagCategoryAssociatedEntities
         }
     }
 
-    public class Query : IRequest<IEnumerable<TagCategoryAssociatedEntitiesDto>>
+    public class Query(int tenantCode, string tagCategoryCode) : IRequest<IEnumerable<TagCategoryAssociatedEntitiesDto>>
     {
-        public Query(int tenantCode, string tagCategoryCode)
-        {
-            TenantCode = tenantCode;
-            TagCategoryCode = tagCategoryCode;
-        }
+        public int TenantCode { get; set; } = tenantCode;
 
-        public int TenantCode { get; set; }
-
-        public string TagCategoryCode { get; set; }
+        public string TagCategoryCode { get; set; } = tagCategoryCode;
     }
 
     public class Handler(
-        ITenantRepository tenantRepository,
-        ITagCategoryRepository tagCategoryRepository,
         ITagRepository tagRepository,
         IProductRepository productRepository)
         : IRequestHandler<Query, IEnumerable<TagCategoryAssociatedEntitiesDto>>

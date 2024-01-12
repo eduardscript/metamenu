@@ -1,5 +1,4 @@
-﻿using Core.Services;
-using MediatR;
+﻿using MediatR;
 
 namespace UnitTests.Helpers;
 
@@ -7,11 +6,15 @@ public class TestBaseHandler<THandler, TRequest> :
     TestBase where THandler : class
     where TRequest : class, IBaseRequest
 {
-    protected readonly ITokenService TokenServiceMock = Substitute.For<ITokenService>();
-
     protected THandler Handler = default!;
 
     protected static readonly TRequest Request = Fixture.Create<TRequest>();
+
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        Handler = Build<THandler>();
+    }
 
     protected async Task AssertThrowsAsync<TException>(IBaseRequest command)
         where TException : Exception

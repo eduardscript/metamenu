@@ -16,6 +16,11 @@ public static class CustomValidatorsMessages
 
         return $"'{singularPropertyName}' must be greater than '0'.";
     }
+    
+    public static string UniqueMessage(string propertyName, string duplicateItems)
+    {
+        return $"'{propertyName}' must be unique. Duplicated items found: '{duplicateItems}'.";
+    }
 }
 
 public static class CustomValidators
@@ -40,7 +45,7 @@ public static class CustomValidators
         this IRuleBuilder<T, IEnumerable<int>> ruleBuilder)
     {
         return ruleBuilder
-            .NotEmpty()
+            .NotEmptyAndRequired()
             .ForEach(p => p
                 .Must((_, value, context) =>
                 {
@@ -80,6 +85,6 @@ public static class CustomValidators
 
                 return true;
             })
-            .WithMessage("'{PropertyName}' must be unique. Duplicated items found: '{DuplicateItems}'.");
+            .WithMessage(CustomValidatorsMessages.UniqueMessage("{PropertyName}", "{DuplicateItems}"));
     }
 }
