@@ -13,13 +13,13 @@ public static class CreateProductHandler
         IEnumerable<string> tagCodes) : IRequest
     {
         public int TenantCode { get; set; } = tenantCode;
-        
+
         public string Name { get; set; } = name;
-        
+
         public string? Description { get; set; } = description;
-        
+
         public decimal Price { get; set; } = price;
-        
+
         public IEnumerable<string> TagCodes { get; set; } = tagCodes;
     }
 
@@ -38,11 +38,14 @@ public static class CreateProductHandler
                 request.TagCodes);
 
             if (!await tenantRepository.ExistsAsync(product.TenantCode, cancellationToken))
+            {
                 throw new TenantNotFoundException(product.TenantCode);
+            }
 
-            var existingTagCodes =
-                await tagRepository.ExistsAsync(product.TenantCode, product.TagCodes, cancellationToken);
-            if (!existingTagCodes) throw new TagNotFoundException(product.TagCodes);
+            if (!await tagRepository.ExistsAsync(product.TenantCode, product.TagCodes, cancellationToken))
+            {
+                throw new TagNotFoundException(product.TagCodes);
+            }
 
             await productRepository.CreateAsync(product, cancellationToken);
         }

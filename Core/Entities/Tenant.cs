@@ -2,7 +2,7 @@
 
 public record Tenant(
     string Name,
-    bool IsEnabled)
+    bool IsEnabled = false)
 {
     public int Code { get; init; }
 }

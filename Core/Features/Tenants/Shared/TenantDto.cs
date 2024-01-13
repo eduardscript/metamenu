@@ -6,6 +6,11 @@ public record TenantDto(
 
 public static class TenantDtoExtensions
 {
+    public static IEnumerable<TenantDto> ToDto(this IEnumerable<Tenant> tenants)
+    {
+        return tenants.Select(x => x.ToDto());
+    }
+    
     public static TenantDto ToDto(this Tenant tenant)
     {
         return new TenantDto(

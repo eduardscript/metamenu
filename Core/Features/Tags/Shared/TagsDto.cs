@@ -7,7 +7,12 @@ public record TagDto(
 
 public static class TagsDtoExtensions
 {
-    public static TagDto ToDto(this TagDto tag)
+    public static IEnumerable<TagDto> ToDto(this IEnumerable<Tag> tags)
+    {
+        return tags.Select(t => t.ToDto());
+    }
+    
+    public static TagDto ToDto(this Tag tag)
     {
         return new TagDto(
             tag.TenantCode,

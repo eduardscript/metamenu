@@ -13,7 +13,7 @@ public static class GetAllTagCategories
         {
             var tags = await tagCategoryRepository.GetAllAsync(request.TenantCode, cancellationToken);
 
-            return tags.Select(tag => new TagCategoryDto(tag.TenantCode, tag.Code));
+            return tags.ToDto();
         }
     }
 }

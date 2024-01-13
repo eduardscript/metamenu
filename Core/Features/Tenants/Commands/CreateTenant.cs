@@ -22,9 +22,7 @@ public static class CreateTenant
     {
         public async Task<TenantDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var tenant = new Tenant(
-                request.Name,
-                false);
+            var tenant = new Tenant(request.Name);
 
             var newTenant = await tenantRepository.CreateAsync(tenant, cancellationToken);
 

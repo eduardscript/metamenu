@@ -1,12 +1,13 @@
 ﻿using Core.Features.Tags.Commands;
 using Core.Features.Tags.Queries;
+using Core.Features.Tags.Shared;
 
 namespace Presentation.Mutations;
 
 [ExtendObjectType(RootTypes.Mutation)]
 public class TagMutations
 {
-    public async Task<IEnumerable<GetAllTags.TagDto>> CreateTag(
+    public async Task<IEnumerable<TagDto>> CreateTag(
         [Service] IMediator mediator,
         CreateTagHandler.Command command,
         CancellationToken cancellationToken)

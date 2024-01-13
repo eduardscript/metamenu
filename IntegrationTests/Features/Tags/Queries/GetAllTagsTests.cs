@@ -1,4 +1,5 @@
 ﻿using Core.Features.Tags.Queries;
+using Core.Features.Tags.Shared;
 
 namespace IntegrationTests.Features.Tags.Queries;
 
@@ -28,7 +29,7 @@ public class GetAllTagsTests : IntegrationTestBase
         var resultList = result.ToList();
         resultList.Should().HaveCount(expectedTags.Count);
         foreach (var expectedTag in expectedTags)
-            resultList.Should().ContainEquivalentOf(new GetAllTags.TagDto(expectedTag.TenantCode, expectedTag.TagCode,
+            resultList.Should().ContainEquivalentOf(new TagDto(expectedTag.TenantCode, expectedTag.TagCode,
                 expectedTag.TagCategoryCode));
     }
 }
