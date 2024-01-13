@@ -13,6 +13,6 @@ public class Validator : TestBaseValidator<CreateTenant.Validator, CreateTenant.
     {
         // Arrange
         Command.Name = name;
-        ExpectedErrorMessage = "'Name' must not be empty.";
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Name));
     }
 }

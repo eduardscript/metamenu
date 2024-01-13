@@ -9,7 +9,7 @@ public static class CreateTenant
         public Validator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty();
+                .NotEmptyAndRequired();
         }
     }
 
