@@ -15,11 +15,11 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
     {
         _tenant = MongoDbFixture.CreateTenantAsync().GetAwaiter().GetResult();
         _handler = new UpdateProductTestBaseHandler.Handler(TenantRepository, TagRepository, ProductRepository);
-        
+
         _tags = Fixture.Build<Tag>()
-                       .With(t => t.TenantCode, _tenant.Code)
-                       .CreateMany()
-                       .ToList();
+            .With(t => t.TenantCode, _tenant.Code)
+            .CreateMany()
+            .ToList();
 
         foreach (var tag in _tags)
         {
@@ -27,10 +27,10 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         }
 
         _product = Fixture.Build<Product>()
-                                  .With(p => p.TenantCode, _tenant.Code)
-                                  .With(p => p.TagCodes, _tags.Select(t => t.TagCode))
-                                  .Create();
-        
+            .With(p => p.TenantCode, _tenant.Code)
+            .With(p => p.TagCodes, _tags.Select(t => t.TagCode))
+            .Create();
+
         await ProductRepository.CreateAsync(_product, default);
     }
 
@@ -41,7 +41,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         var updateProperties = Fixture.Build<UpdateProductTestBaseHandler.UpdateProperties>()
             .With(p => p.TagCodes, _tags.Take(2).Select(t => t.TagCode))
             .Create();
-        
+
         var expectedUpdatedProduct = new Product(
             _product.TenantCode,
             updateProperties.Name!,
@@ -52,7 +52,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         // Act & Assert
         await ActAndAssert(_product, expectedUpdatedProduct, updateProperties);
     }
-    
+
     [TestMethod]
     public async Task Handle_UpdatesProductInDatabase_NameUpdate()
     {
@@ -61,7 +61,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         {
             Name = Fixture.Create<string>()
         };
-        
+
         var expectedUpdatedProduct = new Product(
             _product.TenantCode,
             updateProperties.Name!,
@@ -81,18 +81,21 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         {
             Description = Fixture.Create<string>()
         };
-        
+
         var expectedUpdatedProduct = new Product(
             _product.TenantCode,
             _product.Name!,
             updateProperties.Description,
             _product.Price,
-            _product.TagCodes);
+            _product.TagCodes)
+        {
+            Code = 1
+        };
 
         // Act & Assert
         await ActAndAssert(_product, expectedUpdatedProduct, updateProperties);
     }
-    
+
     [TestMethod]
     public async Task Handle_UpdatesProductInDatabase_PriceUpdate()
     {
@@ -112,7 +115,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         // Act & Assert
         await ActAndAssert(_product, expectedUpdatedProduct, updateProperties);
     }
-    
+
     [TestMethod]
     public async Task Handle_UpdatesProductInDatabase_TagCodesUpdate()
     {
@@ -140,15 +143,21 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
         UpdateProductTestBaseHandler.UpdateProperties updateProperties)
     {
         await _handler.Handle(
-            new UpdateProductTestBaseHandler.Command(_tenant.Code, _product.Name, updateProperties), 
+            new UpdateProductTestBaseHandler.Command(_tenant.Code, _product.Name, updateProperties),
             default);
 
-        var updatedProductResponse = await ProductRepository.GetByAsync(updatedProduct.TenantCode, updatedProduct.Name!, default);
-        updatedProduct.Should().BeEquivalentTo(updatedProductResponse);
-        
+        var updatedProductResponse =
+            await ProductRepository.GetByAsync(updatedProduct.TenantCode, updatedProduct.Name!, default);
+
+        updatedProduct.Should().BeEquivalentTo(
+            updatedProductResponse,
+            options => options.Excluding(p => p.Code));
+
         if (oldProduct.Name != updatedProduct.Name)
         {
-            var oldProductResponse = await ProductRepository.ExistsByNameAsync(oldProduct.TenantCode, oldProduct.Name, default);
+            var oldProductResponse =
+                await ProductRepository.ExistsByNameAsync(oldProduct.TenantCode, oldProduct.Name, default);
+
             oldProductResponse.Should().BeFalse();
         }
     }

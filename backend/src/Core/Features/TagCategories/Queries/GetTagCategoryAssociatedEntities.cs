@@ -32,7 +32,7 @@ public static class GetTagCategoryAssociatedEntities
 
         public string TagCategoryCode { get; set; } = tagCategoryCode;
     }
-
+ 
     public class Handler(
         ITagRepository tagRepository,
         IProductRepository productRepository)
@@ -46,6 +46,7 @@ public static class GetTagCategoryAssociatedEntities
                 cancellationToken);
 
             var tagCodes = tags.Select(t => t.TagCode).ToArray();
+            
             var products = await productRepository.GetAllAsync(new(request.TenantCode, tagCodes), cancellationToken);
 
             if (!products.Any())

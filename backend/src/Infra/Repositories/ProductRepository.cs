@@ -7,9 +7,27 @@ namespace Infra.Repositories;
 
 public class ProductRepository(IMongoCollection<Product?> collection) : IProductRepository
 {
-    public Task CreateAsync(Product product, CancellationToken cancellationToken)
+    public async Task<Product> CreateAsync(Product product, CancellationToken cancellationToken)
     {
-        return collection.InsertOneAsync(product, cancellationToken: cancellationToken);
+        var aggregateFluent = collection.Aggregate()
+            .Group(new BsonDocument
+            {
+                { "_id", BsonNull.Value },
+                { nameof(Product.Code), new BsonDocument("$max", "$Code") }
+            })
+            .Project<Product>(new BsonDocument
+            {
+                { "_id", 0 },
+                { nameof(Product.Code), 1 }
+            });
+
+        var productCode = (await aggregateFluent.FirstOrDefaultAsync(cancellationToken))?.Code;
+
+        product.Code = productCode is null ? 1 : productCode.Value + 1;
+
+        await collection.InsertOneAsync(product, cancellationToken: cancellationToken);
+
+        return product;
     }
 
     public Task<Product?> GetByAsync(int tenantCode, string productName, CancellationToken cancellationToken)
@@ -44,6 +62,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
         pipeline.Add(new("$project", new BsonDocument
         {
             { "_id", 1 },
+            { nameof(Product.Code), 1 },
             { nameof(Product.TenantCode), 1 },
             { nameof(Product.Name), 1 },
             { nameof(Product.Description), 1 },
@@ -59,7 +78,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
     public Task<bool> ExistsByNameAsync(int tenantCode, string productName, CancellationToken cancellationToken)
     {
         return collection
-            .Find(p => 
+            .Find(p =>
                 p!.TenantCode == tenantCode &&
                 p.Name == productName).AnyAsync(cancellationToken);
     }
