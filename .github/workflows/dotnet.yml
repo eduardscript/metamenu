@@ -25,9 +25,13 @@ jobs:
         dotnet-version: 8.0.x
     - name: 📦 Restore dependencies
       run: dotnet restore
+      working-directory: ./backend/src
     - name: 🏗️ Build
       run: dotnet build --no-restore
+      working-directory: ./backend/src
     - name: 🧪 Unit Test
       run: dotnet test UnitTests --no-build --verbosity normal
+      working-directory: ./backend/tests
     - name: 🕸️🧪 Integration Tests
       run: dotnet test IntegrationTests --no-build --verbosity normal
+      working-directory: ./backend/tests
