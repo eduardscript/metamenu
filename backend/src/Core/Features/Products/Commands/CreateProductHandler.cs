@@ -1,5 +1,6 @@
 ﻿using Core.Exceptions.Tags;
 using Core.Exceptions.Tenants;
+using Core.Features.Products.Shared;
 
 namespace Core.Features.Products.Commands;
 
@@ -10,7 +11,7 @@ public static class CreateProductHandler
         string name,
         string? description,
         decimal price,
-        IEnumerable<string> tagCodes) : IRequest
+        IEnumerable<string> tagCodes) : IRequest<ProductDto>
     {
         public int TenantCode { get; set; } = tenantCode;
 
@@ -26,9 +27,9 @@ public static class CreateProductHandler
     public class Handler(
         ITenantRepository tenantRepository,
         ITagRepository tagRepository,
-        IProductRepository productRepository) : IRequestHandler<Command>
+        IProductRepository productRepository) : IRequestHandler<Command, ProductDto>
     {
-        public async Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task<ProductDto> Handle(Command request, CancellationToken cancellationToken)
         {
             var product = new Product(
                 request.TenantCode,
@@ -42,12 +43,19 @@ public static class CreateProductHandler
                 throw new TenantNotFoundException(product.TenantCode);
             }
 
-            if (!await tagRepository.ExistsAsync(product.TenantCode, product.TagCodes, cancellationToken))
+            var existingTags =
+                await tagRepository.GetAll(new ITagRepository.TagFilter(product.TenantCode), cancellationToken);
+
+            var invalidTagCodes = product.TagCodes.Except(existingTags.Select(t => t.TagCode)).ToList();
+
+            if (invalidTagCodes.Any())
             {
-                throw new TagNotFoundException(product.TagCodes);
+                throw new TagNotFoundException(invalidTagCodes);
             }
 
-            await productRepository.CreateAsync(product, cancellationToken);
+            var newProduct = await productRepository.CreateAsync(product, cancellationToken);
+
+            return newProduct.ToDto();
         }
     }
 }

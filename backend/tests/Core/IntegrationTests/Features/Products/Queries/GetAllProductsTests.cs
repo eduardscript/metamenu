@@ -1,4 +1,5 @@
 ﻿using Core.Features.Products.Queries;
+using Core.Features.Products.Shared;
 
 namespace IntegrationTests.Features.Products.Queries;
 
@@ -61,7 +62,7 @@ public class GetAllProductsTests : IntegrationTestBase
         AssertProducts(result, productsWithRandomTag);
     }
 
-    private static void AssertProducts(IEnumerable<GetAllProducts.ProductDto> result, List<Product> expectedProducts)
+    private static void AssertProducts(IEnumerable<ProductDto> result, List<Product> expectedProducts)
     {
         var resultList = result.ToList();
         resultList.Count.Should().BeGreaterThan(0);
@@ -69,7 +70,8 @@ public class GetAllProductsTests : IntegrationTestBase
 
         resultList.Should().HaveCount(expectedProducts.Count);
         foreach (var expectedProduct in expectedProducts)
-            resultList.Should().ContainEquivalentOf(new GetAllProducts.ProductDto(
+            resultList.Should().ContainEquivalentOf(new ProductDto(
+                expectedProduct.Code,
                 expectedProduct.TenantCode,
                 expectedProduct.Name,
                 expectedProduct.Description,

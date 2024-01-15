@@ -13,12 +13,14 @@ public class GetAllTagsTests : IntegrationTestBase
     {
         // Arrange
         var tenantCode = Fixture.Create<int>();
+
         var expectedTags = Fixture.Build<Tag>()
             .With(tag => tag.TenantCode, tenantCode)
             .CreateMany()
             .ToList();
 
-        foreach (var tag in expectedTags) await _tagRepository.CreateAsync(tag, default);
+        foreach (var tag in expectedTags)
+            await _tagRepository.CreateAsync(tag, default);
 
         var handler = new GetAllTags.Handler(_tagRepository);
 
@@ -27,9 +29,16 @@ public class GetAllTagsTests : IntegrationTestBase
 
         // Assert
         var resultList = result.ToList();
+
         resultList.Should().HaveCount(expectedTags.Count);
+
         foreach (var expectedTag in expectedTags)
-            resultList.Should().ContainEquivalentOf(new TagDto(expectedTag.TenantCode, expectedTag.TagCode,
-                expectedTag.TagCategoryCode));
+        {
+            resultList.Should().ContainEquivalentOf(
+                new TagDto(
+                    expectedTag.TenantCode,
+                    expectedTag.TagCategoryCode,
+                    expectedTag.TagCode));
+        }
     }
 }

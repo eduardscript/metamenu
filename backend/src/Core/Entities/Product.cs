@@ -7,6 +7,7 @@ public class Product(
     decimal price,
     IEnumerable<string> tagCodes)
 {
+    public int Code { get; set; }
     public int TenantCode { get; set; } = tenantCode;
 
     public string Name { get; set; } = name;

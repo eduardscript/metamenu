@@ -1,4 +1,6 @@
-﻿namespace Core.Features.Products.Queries;
+﻿using Core.Features.Products.Shared;
+
+namespace Core.Features.Products.Queries;
 
 public static class GetAllProducts
 {
@@ -13,20 +15,7 @@ public static class GetAllProducts
                 request.ProductFilter,
                 cancellationToken);
 
-            return products.Select(p => new ProductDto(
-                p.TenantCode,
-                p.Name,
-                p.Description,
-                p.Price,
-                p.TagCodes));
+            return products.Select(p => p.ToDto());
         }
     }
-
-    public record ProductDto(
-        int TenantCode,
-        string Name,
-        string? Description,
-        decimal Price,
-        IEnumerable<string> TagCodes,
-        IEnumerable<string>? TagCategories = default!);
 }
