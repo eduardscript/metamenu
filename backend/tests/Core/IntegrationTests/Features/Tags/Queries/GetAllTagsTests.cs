@@ -38,7 +38,7 @@ public class GetAllTagsTests : IntegrationTestBase
                 new TagDto(
                     expectedTag.TenantCode,
                     expectedTag.TagCategoryCode,
-                    expectedTag.TagCode));
+                    expectedTag.Code));
         }
     }
 }

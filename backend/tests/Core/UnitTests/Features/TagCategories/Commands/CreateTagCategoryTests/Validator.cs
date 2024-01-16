@@ -47,6 +47,6 @@ public class Validator : TestBaseValidator<CreateTagCategory.Validator, CreateTa
         TagCategoryRepositoryMock.ExistsAsync(Command.TenantCode, Command.Code, default).Returns(true);
 
         ExpectedErrorMessage =
-            CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory), nameof(TagCategory.Code), Command.Code);
+            CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), Command.Code);
     }
 }

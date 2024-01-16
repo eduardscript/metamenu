@@ -17,6 +17,6 @@ public static class TagsDtoExtensions
         return new TagDto(
             tag.TenantCode,
             tag.TagCategoryCode,
-            tag.TagCode);
+            tag.Code);
     }
 }

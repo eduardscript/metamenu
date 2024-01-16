@@ -32,7 +32,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         return collection
             .Find(t =>
                 t.TenantCode == tenantCode &&
-                tagCodes.Contains(t.TagCode))
+                tagCodes.Contains(t.Code))
             .AnyAsync(cancellationToken);
     }
 
@@ -41,7 +41,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         return collection
             .Find(
                 t => t.TenantCode == tenantCode &&
-                     t.TagCode == tagCode)
+                     t.Code == tagCode)
             .AnyAsync(cancellationToken);
     }
 
@@ -50,8 +50,8 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         return collection
             .UpdateOneAsync(
                 t => t.TenantCode == tenantCode &&
-                     t.TagCode == oldTagCode,
-                Builders<Tag>.Update.Set(t => t.TagCode, newTagCode),
+                     t.Code == oldTagCode,
+                Builders<Tag>.Update.Set(t => t.Code, newTagCode),
                 cancellationToken: cancellationToken);
     }
 }

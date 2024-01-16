@@ -46,7 +46,7 @@ public class Validator : TestBaseValidator<RenameTagCategoryCode.Validator, Rena
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
 
         ExpectedErrorMessage =
-            CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory), nameof(TagCategory.Code), Command.OldTagCategoryCode);
+            CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), Command.OldTagCategoryCode);
     }
 
     [TestMethod]
@@ -72,6 +72,6 @@ public class Validator : TestBaseValidator<RenameTagCategoryCode.Validator, Rena
         TagCategoryRepositoryMock.ExistsAsync(Command.TenantCode, Command.NewTagCategoryCode, default).Returns(true);
 
         ExpectedErrorMessage =
-            CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory), nameof(TagCategory.Code), Command.NewTagCategoryCode);
+            CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), Command.NewTagCategoryCode);
     }
 }

@@ -1,7 +1,5 @@
 ﻿using Core.Features.Products.Commands;
-using Core.Features.Products.Queries;
 using Core.Features.Products.Shared;
-using Core.Repositories;
 
 namespace Presentation.Mutations;
 

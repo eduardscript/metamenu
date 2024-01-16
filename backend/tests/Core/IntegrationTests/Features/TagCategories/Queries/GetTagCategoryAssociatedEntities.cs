@@ -29,7 +29,7 @@ public class GetTagCategoryAssociatedEntitiesTests : IntegrationTestBase
         
         var products = Fixture.Build<Product>()
             .With(p => p.TenantCode, tenantCode)
-            .With(p => p.TagCodes, tags.GetRandom(5).Select(t => t.TagCode).ToArray())
+            .With(p => p.TagCodes, tags.GetRandom(5).Select(t => t.Code).ToArray())
             .CreateMany(10)
             .ToArray();
 
@@ -56,7 +56,7 @@ public class GetTagCategoryAssociatedEntitiesTests : IntegrationTestBase
         {
             dto.Tag.Should().NotBeNull();
 
-            tags.Select(t => t.TagCode).Should().Contain(dto.Tag);
+            tags.Select(t => t.Code).Should().Contain(dto.Tag);
 
             var expectedProducts = products.Where(p => p.TagCodes.Contains(dto.Tag));
 

@@ -35,6 +35,7 @@ public static class CustomValidatorsMessages
 
 public static class EntitiesCustomValidators
 {
+    
     public static IRuleBuilderOptions<T, int> ExistsTenant<T>(
         this IRuleBuilder<T, int> ruleBuilder, ITenantRepository tenantRepository)
     {
@@ -62,7 +63,28 @@ public static class EntitiesCustomValidators
 
                 return !await tagCategoryRepository.ExistsAsync(tenantCode, code, token);
             })
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory), nameof(TagCategory.Code), code));
+            .WithMessage((_, code) => CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), code));
+    }
+    
+    public static IRuleBuilderOptions<T, string> AlreadyExistsTag<T>(
+        this IRuleBuilder<T, string> ruleBuilder, 
+        ITagRepository tagRepository)
+    {
+        return ruleBuilder
+            .NotEmptyAndRequired()
+            .MustAsync(async (command, code, token) =>
+            {
+                var tenantCodeProperty = typeof(T).GetProperty("TenantCode");
+                if (tenantCodeProperty is null)
+                {
+                    throw new InvalidOperationException("The type T must have a property named 'TenantCode'.");
+                }
+
+                var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
+
+                return !await tagRepository.ExistsAsync(tenantCode, code, token);
+            })
+            .WithMessage((_, code) => CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), code));
     }
     
     public static IRuleBuilderOptions<T, string> ExistsTagCategory<T>(
@@ -83,7 +105,28 @@ public static class EntitiesCustomValidators
 
                 return await tagCategoryRepository.ExistsAsync(tenantCode, code, token);
             })
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory), nameof(TagCategory.Code), code));
+            .WithMessage((_, code) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), code));
+    }
+
+    public static IRuleBuilderOptions<T, string> ExistsTag<T>(
+        this IRuleBuilder<T, string> ruleBuilder, 
+        ITagRepository tagRepository)
+    {
+        return ruleBuilder
+            .NotEmptyAndRequired()
+            .MustAsync(async (command, code, token) =>
+            {
+                var tenantCodeProperty = typeof(T).GetProperty("TenantCode");
+                if (tenantCodeProperty is null)
+                {
+                    throw new InvalidOperationException("The type T must have a property named 'TenantCode'.");
+                }
+
+                var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
+
+                return await tagRepository.ExistsAsync(tenantCode, code, token);
+            })
+            .WithMessage((_, code) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), code));
     }
 }
 

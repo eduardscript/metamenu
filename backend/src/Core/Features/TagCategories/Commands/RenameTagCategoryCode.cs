@@ -1,7 +1,4 @@
-﻿using Core.Exceptions.TagCategories;
-using Core.Exceptions.Tenants;
-
-namespace Core.Features.TagCategories.Commands;
+﻿namespace Core.Features.TagCategories.Commands;
 
 public static class RenameTagCategoryCode
 {

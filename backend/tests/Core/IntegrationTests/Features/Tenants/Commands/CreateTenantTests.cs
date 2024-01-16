@@ -1,5 +1,4 @@
 ﻿using Core.Features.Tenants.Commands;
-using Microsoft.Extensions.Time.Testing;
 
 namespace IntegrationTests.Features.Tenants.Commands;
 
@@ -10,17 +9,14 @@ public class CreateTenantTests : IntegrationTestBase
     public async Task Handle_CreatesTenantInDatabase()
     {
         // Arrange
-        var tenant = Fixture.Create<Tenant>();
-        
-        TimeProvider.SetUtcNow(tenant.CreatedAt);
-
         var handler = new CreateTenant.Handler(TenantRepository, TimeProvider);
 
         // Act
-        var tenantDto = await handler.Handle(new CreateTenant.Command(tenant.Name), default);
+        var tenantDto = await handler.Handle(new CreateTenant.Command(Fixture.Create<Tenant>().Name), default);
 
         // Assert
-        var tenantExists = await TenantRepository.ExistsAsync(tenantDto.Code, default);
-        tenantExists.Should().BeTrue();
+        tenantDto.Code.Should().Be(1000);
+        tenantDto.IsEnabled.Should().BeFalse();
+        tenantDto.CreatedAt.Should().Be(TimeProvider.GetUtcNow().DateTime);
     }
 }

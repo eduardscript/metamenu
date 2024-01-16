@@ -3,4 +3,4 @@
 public record Tag(
     int TenantCode,
     string TagCategoryCode,
-    string TagCode);
+    string Code);

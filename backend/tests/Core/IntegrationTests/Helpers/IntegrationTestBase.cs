@@ -23,7 +23,7 @@ public class IntegrationTestBase
         TagRepository = GetService<ITagRepository>();
         TenantRepository = GetService<ITenantRepository>();
         TagCategoryRepository = GetService<ITagCategoryRepository>();
-        UserRepository = GetService<IUserRepository>();
+        UserRepository = GetService<IUserRepository>();        
     }
 
     private static IServiceProvider _serviceProvider = null!;

@@ -27,7 +27,7 @@ public class GetAllProductsTests : IntegrationTestBase
 
         _expectedProducts = Fixture.Build<Product>()
             .With(p => p.TenantCode, _tenant.Code)
-            .With(p => p.TagCodes, () => _tags.Take(Random.Next(_tags.Count)).Select(t => t.TagCode))
+            .With(p => p.TagCodes, () => _tags.Take(Random.Next(_tags.Count)).Select(t => t.Code))
             .CreateMany()
             .ToList();
 
@@ -51,7 +51,7 @@ public class GetAllProductsTests : IntegrationTestBase
     public async Task Handle_ReturnsAllProductsForTenantAndTagCodes()
     {
         // Arrange
-        var randomTagCodes = _tags.Take(2).Select(t => t.TagCode).ToList();
+        var randomTagCodes = _tags.Take(2).Select(t => t.Code).ToList();
 
         // Act
         var result = await _handler.Handle(

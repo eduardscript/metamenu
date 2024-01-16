@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class RenameTagCodeHandlerTests : IntegrationTestBase
+public class RenameTagCodeTests : IntegrationTestBase
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
     private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
@@ -22,22 +22,22 @@ public class RenameTagCodeHandlerTests : IntegrationTestBase
 
         await _tagRepository.CreateAsync(oldTag, default);
 
-        var handler = new RenameTagCodeHandler.Handler(_tenantRepository, _tagRepository);
+        var handler = new RenameTagCode.Handler(_tenantRepository, _tagRepository);
 
         // Act
         await handler.Handle(
-            new RenameTagCodeHandler.Command(tenant.Code, oldTag.TagCode, newTagCode),
+            new RenameTagCode.Command(tenant.Code, oldTag.Code, newTagCode),
             default);
 
         // Assert
         var oldTagCategoryExists =
-            await _tagRepository.ExistsAsync(tenant.Code, oldTag.TagCode, default);
+            await _tagRepository.ExistsAsync(tenant.Code, oldTag.Code, default);
         oldTagCategoryExists.Should().BeFalse();
 
         var newTagCategoryExists =
             await _tagRepository.ExistsAsync(tenant.Code, newTagCode, default);
         newTagCategoryExists.Should().BeTrue();
 
-        newTagCode.Should().NotBeEquivalentTo(oldTag.TagCode);
+        newTagCode.Should().NotBeEquivalentTo(oldTag.Code);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Core.Features.Tenants.Queries;
-using Core.Features.Tenants.Shared;
 
 namespace IntegrationTests.Features.Tenants.Queries;
 
@@ -32,7 +31,8 @@ public class GetAllTenantsTests : IntegrationTestBase
         {
             resultList
                 .Should()
-                .ContainEquivalentOf(new TenantDto(expectedTenant.Code, expectedTenant.Name, expectedTenant.IsEnabled, expectedTenant.CreatedAt));
+                .ContainEquivalentOf(expectedTenant, options => options
+                    .Excluding(t => t.IsEnabled));
         }
     }
 }

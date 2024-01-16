@@ -23,7 +23,7 @@ public class CreateProductHandlerTests : IntegrationTestBase
 
         var product = Fixture.Build<Product>()
             .With(p => p.TenantCode, tenant.Code)
-            .With(p => p.TagCodes, tags.Select(t => t.TagCode))
+            .With(p => p.TagCodes, tags.Select(t => t.Code))
             .Create();
 
         var handler = new CreateProductHandler.Handler(TenantRepository, TagRepository, ProductRepository);

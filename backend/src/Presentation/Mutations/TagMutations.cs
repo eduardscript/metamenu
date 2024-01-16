@@ -9,7 +9,7 @@ public class TagMutations
 {
     public async Task<IEnumerable<TagDto>> CreateTag(
         [Service] IMediator mediator,
-        CreateTagHandler.Command command,
+        CreateTag.Command command,
         CancellationToken cancellationToken)
     {
         await mediator.Send(command, cancellationToken);

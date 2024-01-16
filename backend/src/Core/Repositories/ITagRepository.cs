@@ -2,17 +2,11 @@
 
 public interface ITagRepository
 {
-    public class TagFilter
+    public class TagFilter(int tenantCode, string? tagCategoryCode = null)
     {
-        public TagFilter(int tenantCode, string? tagCategoryCode = null)
-        {
-            TenantCode = tenantCode;
-            TagCategoryCode = tagCategoryCode;
-        }
+        public int TenantCode { get; set; } = tenantCode;
 
-        public int TenantCode { get; set; }
-
-        public string? TagCategoryCode { get; set; }
+        public string? TagCategoryCode { get; set; } = tagCategoryCode;
     }
 
     public Task CreateAsync(Tag tag, CancellationToken cancellationToken);

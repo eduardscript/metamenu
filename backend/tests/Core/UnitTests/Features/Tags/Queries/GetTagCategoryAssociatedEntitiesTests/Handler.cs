@@ -1,9 +1,5 @@
-﻿using Core.Exceptions.Products;
-using Core.Exceptions.TagCategories;
-using Core.Exceptions.Tenants;
+﻿using Core.Exceptions.TagCategories;
 using Core.Features.TagCategories.Queries;
-using Core.Features.Users.Queries;
-using NSubstitute.ReturnsExtensions;
 
 namespace UnitTests.Features.Tags.Queries.GetTagCategoryAssociatedEntitiesTests;
 

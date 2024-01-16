@@ -45,7 +45,7 @@ public static class GetTagCategoryAssociatedEntities
                 new ITagRepository.TagFilter(request.TenantCode, request.TagCategoryCode),
                 cancellationToken);
 
-            var tagCodes = tags.Select(t => t.TagCode).ToArray();
+            var tagCodes = tags.Select(t => t.Code).ToArray();
             
             var products = await productRepository.GetAllAsync(new(request.TenantCode, tagCodes), cancellationToken);
 
@@ -56,8 +56,8 @@ public static class GetTagCategoryAssociatedEntities
 
             return tags.Select(t => new TagCategoryAssociatedEntitiesDto
             {
-                Tag = t.TagCode,
-                Products = products.Where(p => p.TagCodes.Contains(t.TagCode))
+                Tag = t.Code,
+                Products = products.Where(p => p.TagCodes.Contains(t.Code))
             });
         }
     }

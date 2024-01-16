@@ -1,6 +1,5 @@
 ﻿using Core.Exceptions.TagCategories;
 using Core.Features.TagCategories.Queries;
-using Core.Features.Tenants.Commands;
 
 namespace UnitTests.Features.TagCategories.Queries.GetTagCategoryAssociatedEntitiesTests;
 

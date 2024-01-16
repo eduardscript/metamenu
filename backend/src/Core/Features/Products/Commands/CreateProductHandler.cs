@@ -46,7 +46,7 @@ public static class CreateProductHandler
             var existingTags =
                 await tagRepository.GetAll(new ITagRepository.TagFilter(product.TenantCode), cancellationToken);
 
-            var invalidTagCodes = product.TagCodes.Except(existingTags.Select(t => t.TagCode)).ToList();
+            var invalidTagCodes = product.TagCodes.Except(existingTags.Select(t => t.Code)).ToList();
 
             if (invalidTagCodes.Any())
             {
