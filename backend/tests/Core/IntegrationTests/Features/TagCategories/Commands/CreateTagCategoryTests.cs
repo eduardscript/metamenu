@@ -13,7 +13,7 @@ public class CreateTagCategoryTests : IntegrationTestBase
 
         var tagCategory = Fixture.Create<TagCategory>();
 
-        var handler = new CreateTagCategory.Handler(TenantRepository, TagCategoryRepository);
+        var handler = new CreateTagCategory.Handler(TagCategoryRepository);
 
         // Act
         await handler.Handle(new CreateTagCategory.Command(tenant.Code, tagCategory.Code), default);

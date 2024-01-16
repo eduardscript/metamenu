@@ -30,9 +30,9 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
             .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
     }
 
-    public Task<TagCategory> GetByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
+    public async Task<TagCategory?> GetByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {
-        return collection
+        return await collection
             .Find(tc =>
                 tc.TenantCode == tenantCode &&
                 tc.Code == tagCategoryCode)

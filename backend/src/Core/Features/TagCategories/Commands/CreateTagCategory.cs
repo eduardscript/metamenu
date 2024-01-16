@@ -1,5 +1,4 @@
-﻿using Core.Exceptions.TagCategories;
-using Core.Features.TagCategories.Shared;
+﻿using Core.Features.TagCategories.Shared;
 
 namespace Core.Features.TagCategories.Commands;
 
@@ -13,7 +12,7 @@ public static class CreateTagCategory
             ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(c => c.TenantCode)
-                .ValidTenant(tenantRepository);
+                .ExistsTenant(tenantRepository);
 
             RuleFor(c => c.Code)
                 .AlreadyExistsTagCategory(tagCategoryRepository);
@@ -29,9 +28,7 @@ public static class CreateTagCategory
         public string Code { get; set; } = code;
     }
 
-    public class Handler(
-        ITenantRepository tenantRepository,
-        ITagCategoryRepository tagCategoryRepository) : IRequestHandler<Command, TagCategoryDto>
+    public class Handler(ITagCategoryRepository tagCategoryRepository) : IRequestHandler<Command, TagCategoryDto>
     {
         public async Task<TagCategoryDto> Handle(Command request, CancellationToken cancellationToken)
         {

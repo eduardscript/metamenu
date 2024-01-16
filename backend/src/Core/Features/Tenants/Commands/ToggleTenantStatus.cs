@@ -8,7 +8,7 @@ public static class ToggleTenantStatus
         {
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)
-                .ValidTenant(tenantRepository);
+                .ExistsTenant(tenantRepository);
         }
     }
 

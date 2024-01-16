@@ -5,6 +5,24 @@ namespace Core.Features.TagCategories.Commands;
 
 public static class RenameTagCategoryCode
 {
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator(ITenantRepository tenantRepository, ITagCategoryRepository tagCategoryRepository)
+        {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
+
+            RuleFor(c => c.TenantCode)
+                .ExistsTenant(tenantRepository);
+
+            RuleFor(c => c.OldTagCategoryCode)
+                .ExistsTagCategory(tagCategoryRepository);
+            
+            RuleFor(c => c.NewTagCategoryCode)
+                .AlreadyExistsTagCategory(tagCategoryRepository);
+        }
+    }
+
     public class Command(
         int tenantCode,
         string oldTagCategoryCode,
@@ -17,23 +35,11 @@ public static class RenameTagCategoryCode
         public string NewTagCategoryCode { get; set; } = newTagCategoryCode;
     }
 
-    public class Handler(
-        ITenantRepository tenantRepository,
-        ITagCategoryRepository tagCategoryRepository) : IRequestHandler<Command>
+    public class Handler(ITagCategoryRepository tagCategoryRepository) : IRequestHandler<Command>
     {
-        public async Task Handle(Command request, CancellationToken cancellationToken)
+        public Task Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await tenantRepository.ExistsAsync(request.TenantCode, cancellationToken))
-            {
-                throw new TenantNotFoundException(request.TenantCode);
-            }
-
-            if (await tagCategoryRepository.ExistsAsync(request.TenantCode, request.NewTagCategoryCode, cancellationToken))
-            {
-                throw new TagCategoryAlreadyExistsException(request.OldTagCategoryCode);
-            }
-
-            await tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCode, request.NewTagCategoryCode, cancellationToken);
+            return tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCode, request.NewTagCategoryCode, cancellationToken);
         }
     }
 }

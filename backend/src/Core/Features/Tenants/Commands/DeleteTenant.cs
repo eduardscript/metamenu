@@ -8,7 +8,7 @@ public static class DeleteTenant
         {
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)
-                .ValidTenant(tenantRepository);
+                .ExistsTenant(tenantRepository);
         }
     }
 
