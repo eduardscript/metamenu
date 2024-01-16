@@ -5,6 +5,11 @@ namespace Core.Validation;
 
 public static class CustomValidatorsMessages
 {
+    public static string EntityNotFoundMessage(string entityType, string propertyName, object propertyValue)
+    {
+        return $"'{entityType}' with '{propertyName}' = '{propertyValue}' was not found.";
+    }
+
     public static string NotEmptyAndRequiredMessage(string propertyName)
     {
         return $"'{propertyName}' is required and must not be empty.";

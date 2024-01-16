@@ -7,7 +7,7 @@ public class Tenant(
 
     public string Name { get; private set; } = name;
 
-    public bool IsEnabled { get; private set; } = false;
+    public bool IsEnabled { get; set; } = false;
 
-    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 }

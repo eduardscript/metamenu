@@ -9,11 +9,14 @@ public class MongoDbFixture : IntegrationTestBase
         CreatedTenants.Clear();
     }
 
-    public static async Task<Tenant> CreateTenantAsync()
+    public static async Task<Tenant> CreateTenantAsync(Tenant? tenant = default!)
     {
         var tenantRepository = GetService<ITenantRepository>();
+        
+        tenant ??= Fixture.Create<Tenant>();
+        
+        tenant.CreatedAt = TimeProvider.GetUtcNow().DateTime;
 
-        var tenant = Fixture.Create<Tenant>();
         var tenantCode = (await tenantRepository.CreateAsync(tenant, default)).Code;
 
         tenant.Code = tenantCode;

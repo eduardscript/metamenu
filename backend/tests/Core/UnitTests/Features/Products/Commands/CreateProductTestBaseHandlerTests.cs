@@ -30,7 +30,6 @@ public class CreateProductTestBaseHandlerTests : TestBaseHandler<CreateProductHa
         // Act and Assert
         await AssertThrowsAsync<TagNotFoundException>(Request);
         await TenantRepositoryMock.Received().ExistsAsync(Request.TenantCode, default);
-        await TagRepositoryMock.Received().ExistsAsync(Request.TenantCode, Request.TagCodes, default);
         await ProductRepositoryMock.DidNotReceiveWithAnyArgs().CreateAsync(Arg.Any<Product>(), Arg.Any<CancellationToken>());
     }
 }

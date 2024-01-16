@@ -9,7 +9,7 @@ public class Validator : TestBaseValidator<CreateTenant.Validator, CreateTenant.
     [DataRow("")]
     [DataRow(" ")]
     [DataRow(null)]
-    public void Validate_EmptyPassword_FailsValidation(string name)
+    public void EmptyName_FailsValidation(string name)
     {
         // Arrange
         Command.Name = name;

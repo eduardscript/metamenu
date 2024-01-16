@@ -1,5 +1,4 @@
-﻿using Core.Validation.PreProcessors;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Core;
 
@@ -15,6 +14,8 @@ public static class DependencyInjection
                 cfg.RegisterServicesFromAssembly(AssemblyReference.Assembly);
                 cfg.AddOpenRequestPreProcessor(typeof(ValidationRequestPreProcessor<>));
             });
+
+        services.AddSingleton(TimeProvider.System);
 
         return services;
     }

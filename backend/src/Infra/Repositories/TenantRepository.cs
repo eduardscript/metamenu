@@ -38,6 +38,13 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
             .ContinueWith(t => t.Result.AsEnumerable(), cancellationToken);
     }
 
+    public Task<Tenant?> GetAsync(int tenantCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .Find(t => t.Code == tenantCode)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public Task<bool> ExistsAsync(int tenantCode, CancellationToken cancellationToken)
     {
         return collection

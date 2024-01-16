@@ -11,6 +11,8 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
     protected readonly TCommand Command = Fixture.Create<TCommand>();
 
     protected string ExpectedErrorMessage = default!;
+    
+    protected List<string> ExpectedErrorMessages = new();
 
     [TestInitialize]
     public void TestInitialize()
@@ -25,6 +27,14 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
         {
             // Act & Assert
             await AssertValidationResult(ExpectedErrorMessage);
+        }
+        else if (ExpectedErrorMessages.Count != 0)
+        {
+            foreach (var expectedErrorMessage in ExpectedErrorMessages)
+            {
+                // Act & Assert
+                await AssertValidationResult(expectedErrorMessage);
+            }
         }
     }
 

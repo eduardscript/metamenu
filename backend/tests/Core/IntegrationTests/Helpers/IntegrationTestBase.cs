@@ -1,6 +1,7 @@
 ﻿using Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -14,6 +15,7 @@ public class IntegrationTestBase
     protected static ITagRepository TagRepository = default!;
     protected static IProductRepository ProductRepository = default!;
     protected static IUserRepository UserRepository = default!;
+    protected static readonly FakeTimeProvider TimeProvider = new();
 
     public IntegrationTestBase()
     {

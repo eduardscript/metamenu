@@ -18,11 +18,14 @@ public static class CreateTenant
         public string Name { get; set; } = name;
     }
 
-    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command, TenantDto>
+    public class Handler(ITenantRepository tenantRepository, TimeProvider timeProvider) : IRequestHandler<Command, TenantDto>
     {
         public async Task<TenantDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var tenant = new Tenant(request.Name);
+            var tenant = new Tenant(request.Name)
+            {
+                CreatedAt = timeProvider.GetUtcNow().DateTime
+            };
 
             var newTenant = await tenantRepository.CreateAsync(tenant, cancellationToken);
 

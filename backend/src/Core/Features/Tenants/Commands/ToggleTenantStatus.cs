@@ -9,7 +9,8 @@ public static class ToggleTenantStatus
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)
                 .NotEmptyAndRequired()
-                .MustAsync(async (code, token) => await tenantRepository.ExistsAsync(code, token));
+                .MustAsync(async (code, token) => await tenantRepository.ExistsAsync(code, token))
+                .WithMessage((c) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), c.Code));
         }
     }
 
@@ -24,13 +25,13 @@ public static class ToggleTenantStatus
     {
         public async Task<TenantStatusDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var updatedTenantStatus = await tenantRepository.Update(request.Code, request.IsEnabled, cancellationToken);
+            var updateDone = await tenantRepository.Update(request.Code, request.IsEnabled, cancellationToken);
 
             return new TenantStatusDto(
-                updatedTenantStatus);
+                updateDone);
         }
     }
 
     public record TenantStatusDto(
-        bool IsEnabled);
+        bool StatusUpdated);
 }
