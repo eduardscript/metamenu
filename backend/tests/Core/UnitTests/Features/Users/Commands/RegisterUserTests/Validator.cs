@@ -36,7 +36,7 @@ public class Validator : TestBaseValidator<RegisterUser.Validator, RegisterUser.
     {
         // Arrange
         Command.AvailableTenants = new List<int> { availableTenant };
-        ExpectedErrorMessage = CustomValidatorsMessages.GreaterThanZeroMessage(nameof(Command.AvailableTenants).Singularize().Humanize(LetterCasing.Title));
+        ExpectedErrorMessage = CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage(nameof(Command.AvailableTenants).Singularize().Humanize(LetterCasing.Title));
     }
  
     [TestMethod]

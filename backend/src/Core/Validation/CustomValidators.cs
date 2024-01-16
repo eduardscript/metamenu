@@ -15,13 +15,13 @@ public static class CustomValidatorsMessages
         return $"'{propertyName}' is required and must not be empty.";
     }
 
-    public static string GreaterThanZeroMessage(string propertyName)
+    public static string GreaterThanZeroAndRequiredMessage(string propertyName)
     {
         var singularPropertyName = propertyName;
 
-        return $"'{singularPropertyName}' must be greater than '0'.";
+        return $"'{singularPropertyName}' is required and must be greater than '0'.";
     }
-    
+
     public static string UniqueMessage(string propertyName, string duplicateItems)
     {
         return $"'{propertyName}' must be unique. Duplicated items found: '{duplicateItems}'.";
@@ -30,6 +30,14 @@ public static class CustomValidatorsMessages
 
 public static class CustomValidators
 {
+    public static IRuleBuilderOptions<T, int> GreaterThanZeroAndRequired<T>(
+        this IRuleBuilder<T, int> ruleBuilder)
+    {
+        return ruleBuilder
+            .GreaterThan(0)
+            .WithMessage(CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage("{PropertyName}"));
+    }
+
     public static IRuleBuilderOptions<T, TValue> NotEmptyAndRequired<T, TValue>(
         this IRuleBuilder<T, TValue> ruleBuilder)
     {
@@ -37,12 +45,13 @@ public static class CustomValidators
             .NotEmpty()
             .WithMessage(CustomValidatorsMessages.NotEmptyAndRequiredMessage("{PropertyName}"));
     }
-    
+
     public static IRuleBuilderOptions<T, int> TenantExists<T>(
         this IRuleBuilder<T, int> ruleBuilder, ITenantRepository tenantRepository)
     {
         return ruleBuilder
-            .MustAsync(async (tenantCode, cancellationToken) => await tenantRepository.ExistsAsync(tenantCode, cancellationToken))
+            .MustAsync(async (tenantCode, cancellationToken) =>
+                await tenantRepository.ExistsAsync(tenantCode, cancellationToken))
             .WithMessage((_, tenantCode) => new TenantNotFoundException(tenantCode).Message);
     }
 
@@ -66,7 +75,7 @@ public static class CustomValidators
 
                     return false;
                 })
-                .WithMessage(CustomValidatorsMessages.GreaterThanZeroMessage("{SingularPropertyName}")))
+                .WithMessage(CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage("{SingularPropertyName}")))
             .Unique();
     }
 

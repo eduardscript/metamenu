@@ -8,7 +8,7 @@ public static class ToggleTenantStatus
         {
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)
-                .NotEmptyAndRequired()
+                .GreaterThanZeroAndRequired()
                 .MustAsync(async (code, token) => await tenantRepository.ExistsAsync(code, token))
                 .WithMessage((c) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), c.Code));
         }
@@ -17,8 +17,8 @@ public static class ToggleTenantStatus
     public class Command(int code, bool isEnabled) : IRequest<TenantStatusDto>
     {
         public int Code { get; set; } = code;
-        
-        public bool IsEnabled { get; set; } = isEnabled;
+
+        public bool IsEnabled { get; } = isEnabled;
     }
 
     public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command, TenantStatusDto>

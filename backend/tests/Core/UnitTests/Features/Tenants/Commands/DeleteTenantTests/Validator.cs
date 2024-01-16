@@ -6,13 +6,15 @@ namespace UnitTests.Features.Tenants.Commands.DeleteTenantTests;
 public class Validator : TestBaseValidator<DeleteTenant.Validator, DeleteTenant.Command>
 {
     [TestMethod]
-    public void EmptyName_FailsValidation()
+    [DataRow(0)]
+    [DataRow(-1)]
+    public void CodeLessThanZero_FailsValidation(int code)
     {
         // Arrange
-        Command.Code = 0;
-        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Code));
+        Command.Code = code;
+        ExpectedErrorMessage = CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage(nameof(Command.Code));
     }
-    
+
     [TestMethod]
     public void NotExistingTenant_FailsValidation()
     {

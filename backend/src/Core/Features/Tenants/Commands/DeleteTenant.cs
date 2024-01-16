@@ -8,7 +8,7 @@ public static class DeleteTenant
         {
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)
-                .NotEmptyAndRequired()
+                .GreaterThanZeroAndRequired()
                 .MustAsync(async (code, token) => await tenantRepository.ExistsAsync(code, token))
                 .WithMessage((c) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), c.Code));
         }

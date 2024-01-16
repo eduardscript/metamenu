@@ -7,6 +7,18 @@ namespace Core.Features.TagCategories.Commands;
 
 public static class CreateTagCategoryHandler
 {
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.TenantCode)
+                .NotEmptyAndRequired();
+
+            RuleFor(x => x.Code)
+                .NotEmptyAndRequired();
+        }
+    }
+
     public record Command(
         int TenantCode,
         string Code) : IRequest<TagCategoryDto>;
