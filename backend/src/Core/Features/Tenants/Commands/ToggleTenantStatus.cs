@@ -8,9 +8,7 @@ public static class ToggleTenantStatus
         {
             RuleFor(x => x.Code)
                 .Cascade(CascadeMode.Stop)
-                .GreaterThanZeroAndRequired()
-                .MustAsync(async (code, token) => await tenantRepository.ExistsAsync(code, token))
-                .WithMessage((c) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), c.Code));
+                .ValidTenant(tenantRepository);
         }
     }
 

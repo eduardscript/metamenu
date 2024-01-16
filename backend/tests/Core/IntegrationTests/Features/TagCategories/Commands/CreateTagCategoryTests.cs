@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.TagCategories.Commands;
 
 [TestClass]
-public class CreateTagCategoryHandlerTests : IntegrationTestBase
+public class CreateTagCategoryTests : IntegrationTestBase
 {
     [TestMethod]
     public async Task Handle_CreatesTagCategoryInDatabase()
@@ -13,10 +13,10 @@ public class CreateTagCategoryHandlerTests : IntegrationTestBase
 
         var tagCategory = Fixture.Create<TagCategory>();
 
-        var handler = new CreateTagCategoryHandler.Handler(TenantRepository, TagCategoryRepository);
+        var handler = new CreateTagCategory.Handler(TenantRepository, TagCategoryRepository);
 
         // Act
-        await handler.Handle(new CreateTagCategoryHandler.Command(tenant.Code, tagCategory.Code), default);
+        await handler.Handle(new CreateTagCategory.Command(tenant.Code, tagCategory.Code), default);
 
         // Assert
         var tagCategoryExists =

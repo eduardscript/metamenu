@@ -5,10 +5,17 @@ namespace Core.Features.TagCategories.Commands;
 
 public static class RenameTagCategoryCode
 {
-    public record Command(
-        int TenantCode,
-        string OldTagCategoryCode,
-        string NewTagCategoryCode) : IRequest;
+    public class Command(
+        int tenantCode,
+        string oldTagCategoryCode,
+        string newTagCategoryCode) : IRequest
+    {
+        public int TenantCode { get; set; } = tenantCode;
+        
+        public string OldTagCategoryCode { get; set; } = oldTagCategoryCode;
+        
+        public string NewTagCategoryCode { get; set; } = newTagCategoryCode;
+    }
 
     public class Handler(
         ITenantRepository tenantRepository,

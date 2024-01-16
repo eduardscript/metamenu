@@ -8,7 +8,7 @@ public class Validator : TestBaseValidator<ToggleTenantStatus.Validator, ToggleT
     [TestMethod]
     [DataRow(0)]
     [DataRow(-1)]
-    public void CodeLessThanZero_FailsValidation(int code)
+    public void Code_LessThanZero_FailsValidation(int code)
     {
         // Arrange
         Command.Code = code;
@@ -16,7 +16,7 @@ public class Validator : TestBaseValidator<ToggleTenantStatus.Validator, ToggleT
     }
     
     [TestMethod]
-    public void NotExistingTenant_FailsValidation()
+    public void Tenant_NotExisting_FailsValidation()
     {
         // Arrange
         Command.Code = 1;
