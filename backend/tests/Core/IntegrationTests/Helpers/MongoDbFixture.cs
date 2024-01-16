@@ -16,7 +16,7 @@ public class MongoDbFixture : IntegrationTestBase
         var tenant = Fixture.Create<Tenant>();
         var tenantCode = (await tenantRepository.CreateAsync(tenant, default)).Code;
 
-        tenant = tenant with { Code = tenantCode };
+        tenant.Code = tenantCode;
 
         CreatedTenants.Add(tenant);
 

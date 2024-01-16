@@ -11,10 +11,6 @@ using Presentation.Queries;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-
-var signingKey = new SymmetricSecurityKey(
-    "2e6f9b0d5885b6010f9167787445617f553a735f"u8.ToArray());
-
 builder.Services
     .ConfigureOptions<JwtOptions>();
 
@@ -43,12 +39,24 @@ builder.Services
     .AddErrorFilter<ErrorFilter>();
 
 builder.Services
+    .AddCors(options =>
+    {
+        options.AddPolicy(Clients.Admin,
+            policy => policy
+                .WithOrigins("http://localhost:3000")
+                .WithMethods(HttpMethods.Post)
+                .AllowAnyHeader());
+    });
+
+builder.Services
     .AddApplication()
     .AddInfra(builder.Configuration);
 
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors(Clients.Admin);
 
 app.MapGraphQL();
 

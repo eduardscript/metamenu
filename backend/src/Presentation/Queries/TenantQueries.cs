@@ -1,4 +1,5 @@
-﻿using Core.Features.Tenants.Queries;
+﻿using Core.Features.Tenants.Commands;
+using Core.Features.Tenants.Queries;
 using Core.Features.Tenants.Shared;
 
 namespace Presentation.Queries;

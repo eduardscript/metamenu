@@ -2,7 +2,9 @@
 
 public record TenantDto(
     int Code,
-    string Name);
+    string Name,
+    bool IsEnabled,
+    DateTime CreatedAt);
 
 public static class TenantDtoExtensions
 {
@@ -15,6 +17,8 @@ public static class TenantDtoExtensions
     {
         return new TenantDto(
             tenant.Code,
-            tenant.Name);
+            tenant.Name,
+            tenant.IsEnabled,
+            tenant.CreatedAt);
     }
 }

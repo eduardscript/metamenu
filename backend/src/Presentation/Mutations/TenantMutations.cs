@@ -13,4 +13,14 @@ public class TenantMutations
     {
         return await mediator.Send(command, cancellationToken);
     }
+
+    public Task<DeleteTenant.TenantDeletedDto> DeleteTenantAsync([Service] IMediator mediator, DeleteTenant.Command command)
+    {
+        return mediator.Send(command);
+    }
+    
+    public Task<ToggleTenantStatus.TenantStatusDto> ToggleTenantStatusAsync([Service] IMediator mediator, ToggleTenantStatus.Command command)
+    {
+        return mediator.Send(command);
+    }
 }

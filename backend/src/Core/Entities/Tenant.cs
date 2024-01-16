@@ -1,8 +1,13 @@
 ﻿namespace Core.Entities;
 
-public record Tenant(
-    string Name,
-    bool IsEnabled = false)
+public class Tenant(
+    string name)
 {
-    public int Code { get; init; }
+    public int Code { get; set; }
+
+    public string Name { get; private set; } = name;
+
+    public bool IsEnabled { get; private set; } = false;
+
+    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 }

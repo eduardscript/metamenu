@@ -23,7 +23,7 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
 
         var tenantCode = (await aggregateFluent.FirstOrDefaultAsync(cancellationToken))?.Code;
 
-        tenant = tenant with { Code = tenantCode is null ? 1000 : tenantCode.Value + 1000 };
+        tenant.Code = tenantCode is null ? 1000 : tenantCode.Value + 1000;
 
         await collection.InsertOneAsync(tenant, cancellationToken: cancellationToken);
 
@@ -43,5 +43,22 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
         return collection
             .Find(t => t.Code == tenantCode)
             .AnyAsync(cancellationToken);
+    }
+
+    public Task<bool> DeleteAsync(int tenantCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .DeleteOneAsync(t => t.Code == tenantCode, cancellationToken)
+            .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
+    }
+
+    public Task<bool> Update(int tenantCode, bool status, CancellationToken cancellationToken)
+    {
+        var updateDefinition = Builders<Tenant>.Update
+            .Set(t => t.IsEnabled, status);
+        
+        return collection
+            .UpdateOneAsync(t => t.Code == tenantCode, updateDefinition, cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
     }
 }
