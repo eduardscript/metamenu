@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Products.Commands;
 
 [TestClass]
-public class CreateProductHandlerTests : IntegrationTestBase
+public class CreateProductTests : IntegrationTestBase
 {
     [TestMethod]
     public async Task Handle_CreatesProductInDatabase()
@@ -26,12 +26,12 @@ public class CreateProductHandlerTests : IntegrationTestBase
             .With(p => p.TagCodes, tags.Select(t => t.Code))
             .Create();
 
-        var handler = new CreateProductHandler.Handler(TenantRepository, TagRepository, ProductRepository);
+        var handler = new CreateProduct.Handler(TagRepository, ProductRepository);
 
         // Act
         await handler.Handle(
-            new CreateProductHandler.Command(tenant.Code, product.Name, product.Description, product.Price,
-                product.TagCodes), default);
+            new CreateProduct.Command(tenant.Code, product.TagCodes, product.Name, product.Description, product.Price),
+            default);
 
         // Assert
         var productExists = await ProductRepository.ExistsByNameAsync(product.TenantCode, product.Name, default);

@@ -8,7 +8,7 @@ public class ProductMutations
 {
     public async Task<ProductDto> CreateProductAsync(
         [Service] IMediator mediator,
-        CreateProductHandler.Command command,
+        CreateProduct.Command command,
         CancellationToken cancellationToken)
     {
         return await mediator.Send(command, cancellationToken);

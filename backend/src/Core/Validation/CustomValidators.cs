@@ -139,6 +139,14 @@ public static class CustomValidators
             .GreaterThan(0)
             .WithMessage(CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage("{PropertyName}"));
     }
+    
+    public static IRuleBuilderOptions<T, decimal> GreaterThanZeroAndRequired<T>(
+        this IRuleBuilder<T, decimal> ruleBuilder)
+    {
+        return ruleBuilder
+            .GreaterThan(0)
+            .WithMessage(CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage("{PropertyName}"));
+    }
 
     public static IRuleBuilderOptions<T, TValue> NotEmptyAndRequired<T, TValue>(
         this IRuleBuilder<T, TValue> ruleBuilder)
