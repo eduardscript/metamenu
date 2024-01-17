@@ -12,12 +12,14 @@
     "@apollo/client": "^3.8.9",
     "@apollo/experimental-nextjs-app-support": "^0.6.0",
     "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
     "axios": "^1.6.5",
     "clsx": "^2.1.0",
     "graphql": "^16.8.1",
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-select": "^5.8.0"
   },
   "devDependencies": {
     "@types/node": "^20",

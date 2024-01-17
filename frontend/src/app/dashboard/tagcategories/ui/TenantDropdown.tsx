@@ -1,0 +1,44 @@
+import { useState } from 'react';
+import Select from 'react-select';
+
+interface Tenant {
+  code: number;
+  name: string;
+}
+type SelectOptionType = { label: string, value: number }
+
+interface TenantDropdownProps {
+  tenants: Tenant[];
+  onChange?: (selectedTenant: Tenant | null) => void;
+}
+
+const TenantDropdown: React.FC<TenantDropdownProps> = ({ tenants, onChange }) => {
+  const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+  console.log(tenants);
+  const options = tenants.map((tenant) => ({
+    value: tenant.code,
+    label: `${tenant.code} - ${tenant.name}`,
+  }));
+
+  const handleChange = (selectedOption: SelectOptionType | null) => {
+    const newSelectedTenant = selectedOption ? tenants.find((tenant) => tenant.code === selectedOption.value) || null : null;
+
+    if (onChange) {
+      onChange(newSelectedTenant);
+    }
+
+    setSelectedTenant(newSelectedTenant);
+  };
+
+  return (
+    <Select
+      options={options}
+      value={selectedTenant ? { value: selectedTenant.code, label: selectedTenant.name } : null}
+      onChange={handleChange}
+      isSearchable
+      placeholder="Search tenants..."
+    />
+  );
+};
+
+export default TenantDropdown;

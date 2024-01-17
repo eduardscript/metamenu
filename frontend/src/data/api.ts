@@ -84,7 +84,7 @@ export const toggleTenantStatus = async (code: number, isEnabled: boolean) => {
                         code: $code,
                         isEnabled: $isEnabled
                     }) {
-                        isEnabled
+                        statusUpdated
                     }
                 }
             `,
@@ -100,3 +100,53 @@ export const toggleTenantStatus = async (code: number, isEnabled: boolean) => {
         throw error;
     }
 };
+
+export const getTagCategories = async (tenantCode: number) => {
+    const response = await api.post(
+        '',
+        {
+            query: `
+            query($tenantCode: Int!) {
+                allTagCategories(
+                    query: {
+                        tenantCode: $tenantCode,
+                    }
+                ) {
+                    code
+                }
+            }
+        `,
+            variables: {
+                tenantCode,
+            },
+        },
+    );
+
+    return response.data.data;
+}
+
+export const createTagCategory = async (tenantCode: number, code: string) => {
+    const response = await api.post(
+        '',
+        {
+            query: `
+            mutation($tenantCode: Int!, $code: String!) {
+                createTagCategory(
+                    command: {
+                        tenantCode: $tenantCode,
+                        code: $code
+                    }
+                ) {
+                    code
+                }
+            }
+        `,
+            variables: {
+                tenantCode,
+                code
+            },
+        },
+    );
+
+    return response.data.data;
+}
