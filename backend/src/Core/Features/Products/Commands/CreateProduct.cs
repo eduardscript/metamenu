@@ -64,9 +64,7 @@ public static class CreateProduct
         public decimal Price { get; set; } = price;
     }
 
-    public class Handler(
-        ITagRepository tagRepository,
-        IProductRepository productRepository) : IRequestHandler<Command, ProductDto>
+    public class Handler(IProductRepository productRepository) : IRequestHandler<Command, ProductDto>
     {
         public async Task<ProductDto> Handle(Command request, CancellationToken cancellationToken)
         {

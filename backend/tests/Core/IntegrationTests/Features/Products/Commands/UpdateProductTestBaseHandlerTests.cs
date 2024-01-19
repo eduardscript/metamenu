@@ -151,7 +151,7 @@ public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
 
         updatedProduct.Should().BeEquivalentTo(
             updatedProductResponse,
-            options => options.Excluding(p => p.Code));
+            options => options.Excluding(p => p!.Code));
 
         if (oldProduct.Name != updatedProduct.Name)
         {

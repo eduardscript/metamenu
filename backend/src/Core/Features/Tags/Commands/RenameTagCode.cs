@@ -32,9 +32,7 @@ public static class RenameTagCode
         public string NewTagCode { get; set; } = newTagCode;
     }
 
-    public class Handler(
-        ITenantRepository tenantRepository,
-        ITagRepository tagRepository) : IRequestHandler<Command>
+    public class Handler(ITagRepository tagRepository) : IRequestHandler<Command>
     {
         public Task Handle(Command request, CancellationToken cancellationToken)
         {

@@ -22,7 +22,7 @@ public class RenameTagCodeTests : IntegrationTestBase
 
         await _tagRepository.CreateAsync(oldTag, default);
 
-        var handler = new RenameTagCode.Handler(_tenantRepository, _tagRepository);
+        var handler = new RenameTagCode.Handler(_tagRepository);
 
         // Act
         await handler.Handle(

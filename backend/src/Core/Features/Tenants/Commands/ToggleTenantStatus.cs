@@ -23,7 +23,7 @@ public static class ToggleTenantStatus
     {
         public async Task<TenantStatusDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var updateDone = await tenantRepository.Update(request.Code, request.IsEnabled, cancellationToken);
+            var updateDone = await tenantRepository.UpdateAsync(request.Code, new UpdateTenantProperties(isEnabled: request.IsEnabled), cancellationToken);
 
             return new TenantStatusDto(
                 updateDone);

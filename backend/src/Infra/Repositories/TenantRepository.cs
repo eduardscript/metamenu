@@ -38,11 +38,13 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
             .ContinueWith(t => t.Result.AsEnumerable(), cancellationToken);
     }
 
-    public Task<Tenant?> GetAsync(int tenantCode, CancellationToken cancellationToken)
+    public async Task<Tenant?> GetAsync(int tenantCode, CancellationToken cancellationToken)
     {
-        return collection
+        var existingTenant = await collection
             .Find(t => t.Code == tenantCode)
             .FirstOrDefaultAsync(cancellationToken);
+        
+        return existingTenant;
     }
 
     public Task<bool> ExistsAsync(int tenantCode, CancellationToken cancellationToken)
@@ -52,20 +54,33 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
             .AnyAsync(cancellationToken);
     }
 
+    public async Task<bool> UpdateAsync(int tenantCode, UpdateTenantProperties updateTenantProperties, CancellationToken cancellationToken)
+    {
+        var updateDefinition = Builders<Tenant>.Update;
+        var updates = new List<UpdateDefinition<Tenant>>();
+
+        if (updateTenantProperties.Name is not null)
+        {
+            updates.Add(updateDefinition.Set(t => t.Name, updateTenantProperties.Name));
+        }
+        
+        if (updateTenantProperties.IsEnabled is not null)
+        {
+            updates.Add(updateDefinition.Set(t => t.IsEnabled, updateTenantProperties.IsEnabled));
+        }
+        
+        var result = await collection.UpdateOneAsync(
+            t => t.Code == tenantCode,
+            updateDefinition.Combine(updates),
+            cancellationToken: cancellationToken);
+        
+        return result.ModifiedCount > 0;
+    }
+    
     public Task<bool> DeleteAsync(int tenantCode, CancellationToken cancellationToken)
     {
         return collection
             .DeleteOneAsync(t => t.Code == tenantCode, cancellationToken)
             .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
-    }
-
-    public Task<bool> Update(int tenantCode, bool status, CancellationToken cancellationToken)
-    {
-        var updateDefinition = Builders<Tenant>.Update
-            .Set(t => t.IsEnabled, status);
-        
-        return collection
-            .UpdateOneAsync(t => t.Code == tenantCode, updateDefinition, cancellationToken: cancellationToken)
-            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
     }
 }

@@ -26,7 +26,7 @@ public class CreateProductTests : IntegrationTestBase
             .With(p => p.TagCodes, tags.Select(t => t.Code))
             .Create();
 
-        var handler = new CreateProduct.Handler(TagRepository, ProductRepository);
+        var handler = new CreateProduct.Handler(ProductRepository);
 
         // Act
         await handler.Handle(
