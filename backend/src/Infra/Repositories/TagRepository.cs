@@ -38,12 +38,12 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .AnyAsync(cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(int tenantCode, string tagCode, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {
         return collection
             .Find(
                 t => t.TenantCode == tenantCode &&
-                     t.Code == tagCode)
+                     t.TagCategoryCode == tagCategoryCode)
             .AnyAsync(cancellationToken);
     }
 

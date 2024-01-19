@@ -6,8 +6,7 @@ public static class GetAllTagsByTagCategoryCode
 {
     public class Validator : AbstractValidator<Query>
     {
-        public Validator(ITenantRepository tenantRepository, ITagCategoryRepository tagCategoryRepository,
-            ITagRepository tagRepository)
+        public Validator(ITenantRepository tenantRepository, ITagCategoryRepository tagCategoryRepository)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
             ClassLevelCascadeMode = CascadeMode.Stop;
@@ -17,9 +16,6 @@ public static class GetAllTagsByTagCategoryCode
 
             RuleFor(c => c.TagCategoryCode)
                 .ExistsTagCategory(tagCategoryRepository);
-
-            RuleFor(c => c.TagCategoryCode)
-                .ExistsTag(tagRepository);
         }
     }
 

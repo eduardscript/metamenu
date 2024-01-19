@@ -46,6 +46,8 @@ const Tags: React.FC = () => {
   const [tags, setTags] = useState<{ code: string }[]>(null!);
   const handleSelectedTenantChange = (selectedTenant: Tenant | null) => {
     setSelectedTenant(selectedTenant);
+    setSelectedTagCategory(null!);
+    setSelectedTag(null!);
 
     getAllTagCategories(selectedTenant!.code).then((tagCategories) => {
       setTagCategories(tagCategories);

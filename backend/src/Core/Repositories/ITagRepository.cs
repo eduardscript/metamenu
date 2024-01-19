@@ -13,10 +13,12 @@ public interface ITagRepository
 
     public Task<IEnumerable<Tag>> GetAllAsync(TagFilter tagFilter, CancellationToken cancellationToken);
 
-    public Task<bool> ExistsAsync(int tenantCode, IEnumerable<string> tagCodes,
+    public Task<bool> ExistsAsync(
+        int tenantCode, 
+        IEnumerable<string> tagCodes,
         CancellationToken cancellationToken);
 
-    public Task<bool> ExistsAsync(int tenantCode, string tagCode, CancellationToken cancellationToken);
+    public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
 
     public Task RenameAsync(int tenantCode, string oldTagCode, string newTagCode, CancellationToken cancellationToken);
 

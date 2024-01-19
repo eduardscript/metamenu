@@ -28,7 +28,8 @@ public class CreateTagTests : BaseIntegrationTest
         await handler.Handle(new CreateTag.Command(tag.TenantCode, tag.TagCategoryCode, tag.Code), default);
 
         // Assert
-        var tagExists = await TagRepository.ExistsAsync(tag.TenantCode, tag.Code, default);
+        // TODO:EC Fix this test to use just the tagCode instead of the tagCodes array
+        var tagExists = await TagRepository.ExistsAsync(tag.TenantCode, new [] { tag.Code } , default);
         tagExists.Should().BeTrue();
     }
 }
