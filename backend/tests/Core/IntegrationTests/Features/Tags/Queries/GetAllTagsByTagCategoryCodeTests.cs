@@ -4,7 +4,7 @@ using Core.Features.Tags.Shared;
 namespace IntegrationTests.Features.Tags.Queries;
 
 [TestClass]
-public class GetAllTagsTests : IntegrationTestBase
+public class GetAllTagsByTagCategoryCodeTests : IntegrationTestBase
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
 
@@ -13,9 +13,11 @@ public class GetAllTagsTests : IntegrationTestBase
     {
         // Arrange
         var tenantCode = Fixture.Create<int>();
+        var tagCategoryCode = Fixture.Create<string>();
 
         var tagsToInsert = Fixture.Build<Tag>()
             .With(tag => tag.TenantCode, tenantCode)
+            .With(tag => tag.TagCategoryCode, tagCategoryCode)
             .CreateMany()
             .ToList();
 
@@ -24,10 +26,10 @@ public class GetAllTagsTests : IntegrationTestBase
             await _tagRepository.CreateAsync(tagToInsert, default);
         }
 
-        var handler = new GetAllTags.Handler(_tagRepository);
+        var handler = new GetAllTagsByTagCategoryCode.Handler(_tagRepository);
 
         // Act
-        var tagsDto = await handler.Handle(new GetAllTags.Query(tenantCode), default);
+        var tagsDto = await handler.Handle(new GetAllTagsByTagCategoryCode.Query(tenantCode, tagCategoryCode), default);
 
         // Assert
         var tagsDtoList = tagsDto.ToList();
