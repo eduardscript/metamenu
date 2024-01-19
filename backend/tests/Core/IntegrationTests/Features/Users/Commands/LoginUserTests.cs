@@ -4,7 +4,7 @@ using Core.Services;
 namespace IntegrationTests.Features.Users.Commands;
 
 [TestClass]
-public class LoginUserTests : IntegrationTestBase
+public class LoginUserTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_ValidCredentials_LogsInUser()

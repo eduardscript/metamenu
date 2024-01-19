@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Products.Commands;
 
 [TestClass]
-public class UpdateProductTestBaseHandlerTests : IntegrationTestBase
+public class UpdateProductTestBaseHandlerTests : BaseIntegrationTest
 {
     private static Tenant _tenant = default!;
     private static List<Tag> _tags = default!;

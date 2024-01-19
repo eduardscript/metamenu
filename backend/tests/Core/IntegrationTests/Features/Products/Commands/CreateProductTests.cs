@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Products.Commands;
 
 [TestClass]
-public class CreateProductTests : IntegrationTestBase
+public class CreateProductTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_CreatesProductInDatabase()

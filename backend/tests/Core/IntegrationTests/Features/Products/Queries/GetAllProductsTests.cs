@@ -4,7 +4,7 @@ using Core.Features.Products.Shared;
 namespace IntegrationTests.Features.Products.Queries;
 
 [TestClass]
-public class GetAllProductsTests : IntegrationTestBase
+public class GetAllProductsTests : BaseIntegrationTest
 {
     private static readonly Random Random = new();
 

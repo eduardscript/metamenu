@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tenants.Commands;
 
 [TestClass]
-public class ToggleTenantStatusTests : IntegrationTestBase
+public class ToggleTenantStatusTests : BaseIntegrationTest
 {
     [TestMethod]
     [DataRow(false)]

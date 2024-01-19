@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.TagCategories.Commands;
 
 [TestClass]
-public class RenameTagCategoryCodeTests : IntegrationTestBase
+public class RenameTagCategoryCodeTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_RenamesTagCategoryInDatabase()

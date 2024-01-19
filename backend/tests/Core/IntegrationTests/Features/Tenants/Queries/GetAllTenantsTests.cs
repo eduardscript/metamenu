@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tenants.Queries;
 
 [TestClass]
-public class GetAllTenantsTests : IntegrationTestBase
+public class GetAllTenantsTests : BaseIntegrationTest
 {
     [TestInitialize]
     public void TestInitialize()

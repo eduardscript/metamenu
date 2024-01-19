@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tenants.Commands;
 
 [TestClass]
-public class DeleteTenantTests : IntegrationTestBase
+public class DeleteTenantTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_DeleteTenantInDatabase()

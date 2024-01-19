@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class DeleteTagTests : IntegrationTestBase
+public class DeleteTagTests : BaseIntegrationTest
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
 

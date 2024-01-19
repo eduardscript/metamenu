@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tenants.Commands;
 
 [TestClass]
-public class CreateTenantTests : IntegrationTestBase
+public class CreateTenantTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_CreatesTenantInDatabase()

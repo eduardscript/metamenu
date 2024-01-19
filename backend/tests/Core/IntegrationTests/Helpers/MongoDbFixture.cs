@@ -1,6 +1,6 @@
 ﻿namespace IntegrationTests.Helpers;
 
-public class MongoDbFixture : IntegrationTestBase
+public class MongoDbFixture : BaseIntegrationTest
 {
     public static List<Tenant> CreatedTenants { get; } = new();
     

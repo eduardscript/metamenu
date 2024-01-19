@@ -4,7 +4,7 @@ using Core.Features.TagCategories.Shared;
 namespace IntegrationTests.Features.TagCategories.Queries;
 
 [TestClass]
-public class GetAllTagCategoriesTests : IntegrationTestBase
+public class GetAllTagCategoriesTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_ReturnsAllTagCategoriesForTenant()

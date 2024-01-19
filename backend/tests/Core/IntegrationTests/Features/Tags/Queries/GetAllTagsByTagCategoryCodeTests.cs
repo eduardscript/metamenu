@@ -4,7 +4,7 @@ using Core.Features.Tags.Shared;
 namespace IntegrationTests.Features.Tags.Queries;
 
 [TestClass]
-public class GetAllTagsByTagCategoryCodeTests : IntegrationTestBase
+public class GetAllTagsByTagCategoryCodeTests : BaseIntegrationTest
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
 

@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class CreateTagTests : IntegrationTestBase
+public class CreateTagTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_CreatesTagInDatabase()

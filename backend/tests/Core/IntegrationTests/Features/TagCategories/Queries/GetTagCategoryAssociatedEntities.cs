@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.TagCategories.Queries;
 
 [TestClass]
-public class GetTagCategoryAssociatedEntitiesTests : IntegrationTestBase
+public class GetTagCategoryAssociatedEntitiesTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_ReturnsTagCategoryAssociatedEntitiesForTenant()

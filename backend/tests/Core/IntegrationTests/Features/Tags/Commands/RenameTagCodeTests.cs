@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class RenameTagCodeTests : IntegrationTestBase
+public class RenameTagCodeTests : BaseIntegrationTest
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
     private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();

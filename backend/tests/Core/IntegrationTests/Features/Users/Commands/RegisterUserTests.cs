@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Users.Commands;
 
 [TestClass]
-public class RegisterUserTests : IntegrationTestBase
+public class RegisterUserTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_ValidInput_CreatesUser()

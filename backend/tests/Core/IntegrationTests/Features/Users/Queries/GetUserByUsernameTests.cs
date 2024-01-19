@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Users.Queries;
 
 [TestClass]
-public class GetUserByUsernameTests : IntegrationTestBase
+public class GetUserByUsernameTests : BaseIntegrationTest
 {
     [TestMethod]
     public async Task Handle_ValidUsername_ReturnsUser()

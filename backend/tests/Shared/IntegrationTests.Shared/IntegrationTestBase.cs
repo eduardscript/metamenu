@@ -1,23 +1,26 @@
-﻿using Infra;
+﻿using System.Reflection;
+using AutoFixture;
+using Core.Repositories;
+using Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace IntegrationTests.Helpers;
+namespace Shared;
 
-[TestClass]
-public class IntegrationTestBase
+public abstract class BaseIntegrationTest
 {
     protected static ITenantRepository TenantRepository = default!;
     protected static ITagCategoryRepository TagCategoryRepository = default!;
     protected static ITagRepository TagRepository = default!;
     protected static IProductRepository ProductRepository = default!;
     protected static IUserRepository UserRepository = default!;
-    protected static readonly FakeTimeProvider TimeProvider = new();
+    public static readonly FakeTimeProvider TimeProvider = new();
 
-    public IntegrationTestBase()
+    protected BaseIntegrationTest()
     {
         ProductRepository = GetService<IProductRepository>();
         TagRepository = GetService<ITagRepository>();
@@ -31,19 +34,23 @@ public class IntegrationTestBase
     protected static Fixture Fixture { get; } = new();
 
     [AssemblyInitialize]
-    public static void Initialize(TestContext testContext)
+    public static void AssemblyInitialize(TestContext testContext)
     {
-        var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .Build();
+        var currentDirectory = Path.GetDirectoryName(typeof(BaseIntegrationTest).Assembly.Location)!;
+    
+        var appSettingsPath = Path.Combine(currentDirectory, "appsettings.json");
 
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile(appSettingsPath)
+            .Build();
+    
         _serviceProvider = new ServiceCollection()
             .AddInfra(configuration)
             .BuildServiceProvider();
     }
     
     [AssemblyCleanup]
-    public static Task DropAllMongoDbCollections()
+    public static Task AssemblyCleanup()
     {
         return OperateInDocumentsFromMongoDbCollections(OperationType.DropCollection);
     }
