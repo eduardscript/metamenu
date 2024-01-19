@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useState } from 'react';
 import Select from 'react-select';
 
@@ -10,11 +11,12 @@ type SelectOptionType = { label: string, value: number }
 interface TenantDropdownProps {
   tenants: Tenant[];
   onChange?: (selectedTenant: Tenant | null) => void;
+  className?: string;
 }
 
-const TenantDropdown: React.FC<TenantDropdownProps> = ({ tenants, onChange }) => {
+const TenantDropdown: React.FC<TenantDropdownProps> = ({ tenants, onChange, className }) => {
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
-  console.log(tenants);
+
   const options = tenants.map((tenant) => ({
     value: tenant.code,
     label: `${tenant.code} - ${tenant.name}`,
@@ -36,7 +38,8 @@ const TenantDropdown: React.FC<TenantDropdownProps> = ({ tenants, onChange }) =>
       value={selectedTenant ? { value: selectedTenant.code, label: selectedTenant.name } : null}
       onChange={handleChange}
       isSearchable
-      placeholder="Search tenants..."
+      placeholder="Please select a tenant"
+      className={clsx("mb-2", className)}
     />
   );
 };

@@ -54,4 +54,15 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
                 Builders<Tag>.Update.Set(t => t.Code, newTagCode),
                 cancellationToken: cancellationToken);
     }
+    
+    public Task<bool> DeleteAsync(int requestTenantCode, string requestTagCategoryCode, string requestTagCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .DeleteOneAsync(
+                t => t.TenantCode == requestTenantCode &&
+                     t.TagCategoryCode == requestTagCategoryCode &&
+                     t.Code == requestTagCode,
+                cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
+    }
 }

@@ -16,4 +16,12 @@ public class TagMutations
 
         return await mediator.Send(new GetAllTags.Query(command.TenantCode), cancellationToken);
     }
+    
+    public Task<DeleteTag.TagDeletedDto> DeleteTag(
+        [Service] IMediator mediator,
+        DeleteTag.Command command,
+        CancellationToken cancellationToken)
+    {
+        return mediator.Send(command, cancellationToken);
+    }
 }

@@ -13,4 +13,12 @@ public class TagQueries
     {
         return mediator.Send(query, cancellationToken);
     }
+    
+    public Task<IEnumerable<TagDto>> GetAllTagsByTagCategoryCodeAsync(
+        [Service] IMediator mediator,
+        GetAllTagsByTagCategoryCode.Query query,
+        CancellationToken cancellationToken)
+    {
+        return mediator.Send(query, cancellationToken);
+    }
 }

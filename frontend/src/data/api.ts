@@ -16,7 +16,8 @@ export const getTenants = async () => {
                 query: GET_TENANTS,
             },
         );
-        return response.data;
+
+        return response.data.data.allTenants;
     } catch (error) {
         console.error('Error fetching tenants:', error);
         throw error;
@@ -143,6 +144,114 @@ export const createTagCategory = async (tenantCode: number, code: string) => {
         `,
             variables: {
                 tenantCode,
+                code
+            },
+        },
+    );
+
+    return response.data.data;
+}
+
+export const getAllTagCategories = async (tenantCode: number) => {
+    const response = await api.post(
+        '',
+        {
+            query: `
+            query($tenantCode: Int!) {
+                allTagCategories(
+                    query: {
+                        tenantCode: $tenantCode
+                    }
+                ) {
+                    code
+                }
+            }
+        `,
+            variables: {
+                tenantCode
+            },
+        },
+    );
+
+    console.log(response.data.data.allTagCategories);
+    
+    return response.data.data.allTagCategories;
+}
+
+export const getAllTagsByTagCategoryCode = async (tenantCode: number, tagCategoryCode: string) => {
+    const response = await api.post(
+        '',
+        {
+            query: `
+            query($tenantCode: Int!, $tagCategoryCode: String!) {
+                allTagsByTagCategoryCode(
+                    query: {
+                        tenantCode: $tenantCode,
+                        tagCategoryCode: $tagCategoryCode
+                    }
+                ) {
+                    code
+                }
+            }
+        `,
+            variables: {
+                tenantCode,
+                tagCategoryCode
+            },
+        },
+    );
+
+    return response.data.data.allTagsByTagCategoryCode;
+}
+
+export const createTag = async (tenantCode: number, tagCategoryCode: string, code: string) => {
+    const response = await api.post(
+        '',
+        {
+            query: `
+            mutation($tenantCode: Int!, $tagCategoryCode: String!,$code: String!) {
+                createTag(
+                    command: {
+                        tenantCode: $tenantCode,
+                        tagCategoryCode: $tagCategoryCode,
+                        code: $code
+                    }
+                ) {
+                    code
+                }
+            }
+        `,
+            variables: {
+                tenantCode,
+                tagCategoryCode,
+                code
+            },
+        },
+    );
+
+    return response.data.data;
+}
+
+export const deleteTag = async (tenantCode: number, tagCategoryCode: string, code: string) => {
+    const response = await api.post(
+        '',
+        {
+            query: `
+            mutation($tenantCode: Int!, $tagCategoryCode: String!,$code: String!) {
+                deleteTag(
+                    command: {
+                        tenantCode: $tenantCode,
+                        tagCategoryCode: $tagCategoryCode,
+                        code: $code
+                    }
+                ) {
+                    isDeleted
+                }
+            }
+        `,
+            variables: {
+                tenantCode,
+                tagCategoryCode,
                 code
             },
         },

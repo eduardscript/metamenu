@@ -8,23 +8,22 @@ import Modal from "@/app/ui/Modal";
 import NewTagCategoryForm from "./ui/NewTagCategoryForm";
 import { createTagCategory, getTagCategories, getTenants } from "@/data/api";
 
-// const tenantsData = [
-//   { code: 1000, name: 'Tasca do Spezas' },
-//   { code: 2000, name: 'Restaurante Malmequer' },
-// ];
-
-// const tagCategoriesData = [
-//   { code: "Ingredients" },
-//   { code: "MenuKind" },
-// ];
+type Tenant = {
+  code: number;
+  name: string;
+};
 
 const TagCategories: React.FC = () => {
-  const [tenantsData, setTenantsData] = useState<any[]>([]);
+  const [tenantsData, setTenantsData] = useState<Tenant[]>([]);
   const [tagCategoriesData, setTagCategoriesData] = useState<any[]>([]);
 
   const fetchData = async () => {
-    const { data } = await getTenants();
-    setTenantsData(data.allTenants);
+    try {
+      const tenants = await getTenants();
+      setTenantsData(tenants);
+    } catch (error) {
+      console.error("Error fetching tenants:", error);
+    }
   };
 
   useEffect(() => {
@@ -60,7 +59,7 @@ const TagCategories: React.FC = () => {
   }
 
   return (
-    <DashboardLayout>
+    <>
       <h2 className="text-2xl font-bold mb-4">Tag Categories</h2>
       <TenantDropdown tenants={tenantsData} onChange={handleTenantChange} />
       {isModalOpen && (
@@ -79,7 +78,7 @@ const TagCategories: React.FC = () => {
             )) : <p>This tenant doesn't have tag categories.</p>}
           </div>
         </>}
-    </DashboardLayout>
+    </>
   );
 };
 

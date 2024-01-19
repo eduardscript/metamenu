@@ -12,8 +12,8 @@ const Tenants: React.FC = () => {
 
   const fetchData = async (page: number) => {
     try {
-      const { data } = await getTenants();
-      setTenantsData(data.allTenants);
+      const tenants = await getTenants();
+      setTenantsData(tenants);
     } catch (error) {
     }
   };
@@ -53,14 +53,14 @@ const Tenants: React.FC = () => {
   }, [currentPage]);
 
   return (
-    <DashboardLayout>
+    <>
       <h2 className="text-2xl font-bold mb-4">Tenants</h2>
       <TenantsTable
         tenants={tenantsData}
         onDelete={handleDelete}
         onDeactivate={handleDeactivate}
         onCreate={handleCreate} />
-    </DashboardLayout>
+    </>
   );
 };
 

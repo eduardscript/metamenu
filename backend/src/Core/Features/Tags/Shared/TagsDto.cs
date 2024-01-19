@@ -3,7 +3,7 @@
 public record TagDto(
     int TenantCode,
     string TagCategoryCode,
-    string TagCode);
+    string Code);
 
 public static class TagsDtoExtensions
 {
