@@ -1,9 +1,9 @@
 ﻿using Core.Features.Tags.Commands;
 
-namespace UnitTests.Features.Tags.Commands.RenameTagCodeTests;
+namespace UnitTests.Features.Tags.Commands.DeleteTagTests;
 
 [TestClass]
-public class Validator : TestBaseValidator<RenameTagCode.Validator, RenameTagCode.Command>
+public class Validator : TestBaseValidator<DeleteTag.Validator, DeleteTag.Command>
 {
     [TestMethod]
     [DataRow(0)]
@@ -12,11 +12,12 @@ public class Validator : TestBaseValidator<RenameTagCode.Validator, RenameTagCod
     {
         // Arrange
         Command.TenantCode = code;
+
         ExpectedErrorMessage =
             CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage(nameof(Command.TenantCode)
                 .Humanize(LetterCasing.Title));
     }
-
+    
     [TestMethod]
     public void TenantCode_NotExistingTenant_FailsValidation()
     {
@@ -25,57 +26,55 @@ public class Validator : TestBaseValidator<RenameTagCode.Validator, RenameTagCod
         ExpectedErrorMessage =
             CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), Command.TenantCode);
     }
+    
+    [TestMethod]
+    [DataRow("")]
+    [DataRow(" ")]
+    [DataRow(null)]
+    public void TagCategoryCode_Empty_FailsValidation(string tagCategoryCode)
+    {
+        // Arrange
+        TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
+
+        Command.TagCategoryCode = tagCategoryCode;
+        ExpectedErrorMessage =
+            CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.TagCategoryCode)
+                .Humanize(LetterCasing.Title));
+    }
+    
+    [TestMethod]
+    public void TagCategoryCode_NotFoundTagCategory_FailsValidation()
+    {
+        // Arrange
+        TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
+        TagCategoryRepositoryMock.ExistsAsync(Command.TenantCode, Command.Code, default).Returns(true);
+
+        ExpectedErrorMessage =
+            CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), Command.TagCategoryCode);
+    }
 
     [TestMethod]
     [DataRow("")]
     [DataRow(" ")]
     [DataRow(null)]
-    public void OldTagCode_Empty_FailsValidation(string oldTagCode)
+    public void Code_Empty_FailsValidation(string code)
     {
         // Arrange
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
+        TagCategoryRepositoryMock.ExistsAsync(Command.TenantCode, Command.TagCategoryCode, default).Returns(true);
 
-        Command.OldTagCode = oldTagCode;
-        ExpectedErrorMessage =
-            CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.OldTagCode)
-                .Humanize(LetterCasing.Title));
+        Command.Code = code;
+        ExpectedErrorMessage = CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.Code));
     }
-
+    
     [TestMethod]
-    public void OldTagCode_NotFoundTag_FailsValidation()
+    public void Code_NotFoundTag_FailsValidation()
     {
         // Arrange
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
+        TagCategoryRepositoryMock.ExistsAsync(Command.TenantCode, Command.TagCategoryCode, default).Returns(true);
 
         ExpectedErrorMessage =
-            CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), Command.OldTagCode);
-    }
-
-    [TestMethod]
-    [DataRow("")]
-    [DataRow(" ")]
-    [DataRow(null)]
-    public void NewTagCode_Empty_FailsValidation(string newTagCode)
-    {
-        // Arrange
-        TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.OldTagCode, default).Returns(true);
-
-        Command.NewTagCode = newTagCode;
-        ExpectedErrorMessage =
-            CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.NewTagCode)
-                .Humanize(LetterCasing.Title));
-    }
-
-    [TestMethod]
-    public void NewTagCode_AlreadyExistsTag_FailsValidation()
-    {
-        // Arrange
-        TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.OldTagCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.NewTagCode, default).Returns(true);
-
-        ExpectedErrorMessage =
-            CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), Command.NewTagCode);
+            CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), Command.Code);
     }
 }

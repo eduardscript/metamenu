@@ -9,7 +9,7 @@ public class RenameTagCodeTests : IntegrationTestBase
     private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
 
     [TestMethod]
-    public async Task Handle_RenamesTagCategoryInDatabase()
+    public async Task Handle_RenamesTagCodeInDatabase()
     {
         // Arrange
         var tenant = await MongoDbFixture.CreateTenantAsync();
