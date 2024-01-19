@@ -4,7 +4,7 @@ public interface ITagCategoryRepository
 {
     public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode, CancellationToken cancellationToken);
 
-    public Task CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken);
+    public Task<TagCategory> CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken);
 
     Task<IEnumerable<TagCategory>> GetAllAsync(int tenantCode, CancellationToken cancellationToken);
     

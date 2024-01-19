@@ -17,9 +17,11 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
                 cancellationToken: cancellationToken);
     }
 
-    public Task CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken)
+    public async Task<TagCategory> CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken)
     {
-        return collection.InsertOneAsync(tagCategory, cancellationToken: cancellationToken);
+        await collection.InsertOneAsync(tagCategory, cancellationToken: cancellationToken);
+        
+        return tagCategory;
     }
 
     public Task<IEnumerable<TagCategory>> GetAllAsync(int tenantCode, CancellationToken cancellationToken)

@@ -1,4 +1,5 @@
 ﻿using Core.Features.TagCategories.Queries;
+using Shared.Extensions;
 
 namespace IntegrationTests.Features.TagCategories.Queries;
 
@@ -29,7 +30,7 @@ public class GetTagCategoryAssociatedEntitiesTests : BaseIntegrationTest
         
         var products = Fixture.Build<Product>()
             .With(p => p.TenantCode, tenantCode)
-            .With(p => p.TagCodes, tags.GetRandom(5).Select(t => t.Code).ToArray())
+            .With(p => p.TagCodes, tags.TakeRandom(5).Select(t => t.Code).ToArray())
             .CreateMany(10)
             .ToArray();
 
