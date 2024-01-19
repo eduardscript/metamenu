@@ -68,7 +68,7 @@ public class Validator : TestBaseValidator<CreateProduct.Validator, CreateProduc
             .ToList();
 
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
-        TagRepositoryMock.GetAll(Arg.Is<ITagRepository.TagFilter>(f => f.TenantCode == Command.TenantCode), default)
+        TagRepositoryMock.GetAllAsync(Arg.Is<TagFilter>(f => f.TenantCode == Command.TenantCode), default)
             .Returns(tags);
 
         Command.TagCodes = new List<string>(tags.Select(t => t.Code))

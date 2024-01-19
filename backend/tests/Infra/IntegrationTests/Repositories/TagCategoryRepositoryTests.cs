@@ -108,7 +108,6 @@ public class TagCategoryRepositoryTests : BaseIntegrationTest
     
     #endregion
     
-    
     #region RenameAsync
     
     [TestMethod]

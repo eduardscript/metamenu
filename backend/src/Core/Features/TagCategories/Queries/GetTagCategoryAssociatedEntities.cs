@@ -41,8 +41,8 @@ public static class GetTagCategoryAssociatedEntities
         public async Task<IEnumerable<TagCategoryAssociatedEntitiesDto>> Handle(Query request,
             CancellationToken cancellationToken)
         {
-            var tags = await tagRepository.GetAll(
-                new ITagRepository.TagFilter(request.TenantCode, request.TagCategoryCode),
+            var tags = await tagRepository.GetAllAsync(
+                new TagFilter(request.TenantCode, request.TagCategoryCode),
                 cancellationToken);
 
             var tagCodes = tags.Select(t => t.Code).ToArray();

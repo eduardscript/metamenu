@@ -34,8 +34,8 @@ public static class GetAllTagsByTagCategoryCode
     {
         public async Task<IEnumerable<TagDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var tags = await tagRepository.GetAll(
-                new ITagRepository.TagFilter(request.TenantCode, request.TagCategoryCode), cancellationToken);
+            var tags = await tagRepository.GetAllAsync(
+                new TagFilter(request.TenantCode, request.TagCategoryCode), cancellationToken);
 
             return tags.ToDto();
         }

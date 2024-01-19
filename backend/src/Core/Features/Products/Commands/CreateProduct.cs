@@ -28,7 +28,7 @@ public static class CreateProduct
                     var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
 
                     var existingTags =
-                        await tagRepository.GetAll(new ITagRepository.TagFilter(tenantCode), token);
+                        await tagRepository.GetAllAsync(new TagFilter(tenantCode), token);
 
                     var invalidTagCodes = command.TagCodes.Except(existingTags.Select(t => t.Code)).ToList();
 

@@ -6,12 +6,14 @@ namespace Infra.Repositories;
 
 public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
 {
-    public Task CreateAsync(Tag tag, CancellationToken cancellationToken)
+    public async Task<Tag> CreateAsync(Tag tag, CancellationToken cancellationToken)
     {
-        return collection.InsertOneAsync(tag, cancellationToken: cancellationToken);
+        await collection.InsertOneAsync(tag, cancellationToken: cancellationToken);
+
+        return tag;
     }
 
-    public Task<IEnumerable<Tag>> GetAll(ITagRepository.TagFilter tagFilter, CancellationToken cancellationToken)
+    public Task<IEnumerable<Tag>> GetAllAsync(TagFilter tagFilter, CancellationToken cancellationToken)
     {
         var filter = Builders<Tag>.Filter.Eq(t => t.TenantCode, tagFilter.TenantCode);
 

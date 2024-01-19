@@ -6,21 +6,10 @@ namespace Infra.Repositories;
 
 public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : ITagCategoryRepository
 {
-    public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode,
-        CancellationToken cancellationToken)
-    {
-        return collection
-            .UpdateOneAsync(
-                tc => tc.TenantCode == tenantCode &&
-                      tc.Code == oldTagCategoryCode,
-                Builders<TagCategory>.Update.Set(t => t.Code, newCategoryCode),
-                cancellationToken: cancellationToken);
-    }
-
     public async Task<TagCategory> CreateAsync(TagCategory tagCategory, CancellationToken cancellationToken)
     {
         await collection.InsertOneAsync(tagCategory, cancellationToken: cancellationToken);
-        
+
         return tagCategory;
     }
 
@@ -32,7 +21,8 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
             .ContinueWith(tc => tc.Result.AsEnumerable(), cancellationToken);
     }
 
-    public async Task<TagCategory?> GetByAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
+    public async Task<TagCategory?> GetByAsync(int tenantCode, string tagCategoryCode,
+        CancellationToken cancellationToken)
     {
         return await collection
             .Find(tc =>
@@ -41,7 +31,6 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-
     public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
     {
         return collection
@@ -49,5 +38,16 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
                 tc.TenantCode == tenantCode &&
                 tc.Code == tagCategoryCode)
             .AnyAsync(cancellationToken);
+    }
+
+    public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode,
+        CancellationToken cancellationToken)
+    {
+        return collection
+            .UpdateOneAsync(
+                tc => tc.TenantCode == tenantCode &&
+                      tc.Code == oldTagCategoryCode,
+                Builders<TagCategory>.Update.Set(t => t.Code, newCategoryCode),
+                cancellationToken: cancellationToken);
     }
 }
