@@ -58,7 +58,20 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
                 }
             }));
         }
-
+        
+        if (productFilter.TagCode is not null)
+        {
+            pipeline.Add(new("$match", new BsonDocument
+            {
+                {
+                    nameof(Product.TagCodes), new BsonDocument
+                    {
+                        { "$in", new BsonArray(new[] { productFilter.TagCode }) }
+                    }
+                }
+            }));
+        }
+        
         pipeline.Add(new("$project", new BsonDocument
         {
             { "_id", 1 },

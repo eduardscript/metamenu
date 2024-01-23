@@ -1,10 +1,14 @@
 ﻿namespace Core.Repositories;
 
-public class TagFilter(int tenantCode, string? tagCategoryCode = null)
+public class TagFilter(int tenantCode)
 {
     public int TenantCode { get; set; } = tenantCode;
 
-    public string? TagCategoryCode { get; set; } = tagCategoryCode;
+    public string? TagCategoryCode { get; set; }
+    
+    public string? Code { get; set; }
+
+    public IEnumerable<string>? Codes { get; set; }
 }
 
 public interface ITagRepository
@@ -14,11 +18,8 @@ public interface ITagRepository
     public Task<IEnumerable<Tag>> GetAllAsync(TagFilter tagFilter, CancellationToken cancellationToken);
 
     public Task<bool> ExistsAsync(
-        int tenantCode, 
-        IEnumerable<string> tagCodes,
+        TagFilter tagFilter,
         CancellationToken cancellationToken);
-
-    public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
 
     public Task RenameAsync(int tenantCode, string oldTagCode, string newTagCode, CancellationToken cancellationToken);
 

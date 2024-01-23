@@ -50,7 +50,11 @@ public class TagRepositoryTests : BaseIntegrationTest
             .ToList();
 
         // Act
-        var filter = new TagFilter(tenantCode, tagCategoryCode);
+        var filter = new TagFilter(tenantCode)
+        {
+            TagCategoryCode = tagCategoryCode
+        };
+
         var existingTags = await TagRepository.GetAllAsync(filter, default);
 
         // Assert

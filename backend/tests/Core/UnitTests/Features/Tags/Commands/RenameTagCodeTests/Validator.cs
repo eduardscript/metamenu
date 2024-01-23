@@ -59,7 +59,7 @@ public class Validator : TestBaseValidator<RenameTagCode.Validator, RenameTagCod
     {
         // Arrange
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.OldTagCode, default).Returns(true);
+        TagRepositoryMock.ExistsAsync(Arg.Any<TagFilter>(), default).Returns(true);
 
         Command.NewTagCode = newTagCode;
         ExpectedErrorMessage =
@@ -72,8 +72,7 @@ public class Validator : TestBaseValidator<RenameTagCode.Validator, RenameTagCod
     {
         // Arrange
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.OldTagCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.NewTagCode, default).Returns(true);
+        TagRepositoryMock.ExistsAsync(Arg.Any<TagFilter>(), default).Returns(true);
 
         ExpectedErrorMessage =
             CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), Command.NewTagCode);

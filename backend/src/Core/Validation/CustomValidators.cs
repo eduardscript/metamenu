@@ -35,18 +35,18 @@ public static class CustomValidatorsMessages
 
 public static class EntitiesCustomValidators
 {
-    
     public static IRuleBuilderOptions<T, int> ExistsTenant<T>(
         this IRuleBuilder<T, int> ruleBuilder, ITenantRepository tenantRepository)
     {
         return ruleBuilder
             .GreaterThanZeroAndRequired()
             .MustAsync(async (code, token) => await tenantRepository.ExistsAsync(code, token))
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), code));
+            .WithMessage((_, code) =>
+                CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tenant), nameof(Tenant.Code), code));
     }
-    
+
     public static IRuleBuilderOptions<T, string> AlreadyExistsTagCategory<T>(
-        this IRuleBuilder<T, string> ruleBuilder, 
+        this IRuleBuilder<T, string> ruleBuilder,
         ITagCategoryRepository tagCategoryRepository)
     {
         return ruleBuilder
@@ -63,11 +63,13 @@ public static class EntitiesCustomValidators
 
                 return !await tagCategoryRepository.ExistsAsync(tenantCode, code, token);
             })
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), code));
+            .WithMessage((_, code) =>
+                CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(TagCategory).Humanize(LetterCasing.Title),
+                    nameof(TagCategory.Code), code));
     }
-    
+
     public static IRuleBuilderOptions<T, string> AlreadyExistsTag<T>(
-        this IRuleBuilder<T, string> ruleBuilder, 
+        this IRuleBuilder<T, string> ruleBuilder,
         ITagRepository tagRepository)
     {
         return ruleBuilder
@@ -82,13 +84,17 @@ public static class EntitiesCustomValidators
 
                 var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
 
-                return !await tagRepository.ExistsAsync(tenantCode, code, token);
+                return !await tagRepository.ExistsAsync(new(tenantCode)
+                {
+                    Code = code
+                }, token);
             })
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), code));
+            .WithMessage((_, code) =>
+                CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), code));
     }
-    
+
     public static IRuleBuilderOptions<T, string> ExistsTagCategory<T>(
-        this IRuleBuilder<T, string> ruleBuilder, 
+        this IRuleBuilder<T, string> ruleBuilder,
         ITagCategoryRepository tagCategoryRepository)
     {
         return ruleBuilder
@@ -105,11 +111,13 @@ public static class EntitiesCustomValidators
 
                 return await tagCategoryRepository.ExistsAsync(tenantCode, code, token);
             })
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory).Humanize(LetterCasing.Title), nameof(TagCategory.Code), code));
+            .WithMessage((_, code) =>
+                CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory).Humanize(LetterCasing.Title),
+                    nameof(TagCategory.Code), code));
     }
 
     public static IRuleBuilderOptions<T, string> ExistsTag<T>(
-        this IRuleBuilder<T, string> ruleBuilder, 
+        this IRuleBuilder<T, string> ruleBuilder,
         ITagRepository tagRepository)
     {
         return ruleBuilder
@@ -124,9 +132,13 @@ public static class EntitiesCustomValidators
 
                 var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
 
-                return await tagRepository.ExistsAsync(tenantCode, code, token);
+                return await tagRepository.ExistsAsync(new(tenantCode)
+                {
+                    Code = code
+                }, token);
             })
-            .WithMessage((_, code) => CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), code));
+            .WithMessage((_, code) =>
+                CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), code));
     }
 }
 
@@ -139,7 +151,7 @@ public static class CustomValidators
             .GreaterThan(0)
             .WithMessage(CustomValidatorsMessages.GreaterThanZeroAndRequiredMessage("{PropertyName}"));
     }
-    
+
     public static IRuleBuilderOptions<T, decimal> GreaterThanZeroAndRequired<T>(
         this IRuleBuilder<T, decimal> ruleBuilder)
     {

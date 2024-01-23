@@ -10,7 +10,7 @@ public static class GetAllTags
     {
         public async Task<IEnumerable<TagDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var tags = await tagRepository.GetAllAsync(new TagFilter(request.TenantCode), cancellationToken);
+            var tags = await tagRepository.GetAllAsync(new(request.TenantCode), cancellationToken);
 
             return tags.ToDto();
         }

@@ -50,7 +50,10 @@ public class UpdateTagCodesStrategy(ITagRepository tagRepository) : IUpdateProdu
         CancellationToken cancellationToken)
     {
         var existingTagCodes =
-            await tagRepository.ExistsAsync(product.TenantCode, command.TagCodes!, cancellationToken);
+            await tagRepository.ExistsAsync(new(product.TenantCode)
+            {
+                Codes = command.TagCodes!
+            }, cancellationToken);
 
         if (!existingTagCodes)
         {

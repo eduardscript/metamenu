@@ -30,8 +30,10 @@ public class DeleteTagTests : BaseIntegrationTest
         tagDeletedDto.IsDeleted.Should().BeTrue();
         
         var deletedTag = await _tagRepository.ExistsAsync(
-            tenant.Code,
-            tagToInsert.Code,
+            new(tenant.Code)
+            {
+                Code = tagToInsert.Code
+            },
             default);
 
         deletedTag.Should().BeFalse();

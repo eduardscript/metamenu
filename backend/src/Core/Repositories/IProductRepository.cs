@@ -1,27 +1,12 @@
 ﻿namespace Core.Repositories;
 
-public class ProductFilter
+public class ProductFilter(int tenantCode)
 {
-    public ProductFilter(int tenantCode)
-    {
-        TenantCode = tenantCode;
-    }
+    public int TenantCode { get; init; } = tenantCode;
 
-    public ProductFilter(int tenantCode, IEnumerable<string>? tagCodes = null)
-    {
-        TenantCode = tenantCode;
-        TagCodes = tagCodes;
-    }
+    public IEnumerable<string>? TagCodes { get; init; }
 
-    public ProductFilter(int tenantCode, string? tagCode = null)
-    {
-        TenantCode = tenantCode;
-        TagCodes = tagCode is null ? null : new[] { tagCode };
-    }
-
-    public int TenantCode { get; init; }
-
-    public IEnumerable<string>? TagCodes { get; init; } = default!;
+    public string? TagCode { get; set; }
 }
 
 public interface IProductRepository

@@ -73,7 +73,7 @@ public class Validator : TestBaseValidator<CreateTag.Validator, CreateTag.Comman
         // Arrange
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
         TagCategoryRepositoryMock.ExistsAsync(Command.TenantCode, Command.TagCategoryCode, default).Returns(true);
-        TagRepositoryMock.ExistsAsync(Command.TenantCode, Command.Code, default).Returns(true);
+        TagRepositoryMock.ExistsAsync(Arg.Any<TagFilter>(), default).Returns(true);
 
         ExpectedErrorMessage =
             CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), Command.Code);

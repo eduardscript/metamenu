@@ -15,15 +15,8 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
 
     public Task<IEnumerable<Tag>> GetAllAsync(TagFilter tagFilter, CancellationToken cancellationToken)
     {
-        var filter = Builders<Tag>.Filter.Eq(t => t.TenantCode, tagFilter.TenantCode);
-
-        if (tagFilter.TagCategoryCode is not null)
-        {
-            filter &= Builders<Tag>.Filter.Eq(t => t.TagCategoryCode, tagFilter.TagCategoryCode);
-        }
-
         return collection
-            .Find(filter)
+            .Find(BuildFilter(tagFilter))
             .ToListAsync(cancellationToken)
             .ContinueWith(tags => tags.Result.AsEnumerable(), cancellationToken);
     }
@@ -38,12 +31,10 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .AnyAsync(cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(TagFilter tagFilter, CancellationToken cancellationToken)
     {
         return collection
-            .Find(
-                t => t.TenantCode == tenantCode &&
-                     t.TagCategoryCode == tagCategoryCode)
+            .Find(BuildFilter(tagFilter))
             .AnyAsync(cancellationToken);
     }
 
@@ -66,5 +57,27 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
                      t.Code == requestTagCode,
                 cancellationToken: cancellationToken)
             .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
+    }
+
+    private FilterDefinition<Tag> BuildFilter(TagFilter tagFilter)
+    {
+        var filter = Builders<Tag>.Filter.Eq(t => t.TenantCode, tagFilter.TenantCode);
+
+        if (tagFilter.TagCategoryCode is not null)
+        {
+            filter &= Builders<Tag>.Filter.Eq(t => t.TagCategoryCode, tagFilter.TagCategoryCode);
+        }
+        
+        if (tagFilter.Code is not null)
+        {
+            filter &= Builders<Tag>.Filter.Eq(t => t.Code, tagFilter.Code);
+        }
+        
+        if (tagFilter.Codes is not null)
+        {
+            filter &= Builders<Tag>.Filter.In(t => t.Code, tagFilter.Codes);
+        }
+        
+        return filter;
     }
 }

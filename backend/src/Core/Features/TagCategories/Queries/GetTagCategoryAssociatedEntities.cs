@@ -42,12 +42,18 @@ public static class GetTagCategoryAssociatedEntities
             CancellationToken cancellationToken)
         {
             var tags = await tagRepository.GetAllAsync(
-                new TagFilter(request.TenantCode, request.TagCategoryCode),
+                new TagFilter(request.TenantCode)
+                {
+                    TagCategoryCode = request.TagCategoryCode
+                },
                 cancellationToken);
 
             var tagCodes = tags.Select(t => t.Code).ToArray();
             
-            var products = await productRepository.GetAllAsync(new(request.TenantCode, tagCodes), cancellationToken);
+            var products = await productRepository.GetAllAsync(new(request.TenantCode)
+            {
+                TagCodes = tagCodes
+            }, cancellationToken);
 
             if (!products.Any())
             {

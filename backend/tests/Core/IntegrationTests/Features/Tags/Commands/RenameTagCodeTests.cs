@@ -31,12 +31,17 @@ public class RenameTagCodeTests : BaseIntegrationTest
 
         // Assert
         var oldTagCategoryExists =
-            await _tagRepository.ExistsAsync(tenant.Code, oldTag.Code, default);
+            await _tagRepository.ExistsAsync(new(tenant.Code)
+            {
+                Code = oldTag.Code
+            }, default);
         oldTagCategoryExists.Should().BeFalse();
 
-        // TODO:EC Fix this test to use just the tagCode instead of the tagCodes array
         var newTagCategoryExists =
-            await _tagRepository.ExistsAsync(tenant.Code, new[] { newTagCode }, default);
+            await _tagRepository.ExistsAsync(new(tenant.Code)
+            {
+                Code = newTagCode
+            }, default);
         newTagCategoryExists.Should().BeTrue();
 
         newTagCode.Should().NotBeEquivalentTo(oldTag.Code);

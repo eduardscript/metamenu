@@ -22,7 +22,7 @@ public static class GetAllTagsByTagCategoryCode
     public class Query(int tenantCode, string tagCategoryCode) : IRequest<IEnumerable<TagDto>>
     {
         public int TenantCode { get; set; } = tenantCode;
-        
+
         public string TagCategoryCode { get; set; } = tagCategoryCode;
     }
 
@@ -31,7 +31,11 @@ public static class GetAllTagsByTagCategoryCode
         public async Task<IEnumerable<TagDto>> Handle(Query request, CancellationToken cancellationToken)
         {
             var tags = await tagRepository.GetAllAsync(
-                new TagFilter(request.TenantCode, request.TagCategoryCode), cancellationToken);
+                new(request.TenantCode)
+                {
+                    TagCategoryCode = request.TagCategoryCode
+                },
+                cancellationToken);
 
             return tags.ToDto();
         }

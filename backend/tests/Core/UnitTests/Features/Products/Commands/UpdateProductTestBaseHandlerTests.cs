@@ -56,7 +56,6 @@ public class UpdateProductTestBaseHandlerTests : TestBaseHandler<UpdateProductTe
         // Arrange
         TenantRepositoryMock.ExistsAsync(Request.TenantCode, default).Returns(true);
         ProductRepositoryMock.GetByAsync(Request.TenantCode, Request.Name, default).Returns(Product);
-        TagRepositoryMock.ExistsAsync(Request.TenantCode, Request.UpdateProperties.TagCodes!, default).Returns(false);
 
         // Act & Assert
         await AssertThrowsAsync<TagNotFoundException>(Request);

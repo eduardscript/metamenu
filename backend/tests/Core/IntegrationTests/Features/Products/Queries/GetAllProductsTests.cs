@@ -55,7 +55,10 @@ public class GetAllProductsTests : BaseIntegrationTest
 
         // Act
         var result = await _handler.Handle(
-            new GetAllProducts.Query(new ProductFilter(_tenant.Code, randomTagCodes)), default);
+            new GetAllProducts.Query(new ProductFilter(_tenant.Code)
+            {
+                TagCodes = randomTagCodes
+            }), default);
 
         // Assert
         var productsWithRandomTag = _expectedProducts.Where(p => p.TagCodes.Intersect(randomTagCodes).Any()).ToList();
