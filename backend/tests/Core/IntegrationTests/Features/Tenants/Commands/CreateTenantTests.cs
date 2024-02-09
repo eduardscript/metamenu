@@ -12,7 +12,8 @@ public class CreateTenantTests : BaseIntegrationTest
         var handler = new CreateTenant.Handler(TenantRepository, TimeProvider);
 
         // Act
-        var tenantDto = await handler.Handle(new CreateTenant.Command(Fixture.Create<Tenant>().Name), default);
+        var command = Fixture.Create<CreateTenant.Command>();
+        var tenantDto = await handler.Handle(command, default);
 
         // Assert
         tenantDto.Code.Should().Be(1000);

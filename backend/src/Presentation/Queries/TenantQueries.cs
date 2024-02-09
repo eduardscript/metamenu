@@ -10,4 +10,12 @@ public class TenantQueries
     {
         return mediator.Send(new GetAllTenants.Query());
     }
+
+    public Task<TenantDto> GetTenantConfigurationAsync(
+        [Service] IMediator mediator,
+        GetTenantConfiguration.Query query,
+        CancellationToken cancellationToken)
+    {
+        return mediator.Send(query, cancellationToken);
+    }
 }

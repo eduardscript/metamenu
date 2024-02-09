@@ -13,7 +13,8 @@ public class ErrorFilter : IErrorFilter
         Justification = "This method uses reflection to dynamically create instances and invoke methods, which may not be compatible with trimming.")]
     public IError OnError(IError error)
     {
-        var handlerType = GetExceptionHandlerType(error.Exception!.GetType()) ?? typeof(InternalServerErrorHandler);
+        // TODO: Remover isso o quanto antes
+        var handlerType = GetExceptionHandlerType(error.Exception?.GetType()) ?? typeof(InternalServerErrorHandler);
 
         var handlerInstance = Activator.CreateInstance(handlerType);
 
