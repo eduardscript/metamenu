@@ -1,20 +1,18 @@
-﻿using Core.Authentication.Claims;
+﻿using Core.Authentication.Attributes;
+using Core.Authentication.Claims;
 
 namespace Core.Authentication.Handlers;
 
-public class TenantPermissionValidationHandler : IPermissionValidationHandler
+public class TenantPermissionAttributeHandler : IAttributeHandler<NeedsTenantPermissionAttribute>
 {
-    public Task HandleAsync<TRequest>(TRequest request,
+    public Task HandleAsync<TRequest>(
+        TRequest request,
         IUserAccessor userAccessor,
-        object? propertyInfo,
-        CancellationToken cancellationToken) where TRequest : notnull
+        object propertyValue,
+        CancellationToken cancellationToken)
+        where TRequest : notnull
     {
-        if (propertyInfo is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        var availableTenants = userAccessor.ClaimsPrincipal?.Claims
+        var availableTenants = userAccessor.ClaimsPrincipal.Claims
             .FirstOrDefault(c => c.Type == ClaimTypes.AvailableTenants)?.Value;
 
         if (availableTenants is null or "")
@@ -24,7 +22,7 @@ public class TenantPermissionValidationHandler : IPermissionValidationHandler
 
         var tenantCodes = availableTenants.Split(',');
 
-        if (!tenantCodes.Contains(propertyInfo.ToString()))
+        if (!tenantCodes.Contains(propertyValue.ToString()))
         {
             throw new UnauthorizedAccessException("User does not have permission for the specified tenant.");
         }

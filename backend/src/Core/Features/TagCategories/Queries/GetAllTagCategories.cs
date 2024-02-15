@@ -1,4 +1,5 @@
 ﻿using Core.Authentication.Attributes;
+using Core.Authentication.Handlers;
 using Core.Features.TagCategories.Shared;
 
 namespace Core.Features.TagCategories.Queries;
