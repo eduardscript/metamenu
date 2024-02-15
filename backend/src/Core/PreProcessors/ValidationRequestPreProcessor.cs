@@ -1,6 +1,6 @@
 ﻿using MediatR.Pipeline;
 
-namespace Core.Validation.PreProcessors;
+namespace Core.PreProcessors;
 
 public class ValidationRequestPreProcessor<TRequest>(IValidator<TRequest>? validator = null)
     : IRequestPreProcessor<TRequest> where TRequest : notnull

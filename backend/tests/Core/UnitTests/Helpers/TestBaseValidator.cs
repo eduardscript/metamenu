@@ -12,7 +12,7 @@ public class TestBaseValidator<TValidator, TCommand> : TestBase
 
     protected string ExpectedErrorMessage = default!;
     
-    protected List<string> ExpectedErrorMessages = new();
+    protected List<string> ExpectedErrorMessages = [];
 
     [TestInitialize]
     public void TestInitialize()

@@ -1,6 +1,5 @@
 ﻿using Core.Features.Tenants.Queries;
 using Core.Features.Tenants.Shared;
-using HotChocolate.Authorization;
 
 namespace Presentation.Queries;
 

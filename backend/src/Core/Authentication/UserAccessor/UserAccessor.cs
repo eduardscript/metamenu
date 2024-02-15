@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Core.Authentication;
+namespace Core.Authentication.UserAccessor;
 
 public class UserAccessor : IUserAccessor
 {

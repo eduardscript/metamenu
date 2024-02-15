@@ -59,7 +59,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
     }
 
-    private FilterDefinition<Tag> BuildFilter(TagFilter tagFilter)
+    private static FilterDefinition<Tag> BuildFilter(TagFilter tagFilter)
     {
         var filter = Builders<Tag>.Filter.Eq(t => t.TenantCode, tagFilter.TenantCode);
 

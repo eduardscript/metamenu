@@ -1,4 +1,4 @@
-﻿using Core.Authentication;
+﻿using Core.Authentication.UserAccessor;
 using HotChocolate.AspNetCore;
 using HotChocolate.Execution;
 

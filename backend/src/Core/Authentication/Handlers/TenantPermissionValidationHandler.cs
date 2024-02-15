@@ -1,5 +1,6 @@
 ﻿using Core.Authentication.Attributes;
 using Core.Authentication.Claims;
+using Core.Authentication.UserAccessor;
 
 namespace Core.Authentication.Handlers;
 

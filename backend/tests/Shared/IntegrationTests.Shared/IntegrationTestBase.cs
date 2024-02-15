@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using AutoFixture;
+﻿using AutoFixture;
 using Core.Repositories;
 using Infra;
 using Microsoft.Extensions.Configuration;

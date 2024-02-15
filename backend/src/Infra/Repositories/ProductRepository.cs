@@ -83,7 +83,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
             { nameof(Product.TagCodes), 1 },
         }));
 
-        var aggregateFluent = collection.Aggregate<Product>(pipeline);
+        var aggregateFluent = collection.Aggregate<Product>(pipeline, cancellationToken: cancellationToken);
 
         return await aggregateFluent.ToListAsync(cancellationToken);
     }

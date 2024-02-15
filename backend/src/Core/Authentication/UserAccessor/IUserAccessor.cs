@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Core.Authentication;
+namespace Core.Authentication.UserAccessor;
 
 /// <summary>
 /// This interface is used to access the current user's claims and create a decoupling between the presentation layer and the core layer.

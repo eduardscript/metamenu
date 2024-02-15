@@ -1,4 +1,6 @@
-﻿namespace Core.Authentication.Handlers;
+﻿using Core.Authentication.UserAccessor;
+
+namespace Core.Authentication.Handlers;
 
 public interface IPermissionValidationHandler
 {

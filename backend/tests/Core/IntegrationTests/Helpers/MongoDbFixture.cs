@@ -2,7 +2,7 @@
 
 public class MongoDbFixture : BaseIntegrationTest
 {
-    public static List<Tenant> CreatedTenants { get; } = new();
+    public static List<Tenant> CreatedTenants { get; } = [];
     
     public static void Reset()
     {

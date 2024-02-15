@@ -1,9 +1,6 @@
-using System.Security.Claims;
-using Core.Authentication;
 using HotChocolate.Types.Descriptors;
 using Infra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Presentation;
 using Presentation.Configuration;
 using Presentation.Conventions;
@@ -11,6 +8,7 @@ using Presentation.Filters;
 using Presentation.Interceptors;
 using Presentation.Mutations;
 using Presentation.Queries;
+using DependencyInjection = Core.DependencyInjection;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -52,10 +50,10 @@ builder.Services
                 .AllowAnyHeader());
     });
 
-builder.Services
-    .AddApplication()
-    .AddInfra(builder.Configuration);
 
+builder.Services
+    .AddApplication(builder.Configuration.GetRequiredSection("Core").Get<DependencyInjection.CoreOptions>()!)
+    .AddInfra(builder.Configuration);
 
 var app = builder.Build();
 app.UseAuthentication();
