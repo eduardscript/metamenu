@@ -1,4 +1,5 @@
-﻿using Core.Features.Tenants.Shared;
+﻿using System.Security.Claims;
+using Core.Features.Tenants.Shared;
 
 namespace Core.Features.Tenants.Queries;
 

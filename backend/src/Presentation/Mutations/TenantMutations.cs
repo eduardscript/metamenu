@@ -1,5 +1,6 @@
 ﻿using Core.Features.Tenants.Commands;
 using Core.Features.Tenants.Shared;
+using HotChocolate.Authorization;
 
 namespace Presentation.Mutations;
 

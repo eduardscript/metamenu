@@ -1,10 +1,14 @@
+using System.Security.Claims;
+using Core.Authentication;
 using HotChocolate.Types.Descriptors;
 using Infra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Presentation;
 using Presentation.Configuration;
 using Presentation.Conventions;
 using Presentation.Filters;
+using Presentation.Interceptors;
 using Presentation.Mutations;
 using Presentation.Queries;
 
@@ -35,7 +39,8 @@ builder.Services
     .AddTypeExtension<ProductMutations>()
     .AddTypeExtension<UserMutations>()
     .AddConvention<INamingConventions, CustomNamingConvention>()
-    .AddErrorFilter<ErrorFilter>();
+    .AddErrorFilter<ErrorFilter>()
+    .AddHttpRequestInterceptor<HttpContextUserAccessorInterceptor>();
 
 builder.Services
     .AddCors(options =>
@@ -50,6 +55,7 @@ builder.Services
 builder.Services
     .AddApplication()
     .AddInfra(builder.Configuration);
+
 
 var app = builder.Build();
 app.UseAuthentication();

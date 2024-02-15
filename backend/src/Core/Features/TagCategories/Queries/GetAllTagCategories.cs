@@ -1,10 +1,15 @@
-﻿using Core.Features.TagCategories.Shared;
+﻿using Core.Authentication.Attributes;
+using Core.Features.TagCategories.Shared;
 
 namespace Core.Features.TagCategories.Queries;
 
 public static class GetAllTagCategories
 {
-    public record Query(int TenantCode) : IRequest<IEnumerable<TagCategoryDto>>;
+    public class Query(int tenantCode) : IRequest<IEnumerable<TagCategoryDto>>
+    {
+        [NeedsTenantPermission]
+        public int TenantCode { get; set; } = tenantCode;
+    }
 
     public class Handler(ITagCategoryRepository tagCategoryRepository)
         : IRequestHandler<Query, IEnumerable<TagCategoryDto>>

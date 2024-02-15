@@ -23,6 +23,7 @@ public class TokenService(IOptions<JwtConfiguration> jwtConfiguration) : ITokenS
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, user.Username),
+                new Claim("AvailableTenants", string.Join(',', user.AvailableTenants)),
             }),
             Expires = now.AddMinutes(5),
             SigningCredentials = new SigningCredentials(_jwtConfiguration.SignedKey, SecurityAlgorithms.HmacSha256Signature),
