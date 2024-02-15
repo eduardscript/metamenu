@@ -10,7 +10,7 @@ public class HttpContextUserAccessorInterceptor(IUserAccessor userAccessor) : De
         IRequestExecutor requestExecutor, IQueryRequestBuilder requestBuilder,
         CancellationToken cancellationToken)
     {
-            userAccessor.ClaimsPrincipal = context.User;
+        userAccessor.ClaimsPrincipal = context.User;
 
         return base.OnCreateAsync(context, requestExecutor, requestBuilder,
             cancellationToken);

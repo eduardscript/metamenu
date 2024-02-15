@@ -1,4 +1,6 @@
 ﻿using Core.Authentication;
+using Core.Authentication.Handlers;
+using Core.Authentication.Helpers.Cache;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core;
@@ -18,7 +20,11 @@ public static class DependencyInjection
             });
 
         services.AddSingleton(TimeProvider.System);
+
         services.AddSingleton<IUserAccessor, UserAccessor>();
+        services.AddSingleton<IPermissionValidationHandler, TenantPermissionValidationHandler>();
+        services.AddSingleton<IPermissionValidationHandler, AdminPermissionValidationHandler>();
+        services.AddSingleton<IPropertyCache, PropertyCache>();
 
         return services;
     }

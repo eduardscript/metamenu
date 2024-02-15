@@ -1,42 +1,29 @@
 ﻿using Core.Authentication;
-using Core.Authentication.Attributes;
-using Core.Authentication.Claims;
+using Core.Authentication.Handlers;
+using Core.Authentication.Helpers.Cache;
 using MediatR.Pipeline;
 
 namespace Core.Validation.PreProcessors;
 
-public class UserAccessorPreProcessor<TRequest>(IUserAccessor userAccessor)
+public class UserAccessorPreProcessor<TRequest>(
+    IUserAccessor userAccessor,
+    IEnumerable<IPermissionValidationHandler> handlers,
+    IPropertyCache propertyCache)
     : IRequestPreProcessor<TRequest> where TRequest : notnull
 {
-    public Task Process(TRequest request, CancellationToken cancellationToken)
+    public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
-        var propertiesWithTenantPermission = request.GetType()
-            .GetProperties()
-            .Where(prop => Attribute.IsDefined(prop, typeof(NeedsTenantPermissionAttribute)));
+        var cachedProperties = propertyCache.GetCachedProperties(typeof(TRequest)).ToList();
 
-        foreach (var property in propertiesWithTenantPermission)
+        foreach (var handler in handlers)
         {
-            var tenantCode = property.GetValue(request);
-            if (tenantCode is null)
+            foreach (var propertyInfo in cachedProperties)
             {
-                continue;
-            }
-
-            var availableTenants = userAccessor.ClaimsPrincipal?.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.AvailableTenants)?.Value;
-
-            if (availableTenants is not null)
-            {
-                var tenantCodes = availableTenants.Split(',');
-
-                if (!tenantCodes.Contains(tenantCode.ToString()))
+                foreach (var propertyInfoAttribute in propertyInfo.Attributes)
                 {
-                    throw new UnauthorizedAccessException("User does not have permission for the specified tenant.");
+                    await handler.HandleAsync(request, userAccessor,  propertyInfo.PropertyInfo.GetValue(request), cancellationToken);
                 }
             }
         }
-
-        
-        return Task.CompletedTask;
     }
 }

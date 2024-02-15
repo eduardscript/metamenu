@@ -1,10 +1,11 @@
-﻿using System.Security.Claims;
+﻿using Core.Authentication.Attributes;
 using Core.Features.Tenants.Shared;
 
 namespace Core.Features.Tenants.Queries;
 
 public static class GetAllTenants
 {
+    [NeedsAdminPermission]
     public record Query : IRequest<IEnumerable<TenantDto>>;
 
     public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Query, IEnumerable<TenantDto>>
