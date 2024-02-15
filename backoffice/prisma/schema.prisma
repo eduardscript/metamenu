@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        Int      @id
+  name      String
+  isActive  Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  TagCategory TagCategory[]
+  Tag         Tag[]
+}
+
+model TagCategory {
+  id          Int      @id @default(autoincrement())
+  name        String
+
+  tenantId    Int
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+
+  Tag         Tag[]
+}
+
+model Tag {
+  id           Int      @id @default(autoincrement())
+  name         String
+
+  tagCategoryId Int
+  tagCategory   TagCategory @relation(fields: [tagCategoryId], references: [id])
+
+  tenantId      Int
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+}

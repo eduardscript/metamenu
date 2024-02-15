@@ -13,7 +13,7 @@ public class ErrorFilter : IErrorFilter
         Justification = "This method uses reflection to dynamically create instances and invoke methods, which may not be compatible with trimming.")]
     public IError OnError(IError error)
     {
-        var handlerType = GetExceptionHandlerType(error.Exception!.GetType()) ?? typeof(InternalServerErrorHandler);
+        var handlerType = GetExceptionHandlerType(error.Exception?.GetType()) ?? typeof(InternalServerErrorHandler);
 
         var handlerInstance = Activator.CreateInstance(handlerType);
 
@@ -26,8 +26,13 @@ public class ErrorFilter : IErrorFilter
 
     [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicMethods)]
     [RequiresUnreferencedCode("Reflection is used to find types that implement IErrorHandler<T>. This can break if types are trimmed away.")]
-    private static Type? GetExceptionHandlerType(Type exceptionType)
+    private static Type? GetExceptionHandlerType(Type? exceptionType)
     {
+        if (exceptionType is null)
+        {
+            return null;
+        }
+
         return Assembly.GetAssembly(typeof(Program))!
             .GetTypes()
             .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
