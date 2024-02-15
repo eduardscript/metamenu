@@ -1,5 +1,6 @@
 ﻿using Core.Authentication;
 using Core.Authentication.Attributes;
+using Core.Authentication.Claims;
 using MediatR.Pipeline;
 
 namespace Core.Validation.PreProcessors;
@@ -16,15 +17,15 @@ public class UserAccessorPreProcessor<TRequest>(IUserAccessor userAccessor)
         foreach (var property in propertiesWithTenantPermission)
         {
             var tenantCode = property.GetValue(request);
-            if (tenantCode == null)
+            if (tenantCode is null)
             {
                 continue;
             }
 
             var availableTenants = userAccessor.ClaimsPrincipal?.Claims
-                .FirstOrDefault(c => c.Type == "AvailableTenants")?.Value;
+                .FirstOrDefault(c => c.Type == ClaimTypes.AvailableTenants)?.Value;
 
-            if (availableTenants != null)
+            if (availableTenants is not null)
             {
                 var tenantCodes = availableTenants.Split(',');
 
