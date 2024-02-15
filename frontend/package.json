@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.8.9",
-    "@apollo/experimental-nextjs-app-support": "^0.6.0",
+    "@apollo/experimental-nextjs-app-support": "^0.7.0",
     "axios": "^1.6.5",
     "clsx": "^2.1.0",
     "graphql": "^16.8.1",
