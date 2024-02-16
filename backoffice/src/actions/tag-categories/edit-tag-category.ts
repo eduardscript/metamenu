@@ -1,52 +1,58 @@
 "use server";
 
-import prisma from "@/database";
+import { ApiError } from "@/server/errors/api-error";
+import { renameTagCategoryCodeMutation } from "@/server/queries/tag-categories/mutations/rename-tag-category";
 import { revalidatePath } from "next/cache";
 
-import { z } from "zod";
-
-const updateTagCategorySchema = z.object({
-  id: z.string().transform((val) => parseInt(val)),
-  name: z.string(),
-  tenantId: z.string().transform((val) => parseInt(val)),
-});
-
 interface UpdateTagCategoryFormState {
-  errors: {
-    name?: string[];
-    tenantId?: string[];
+  errors?: {
+    tenantCode?: string[];
+    newTagCategoryCode?: string[];
+    oldTagCategoryCode?: string[];
+    _server?: string[];
   };
   success: boolean;
 }
 
 export default async function editTagCategory(
   formState: UpdateTagCategoryFormState,
-  formaData: FormData
-) {
-  const fields = updateTagCategorySchema.safeParse(
-    Object.fromEntries(formaData)
-  );
+  formData: FormData
+): Promise<UpdateTagCategoryFormState> {
+  const fields = {
+    tenantCode: parseInt(formData.get("tenantCode") as string) as number,
+    oldTagCategoryCode: formData.get("oldTagCategoryCode") as string,
+    newTagCategoryCode: formData.get("newTagCategoryCode") as string,
+  };
 
-  if (!fields.success) {
+  try {
+    await renameTagCategoryCodeMutation(
+      fields.tenantCode,
+      fields.oldTagCategoryCode,
+      fields.newTagCategoryCode
+    );
+
+    revalidatePath("/tag-categories?tenantCode=" + fields.tenantCode);
+
     return {
-      errors: fields.error.flatten(),
+      success: true,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return {
+        errors: {
+          tenantCode: error.errors["TenantCode"],
+          oldTagCategoryCode: error.errors["OldTagCategoryCode"],
+          newTagCategoryCode: error.errors["NewTagCategoryCode"],
+        },
+        success: false,
+      };
+    }
+
+    return {
+      errors: {
+        _server: ["An error occurred while creating the tag category"],
+      },
       success: false,
     };
   }
-
-  await prisma.tagCategory.update({
-    where: {
-      id: fields.data.id,
-    },
-    data: {
-      name: fields.data.name,
-      tenantId: fields.data.tenantId,
-    },
-  });
-
-  revalidatePath("/tag-categories?tenantId=" + fields.data.tenantId);
-
-  return {
-    success: true,
-  };
 }

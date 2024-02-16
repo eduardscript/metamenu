@@ -13,4 +13,20 @@ public class TagCategoryMutations
     {
         return await mediator.Send(command, cancellationToken);
     }
+    
+    public async Task<RenameTagCategoryCode.RenameTagCategoryDto> RenameTagCategoryCode(
+        [Service] IMediator mediator,
+        RenameTagCategoryCode.Command command,
+        CancellationToken cancellationToken)
+    {
+        return await mediator.Send(command, cancellationToken);
+    }
+    
+    public async Task<DeleteTagCategory.DeleteTagCategoryDto> DeleteTagCategory(
+        [Service] IMediator mediator,
+        DeleteTagCategory.Command command,
+        CancellationToken cancellationToken)
+    {
+        return await mediator.Send(command, cancellationToken);
+    }
 }

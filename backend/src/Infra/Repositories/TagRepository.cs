@@ -43,7 +43,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         return collection
             .UpdateOneAsync(
                 t => t.TenantCode == tenantCode &&
-                     t.Code == oldTagCode,
+                     t.TagCategoryCode == oldTagCode,
                 Builders<Tag>.Update.Set(t => t.Code, newTagCode),
                 cancellationToken: cancellationToken);
     }
@@ -58,6 +58,36 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
                 cancellationToken: cancellationToken)
             .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
     }
+
+    public Task<bool> UpdateManyAsync(
+        TagFilter tagFilter, 
+        UpdateTagFilter updateFilter,
+        CancellationToken cancellationToken)
+    {
+        UpdateDefinition<Tag> updateDefinition = null!;
+
+        if (updateFilter.UpdateType == UpdateType.TagCategory)
+        {
+            updateDefinition = Builders<Tag>.Update.Set(t => t.TagCategoryCode, updateFilter.NewTagCategoryCode);
+        }
+        
+        if (updateDefinition is null)
+        {
+            throw new InvalidOperationException("UpdateType is not supported");
+        }
+  
+        return collection
+            .UpdateManyAsync(BuildFilter(tagFilter), updateDefinition, cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
+    }
+
+    public Task<bool> DeleteManyAsync(TagFilter tagFilter, CancellationToken cancellationToken)
+    {
+        return collection
+            .DeleteManyAsync(BuildFilter(tagFilter), cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
+    }
+
 
     private static FilterDefinition<Tag> BuildFilter(TagFilter tagFilter)
     {

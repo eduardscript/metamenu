@@ -46,20 +46,26 @@ export default async function TagCategoriesPage({
         key={tagCategory.code}
         actions={
           <>
-            {/* <Dialog
+            <Dialog
               formAction={editTagCategory}
               formTitle="Edit Tag Category"
               buttonType="edit"
               inputForm={EditTagCategoryForm}
-              model={tagCategory}
+              model={{
+                tenantCode,
+                code: tagCategory.code,
+              }}
             />
             <Dialog
               formAction={deleteTagCategory}
               formTitle="Delete Tag Category"
               buttonType="delete"
               inputForm={DeleteTagCategoryForm}
-              model={tagCategory}
-            /> */}
+              model={{
+                tenantCode,
+                code: tagCategory.code,
+              }}
+            />
           </>
         }
         entity={tagCategory}

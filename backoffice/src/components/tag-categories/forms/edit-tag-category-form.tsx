@@ -27,17 +27,20 @@ export default function EditTagCategoryForm({
 
   return (
     <>
-      <input type="hidden" name="tenantId" value={model.tenantId} />
-      <input type="hidden" name="id" value={model.id} />
+      {state.errors?._server && (
+        <span className="text-red-500 block">{state.errors._server}</span>
+      )}
+      <input type="hidden" name="tenantCode" value={model.tenantCode} />
+      <input type="hidden" name="oldTagCategoryCode" value={model.code} />
       {state.errors?._server && (
         <span className="text-red-500 block">{state.errors._server}</span>
       )}
       <p className="py-4">
         <input
-          name="name"
+          name="newTagCategoryCode"
           className="input input-bordered"
           placeholder="tag category name"
-          defaultValue={model.name}
+          defaultValue={model.code}
           ref={inputRef}
         />
       </p>

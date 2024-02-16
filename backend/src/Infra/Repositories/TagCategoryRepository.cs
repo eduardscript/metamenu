@@ -40,7 +40,7 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
             .AnyAsync(cancellationToken);
     }
 
-    public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode,
+    public Task<bool> RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode,
         CancellationToken cancellationToken)
     {
         return collection
@@ -48,6 +48,17 @@ public class TagCategoryRepository(IMongoCollection<TagCategory> collection) : I
                 tc => tc.TenantCode == tenantCode &&
                       tc.Code == oldTagCategoryCode,
                 Builders<TagCategory>.Update.Set(t => t.Code, newCategoryCode),
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
+    }
+    
+    public Task<bool> DeleteAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken)
+    {
+        return collection
+            .DeleteOneAsync(
+                tc => tc.TenantCode == tenantCode &&
+                      tc.Code == tagCategoryCode,
+                cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
     }
 }
