@@ -1,7 +1,7 @@
 "use server";
 
+import paths from "@/paths";
 import { ApiError } from "@/server/errors/api-error";
-import { renameTagCategoryCodeMutation } from "@/server/queries/tag-categories/mutations/rename-tag-category";
 import { updateTagMutation } from "@/server/queries/tags/mutations/update-tag";
 import { revalidatePath } from "next/cache";
 
@@ -30,7 +30,9 @@ export default async function editTagCategory(
   try {
     await updateTagMutation(fields);
 
-    // revalidatePath("/tag-categories?tenantCode=" + fields.tenantCode);
+    revalidatePath(
+      paths.tags.home(fields.tenantCode, fields.newTagCategoryCode)
+    );
 
     return {
       success: true,

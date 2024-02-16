@@ -24,7 +24,6 @@ const EditTagForm: FC<{ state: any; model?: any }> = ({ state, model }) => {
 
   return (
     <>
-      {JSON.stringify(model)}
       <input name="tenantCode" type="hidden" value={model.tenantCode} />
       <input name="code" type="hidden" value={tag.code} />
       <input name="newTagCategoryCode" type="hidden" value={tagCategoryCode} />
@@ -48,9 +47,7 @@ const EditTagForm: FC<{ state: any; model?: any }> = ({ state, model }) => {
         <SelectTagCategory
           isQuery={false}
           tagCategories={tagCategories}
-          onChange={(value) => {
-            setTagCategoryCode(value);
-          }}
+          onChange={(value) => setTagCategoryCode(value)}
         />
       </p>
     </>

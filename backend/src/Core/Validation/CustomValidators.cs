@@ -70,7 +70,8 @@ public static class EntitiesCustomValidators
 
     public static IRuleBuilderOptions<T, string> AlreadyExistsTag<T>(
         this IRuleBuilder<T, string> ruleBuilder,
-        ITagRepository tagRepository)
+        ITagRepository tagRepository,
+        bool isCreate = false)
     {
         return ruleBuilder
             .NotEmptyAndRequired()
@@ -92,6 +93,11 @@ public static class EntitiesCustomValidators
                         Code = tagCode
                     },
                     token);
+                
+                if (isCreate)
+                {
+                    return existingTag is null;
+                }
 
                 if (existingTag is null)
                 {

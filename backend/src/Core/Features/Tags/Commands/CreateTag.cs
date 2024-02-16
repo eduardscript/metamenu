@@ -17,7 +17,7 @@ public static class CreateTag
                 .ExistsTagCategory(tagCategoryRepository);
 
             RuleFor(c => c.Code)
-                .AlreadyExistsTag(tagRepository);
+                .AlreadyExistsTag(tagRepository, true);
         }
     }
 
