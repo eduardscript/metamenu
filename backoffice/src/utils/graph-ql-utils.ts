@@ -41,6 +41,7 @@ export async function fetchGraphQL<T>(
 
       throw new ApiError(errorMessage, errorObject);
     } else {
+      console.error(jsonResponse.errors);
       throw new Error(errorMessage);
     }
   }

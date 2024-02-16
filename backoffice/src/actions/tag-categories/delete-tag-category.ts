@@ -1,44 +1,51 @@
 "use server";
 
-import prisma from "@/database";
+import { ApiError } from "@/server/errors/api-error";
+import { deleteTagCategoryMutation } from "@/server/queries/tag-categories/mutations/delete-tag-category";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
-const deleteTagCategorySchema = z.object({
-  id: z.string().transform((val) => parseInt(val)),
-});
-
-interface DeleteTagCategoryFormState {
-  errors: {
-    id?: string[];
+interface UpdateTagCategoryFormState {
+  errors?: {
+    tenantCode?: string[];
+    tagCategoryCode?: string[];
+    _server?: string[];
   };
   success: boolean;
 }
 
 export default async function deleteTagCategory(
-  formState: DeleteTagCategoryFormState,
-  formaData: FormData
-) {
-  const fields = deleteTagCategorySchema.safeParse(
-    Object.fromEntries(formaData)
-  );
+  formState: UpdateTagCategoryFormState,
+  formData: FormData
+): Promise<UpdateTagCategoryFormState> {
+  const fields = {
+    tenantCode: parseInt(formData.get("tenantCode") as string) as number,
+    tagCategoryCode: formData.get("tagCategoryCode") as string,
+  };
 
-  if (!fields.success) {
+  try {
+    await deleteTagCategoryMutation(fields.tenantCode, fields.tagCategoryCode);
+
+    revalidatePath("/tag-categories?tenantCode=" + fields.tenantCode);
+
     return {
-      errors: fields.error.flatten(),
+      success: true,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return {
+        errors: {
+          tenantCode: error.errors["TenantCode"],
+          tagCategoryCode: error.errors["TagCategoryCode"],
+        },
+        success: false,
+      };
+    }
+
+    return {
+      errors: {
+        _server: ["An error occurred while creating the tag category"],
+      },
       success: false,
     };
   }
-
-  await prisma.tagCategory.delete({
-    where: {
-      id: fields.data.id,
-    },
-  });
-
-  revalidatePath("/");
-
-  return {
-    success: true,
-  };
 }

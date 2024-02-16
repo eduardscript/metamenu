@@ -19,12 +19,14 @@ const DeleteTagCategoryForm: FC<{ state: any; model?: any }> = ({
 
   return (
     <>
-      <input name="id" type="hidden" value={model.id} />
+      <input name="tagCategoryCode" type="hidden" value={model.code} />
+      <input name="tenantCode" type="hidden" value={model.tenantCode} />
       {state.errors?._server && (
         <span className="text-red-500 block">{state.errors._server}</span>
       )}
       <p className="py-4">
-        Are you sure you want to delete tag category {model.id}?
+        Are you sure you want to delete tag category {model.code}? This
+        operation will delete all tags associated with this category.
       </p>
       <p className="font-bold text-sm italic">(This action cannot be undone)</p>
     </>

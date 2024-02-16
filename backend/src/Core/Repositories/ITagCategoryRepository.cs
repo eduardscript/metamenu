@@ -10,5 +10,7 @@ public interface ITagCategoryRepository
     
     public Task<bool> ExistsAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
     
-    public Task RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode, CancellationToken cancellationToken);
+    public Task<bool> RenameAsync(int tenantCode, string oldTagCategoryCode, string newCategoryCode, CancellationToken cancellationToken);
+    
+    public Task<bool> DeleteAsync(int tenantCode, string tagCategoryCode, CancellationToken cancellationToken);
 }

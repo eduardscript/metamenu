@@ -14,7 +14,7 @@ public static class RenameTagCategoryCode
 
             RuleFor(c => c.OldTagCategoryCode)
                 .ExistsTagCategory(tagCategoryRepository);
-            
+
             RuleFor(c => c.NewTagCategoryCode)
                 .AlreadyExistsTagCategory(tagCategoryRepository);
         }
@@ -23,20 +23,33 @@ public static class RenameTagCategoryCode
     public class Command(
         int tenantCode,
         string oldTagCategoryCode,
-        string newTagCategoryCode) : IRequest
+        string newTagCategoryCode) : IRequest<RenameTagCategoryDto>
     {
         public int TenantCode { get; set; } = tenantCode;
-        
+
         public string OldTagCategoryCode { get; set; } = oldTagCategoryCode;
-        
+
         public string NewTagCategoryCode { get; set; } = newTagCategoryCode;
     }
 
-    public class Handler(ITagCategoryRepository tagCategoryRepository) : IRequestHandler<Command>
+    public class Handler(
+        ITagCategoryRepository tagCategoryRepository,
+        ITagRepository tagRepository) : IRequestHandler<Command, RenameTagCategoryDto>
     {
-        public Task Handle(Command request, CancellationToken cancellationToken)
+        public async Task<RenameTagCategoryDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            return tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCode, request.NewTagCategoryCode, cancellationToken);
+            var result = await tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCode,
+                request.NewTagCategoryCode, cancellationToken);
+
+            await tagRepository.UpdateManyAsync(
+                new(request.TenantCode) { TagCategoryCode = request.OldTagCategoryCode },
+                new (UpdateType.TagCategory) { NewTagCategoryCode = request.NewTagCategoryCode },
+                cancellationToken);
+
+            return new(result);
         }
     }
+
+    public record RenameTagCategoryDto(
+        bool IsUpdated);
 }
