@@ -32,11 +32,24 @@ public static class DeleteTag
         public string Code { get; set; } = code;
     }
 
-    public class Handler(ITagRepository tagRepository) : IRequestHandler<Command, TagDeletedDto>
+    public class Handler(
+        ITagRepository tagRepository,
+        IProductRepository productRepository) : IRequestHandler<Command, TagDeletedDto>
     {
         public async Task<TagDeletedDto> Handle(Command request, CancellationToken cancellationToken)
         {
             var tagWasDeleted = await tagRepository.DeleteAsync(request.TenantCode, request.TagCategoryCode, request.Code, cancellationToken);
+            
+            if (tagWasDeleted)
+            {
+                await productRepository.UpdateManyAsync(
+                    new(request.TenantCode) { TagCode = request.Code },
+                    new()
+                    {
+                        TagCategoryCodeToRemove = request.TagCategoryCode
+                    },
+                    cancellationToken);
+            }
             
             return new TagDeletedDto(tagWasDeleted);
         }

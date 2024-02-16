@@ -11,17 +11,11 @@ public class TagFilter(int tenantCode)
     public IEnumerable<string>? Codes { get; set; }
 }
 
-public enum UpdateType
-{
-    TagCategory,
-    TagCodes
-}
-
-public class UpdateTagFilter(UpdateType updateType)
+public class UpdateTagFilter
 {
     public string? NewTagCategoryCode { get; set; }
-
-    public UpdateType UpdateType { get; set; } = updateType;
+    
+    public string? NewTagCode { get; set; }
 }
 
 public interface ITagRepository
@@ -30,18 +24,23 @@ public interface ITagRepository
 
     public Task<IEnumerable<Tag>> GetAllAsync(TagFilter tagFilter, CancellationToken cancellationToken);
 
+    public Task<Tag?> GetAsync(TagFilter tagFilter, CancellationToken cancellationToken);
+
     public Task<bool> ExistsAsync(
         TagFilter tagFilter,
-        CancellationToken cancellationToken);
-
-    public Task RenameAsync(int tenantCode, string oldTagCode, string newTagCode, CancellationToken cancellationToken);
-
-    Task<bool> DeleteAsync(int requestTenantCode, string requestTagCategoryCode, string requestTagCode,
         CancellationToken cancellationToken);
 
     public Task<bool> UpdateManyAsync(
         TagFilter tagFilter,
         UpdateTagFilter updateFilter,
+        CancellationToken cancellationToken);
+
+    public Task<bool> UpdateAsync(
+        TagFilter tagFilter,
+        UpdateTagFilter updateFilter,
+        CancellationToken cancellationToken);
+
+    Task<bool> DeleteAsync(int requestTenantCode, string requestTagCategoryCode, string requestTagCode,
         CancellationToken cancellationToken);
 
     public Task<bool> DeleteManyAsync(TagFilter tagFilter, CancellationToken cancellationToken);

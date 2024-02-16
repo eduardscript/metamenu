@@ -8,9 +8,11 @@ import { TagCategory } from "@/server/models/tag-category";
 export default function SelectTagCategory({
   tagCategories,
   isQuery,
+  onChange,
 }: {
   tagCategories: TagCategory[];
   isQuery: boolean;
+  onChange?: (value: string) => void;
 }) {
   const [option, setOption] = useState<{ value: string; label: string }>({
     value: null!,
@@ -54,11 +56,15 @@ export default function SelectTagCategory({
       name="tagCategoryCode"
       className="flex-grow"
       options={options}
-      onChange={(p) =>
+      onChange={(p) => {
         isQuery
           ? handleSearch(p?.value || "")
-          : setOption(p || { value: null!, label: "teste" })
-      }
+          : setOption(p || { value: null!, label: "teste" });
+
+        if (onChange) {
+          onChange(p!.value);
+        }
+      }}
       placeholder="Select a tag category"
       value={option}
     />

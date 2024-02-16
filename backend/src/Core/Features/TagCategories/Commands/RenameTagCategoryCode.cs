@@ -38,12 +38,15 @@ public static class RenameTagCategoryCode
     {
         public async Task<RenameTagCategoryDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var result = await tagCategoryRepository.RenameAsync(request.TenantCode, request.OldTagCategoryCode,
-                request.NewTagCategoryCode, cancellationToken);
+            var result = await tagCategoryRepository.RenameAsync(
+                request.TenantCode,
+                request.OldTagCategoryCode,
+                request.NewTagCategoryCode,
+                cancellationToken);
 
             await tagRepository.UpdateManyAsync(
                 new(request.TenantCode) { TagCategoryCode = request.OldTagCategoryCode },
-                new (UpdateType.TagCategory) { NewTagCategoryCode = request.NewTagCategoryCode },
+                new() { NewTagCategoryCode = request.NewTagCategoryCode },
                 cancellationToken);
 
             return new(result);

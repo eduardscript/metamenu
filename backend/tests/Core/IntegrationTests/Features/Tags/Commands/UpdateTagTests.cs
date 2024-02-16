@@ -3,7 +3,7 @@
 namespace IntegrationTests.Features.Tags.Commands;
 
 [TestClass]
-public class RenameTagCodeTests : BaseIntegrationTest
+public class UpdateTagTests : BaseIntegrationTest
 {
     private readonly ITagRepository _tagRepository = GetService<ITagRepository>();
     private readonly ITenantRepository _tenantRepository = GetService<ITenantRepository>();
@@ -22,11 +22,11 @@ public class RenameTagCodeTests : BaseIntegrationTest
 
         await _tagRepository.CreateAsync(oldTag, default);
 
-        var handler = new RenameTagCode.Handler(_tagRepository);
+        var handler = new UpdateTag.Handler(_tagRepository);
 
         // Act
         await handler.Handle(
-            new RenameTagCode.Command(tenant.Code, oldTag.Code, newTagCode),
+            new UpdateTag.Command(tenant.Code, oldTag.Code, newTagCode),
             default);
 
         // Assert

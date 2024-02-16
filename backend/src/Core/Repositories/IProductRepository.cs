@@ -11,6 +11,11 @@ public class ProductFilter(int tenantCode)
 
 public interface IProductRepository
 {
+    public class UpdateType
+    {
+        public string? TagCategoryCodeToRemove { get; init; }
+    }
+
     public Task<Product> CreateAsync(Product product, CancellationToken cancellationToken);
 
     public Task<Product?> GetByAsync(int tenantCode, string productName, CancellationToken cancellationToken);
@@ -20,4 +25,6 @@ public interface IProductRepository
     public Task<bool> ExistsByNameAsync(int tenantCode, string productName, CancellationToken cancellationToken);
 
     public Task UpdateAsync(string oldProductName, Product product, CancellationToken cancellationToken);
+    
+    public Task<bool> UpdateManyAsync(ProductFilter productFilter, UpdateType updateType, CancellationToken cancellationToken);
 }

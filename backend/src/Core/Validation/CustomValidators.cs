@@ -83,11 +83,40 @@ public static class EntitiesCustomValidators
                 }
 
                 var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
+                
+                var tagCode = command.GetType().GetProperty("Code")!.GetValue(command)!.ToString() ?? throw new InvalidOperationException("The type T must have a property named 'Code'.");
+                
+                var existingTag = await tagRepository.GetAsync(
+                    new(tenantCode)
+                    {
+                        Code = tagCode
+                    },
+                    token);
 
-                return !await tagRepository.ExistsAsync(new(tenantCode)
+                if (existingTag is null)
                 {
-                    Code = code
-                }, token);
+                    return false;
+                }
+                
+                var newTagCodeProperty = typeof(T).GetProperty("NewTagCode");
+                if (newTagCodeProperty?.GetValue(command) is string newTagCode)
+                {
+                    if (newTagCode == tagCode)
+                    {
+                        command!.GetType().GetProperty("NewTagCode")!.SetValue(command, null);
+                    }
+                }
+                
+                var newTagCategoryCodeProperty = typeof(T).GetProperty("NewTagCategoryCode");
+                if (newTagCategoryCodeProperty?.GetValue(command) is string newTagCategoryCode)
+                {
+                    if (newTagCategoryCode == existingTag.TagCategoryCode)
+                    {
+                        command!.GetType().GetProperty("NewTagCategoryCode")!.SetValue(command, null);
+                    }
+                }
+
+                return true;
             })
             .WithMessage((_, code) =>
                 CustomValidatorsMessages.EntityAlreadyExistsMessage(nameof(Tag), nameof(Tag.Code), code));
@@ -108,8 +137,10 @@ public static class EntitiesCustomValidators
                 }
 
                 var tenantCode = (int)tenantCodeProperty.GetValue(command)!;
-
-                return await tagCategoryRepository.ExistsAsync(tenantCode, code, token);
+                
+                var existingTagCategory = await tagCategoryRepository.GetByAsync(tenantCode, code, token);
+                
+                return existingTagCategory is not null;
             })
             .WithMessage((_, code) =>
                 CustomValidatorsMessages.EntityNotFoundMessage(nameof(TagCategory).Humanize(LetterCasing.Title),

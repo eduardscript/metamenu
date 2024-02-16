@@ -41,6 +41,8 @@ public static class DeleteTagCategory
             {
                 TagCategoryCode = request.TagCategoryCode
             }, cancellationToken);
+            
+            // Remove tag from all products
 
             return new(result);
         }

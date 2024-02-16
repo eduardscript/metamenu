@@ -1,12 +1,17 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import SelectTagCategory from "../select-tag-category";
 
 const EditTagForm: FC<{ state: any; model?: any }> = ({ state, model }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { tag, tagCategories } = model;
+
+  const [tagCategoryCode, setTagCategoryCode] = useState<string>(
+    model.tagCategoryCode
+  );
+  const [tagCode, setTagCode] = useState<string>(tag.code);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -19,25 +24,34 @@ const EditTagForm: FC<{ state: any; model?: any }> = ({ state, model }) => {
 
   return (
     <>
+      {JSON.stringify(model)}
+      <input name="tenantCode" type="hidden" value={model.tenantCode} />
       <input name="code" type="hidden" value={tag.code} />
-      <input name="tagCategoryId" type="hidden" value={tag.tagCategoryId} />
+      <input name="newTagCategoryCode" type="hidden" value={tagCategoryCode} />
       {state.errors?._server && (
         <span className="text-red-500 block">{state.errors._server}</span>
       )}
       <p className="py-4">
         <input
-          name="name"
+          name="newTagCode"
           className="input input-bordered"
-          defaultValue={tag.name}
-          placeholder={tag.name}
+          defaultValue={tag.code}
           ref={inputRef}
+          onChange={(e) => setTagCode(e.target.value)}
         />
       </p>
       {state.errors?.name && (
         <span className="text-red-500 block">{state.errors.name}</span>
       )}
       <p>
-        <SelectTagCategory isQuery={false} tagCategories={tagCategories} />
+        <label className="label">Tag Category</label>
+        <SelectTagCategory
+          isQuery={false}
+          tagCategories={tagCategories}
+          onChange={(value) => {
+            setTagCategoryCode(value);
+          }}
+        />
       </p>
     </>
   );

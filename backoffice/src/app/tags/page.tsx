@@ -58,8 +58,10 @@ export default async function TagsPage({ searchParams }: SearchParams) {
                 formAction={editTag}
                 inputForm={EditTagForm}
                 model={{
+                  tenantCode,
                   tag,
                   tagCategories,
+                  tagCategoryCode,
                 }}
               />
               <Dialog

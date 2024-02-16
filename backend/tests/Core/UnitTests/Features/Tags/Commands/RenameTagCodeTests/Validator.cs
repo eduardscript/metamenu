@@ -3,7 +3,7 @@
 namespace UnitTests.Features.Tags.Commands.RenameTagCodeTests;
 
 [TestClass]
-public class Validator : TestBaseValidator<RenameTagCode.Validator, RenameTagCode.Command>
+public class Validator : TestBaseValidator<UpdateTag.Validator, UpdateTag.Command>
 {
     [TestMethod]
     [DataRow(0)]

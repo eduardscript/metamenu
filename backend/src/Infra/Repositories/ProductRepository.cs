@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace Infra.Repositories;
 
-public class ProductRepository(IMongoCollection<Product?> collection) : IProductRepository
+public class ProductRepository(IMongoCollection<Product> collection) : IProductRepository
 {
     public async Task<Product> CreateAsync(Product product, CancellationToken cancellationToken)
     {
@@ -58,7 +58,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
                 }
             }));
         }
-        
+
         if (productFilter.TagCode is not null)
         {
             pipeline.Add(new("$match", new BsonDocument
@@ -71,7 +71,7 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
                 }
             }));
         }
-        
+
         pipeline.Add(new("$project", new BsonDocument
         {
             { "_id", 1 },
@@ -102,5 +102,22 @@ public class ProductRepository(IMongoCollection<Product?> collection) : IProduct
             p => p!.TenantCode == product.TenantCode && p.Name == oldProductName,
             product,
             cancellationToken: cancellationToken);
+    }
+
+    public Task<bool> UpdateManyAsync(ProductFilter productFilter, IProductRepository.UpdateType updateType,
+        CancellationToken cancellationToken)
+    {
+        UpdateDefinition<Product> updateDefinition = null!;
+
+        if (updateType.TagCategoryCodeToRemove is not null)
+        {
+            updateDefinition = Builders<Product>.Update.Pull(p => p.TagCodes, updateType.TagCategoryCodeToRemove);
+        }
+
+        return collection.UpdateManyAsync(
+                p => p.TenantCode == productFilter.TenantCode,
+                updateDefinition,
+                cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
     }
 }

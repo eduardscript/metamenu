@@ -21,14 +21,11 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .ContinueWith(tags => tags.Result.AsEnumerable(), cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(int tenantCode, IEnumerable<string> tagCodes,
-        CancellationToken cancellationToken)
+    public Task<Tag> GetAsync(TagFilter tagFilter, CancellationToken cancellationToken)
     {
         return collection
-            .Find(t =>
-                t.TenantCode == tenantCode &&
-                tagCodes.Contains(t.Code))
-            .AnyAsync(cancellationToken);
+            .Find(BuildFilter(tagFilter))
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public Task<bool> ExistsAsync(TagFilter tagFilter, CancellationToken cancellationToken)
@@ -38,17 +35,37 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .AnyAsync(cancellationToken);
     }
 
-    public Task RenameAsync(int tenantCode, string oldTagCode, string newTagCode, CancellationToken cancellationToken)
+    public Task<bool> UpdateAsync(
+        TagFilter tagFilter, 
+        UpdateTagFilter updateFilter,
+        CancellationToken cancellationToken)
+    {
+        var updateDefinition = BuildUpdateDefinition(updateFilter);
+        
+        if (updateDefinition is null)
+        {
+            return Task.FromResult(false);
+        }
+        
+        return collection
+            .UpdateOneAsync(BuildFilter(tagFilter), BuildUpdateDefinition(updateFilter),
+                cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
+    }
+
+    public Task<bool> UpdateManyAsync(
+        TagFilter tagFilter,
+        UpdateTagFilter updateFilter,
+        CancellationToken cancellationToken)
     {
         return collection
-            .UpdateOneAsync(
-                t => t.TenantCode == tenantCode &&
-                     t.TagCategoryCode == oldTagCode,
-                Builders<Tag>.Update.Set(t => t.Code, newTagCode),
-                cancellationToken: cancellationToken);
+            .UpdateManyAsync(BuildFilter(tagFilter), BuildUpdateDefinition(updateFilter),
+                cancellationToken: cancellationToken)
+            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
     }
-    
-    public Task<bool> DeleteAsync(int requestTenantCode, string requestTagCategoryCode, string requestTagCode, CancellationToken cancellationToken)
+
+    public Task<bool> DeleteAsync(int requestTenantCode, string requestTagCategoryCode, string requestTagCode,
+        CancellationToken cancellationToken)
     {
         return collection
             .DeleteOneAsync(
@@ -59,35 +76,12 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
             .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
     }
 
-    public Task<bool> UpdateManyAsync(
-        TagFilter tagFilter, 
-        UpdateTagFilter updateFilter,
-        CancellationToken cancellationToken)
-    {
-        UpdateDefinition<Tag> updateDefinition = null!;
-
-        if (updateFilter.UpdateType == UpdateType.TagCategory)
-        {
-            updateDefinition = Builders<Tag>.Update.Set(t => t.TagCategoryCode, updateFilter.NewTagCategoryCode);
-        }
-        
-        if (updateDefinition is null)
-        {
-            throw new InvalidOperationException("UpdateType is not supported");
-        }
-  
-        return collection
-            .UpdateManyAsync(BuildFilter(tagFilter), updateDefinition, cancellationToken: cancellationToken)
-            .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
-    }
-
     public Task<bool> DeleteManyAsync(TagFilter tagFilter, CancellationToken cancellationToken)
     {
         return collection
             .DeleteManyAsync(BuildFilter(tagFilter), cancellationToken: cancellationToken)
             .ContinueWith(t => t.Result.DeletedCount > 0, cancellationToken);
     }
-
 
     private static FilterDefinition<Tag> BuildFilter(TagFilter tagFilter)
     {
@@ -97,17 +91,42 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         {
             filter &= Builders<Tag>.Filter.Eq(t => t.TagCategoryCode, tagFilter.TagCategoryCode);
         }
-        
+
         if (tagFilter.Code is not null)
         {
             filter &= Builders<Tag>.Filter.Eq(t => t.Code, tagFilter.Code);
         }
-        
+
         if (tagFilter.Codes is not null)
         {
             filter &= Builders<Tag>.Filter.In(t => t.Code, tagFilter.Codes);
         }
-        
+
         return filter;
+    }
+
+    private static UpdateDefinition<Tag>? BuildUpdateDefinition(UpdateTagFilter updateFilter)
+    {
+        var updateDefinitionBuilder = Builders<Tag>.Update;
+        List<UpdateDefinition<Tag>> updateOperations = [];
+        
+        if (updateFilter.NewTagCode is not null)
+        {
+            updateOperations.Add(updateDefinitionBuilder.Set(t => t.Code, updateFilter.NewTagCode));
+        }
+
+        if (updateFilter.NewTagCategoryCode is not null)
+        {
+            updateOperations.Add(updateDefinitionBuilder.Set(t => t.TagCategoryCode, updateFilter.NewTagCategoryCode));
+        }
+        
+        if (updateOperations.Count == 0)
+        {
+            return null;
+        }
+
+        var combinedUpdateDefinition = updateDefinitionBuilder.Combine(updateOperations);
+
+        return combinedUpdateDefinition;
     }
 }

@@ -24,4 +24,12 @@ public class TagMutations
     {
         return mediator.Send(command, cancellationToken);
     }
+    
+    public async Task<UpdateTag.TagUpdatedDto> UpdateTag(
+        [Service] IMediator mediator,
+        UpdateTag.Command command,
+        CancellationToken cancellationToken)
+    {
+        return await mediator.Send(command, cancellationToken);
+    }
 }
