@@ -60,7 +60,7 @@ public class TenantRepositoryTests : BaseIntegrationTest
         var tenantToInsert = await TenantRepository.CreateAsync(Fixture.Create<Tenant>(), default);
 
         // Act
-        var existingTenant = await TenantRepository.GetAsync(tenantToInsert.Code, default);
+        var existingTenant = await TenantRepository.GetByCodeAsync(tenantToInsert.Code, default);
 
         // Assert
         existingTenant.Should().BeEquivalentTo(tenantToInsert);
@@ -70,7 +70,7 @@ public class TenantRepositoryTests : BaseIntegrationTest
     public async Task GetByAsync_NotFoundTenant_GetsNull()
     {
         // Arrange & Act
-        var existingTenant = await TenantRepository.GetAsync(Fixture.Create<int>(), default);
+        var existingTenant = await TenantRepository.GetByCodeAsync(Fixture.Create<int>(), default);
 
         // Assert
         existingTenant.Should().BeNull();
@@ -118,7 +118,7 @@ public class TenantRepositoryTests : BaseIntegrationTest
             .With(t => t.IsEnabled, !tenantToInsert.IsEnabled)
             .Create();
 
-        var updateProperties = new UpdateTenantProperties(
+        var updateProperties = new UpdateTenantFilter(
             expectedTenant.Name,
             expectedTenant.IsEnabled);
 
@@ -126,7 +126,7 @@ public class TenantRepositoryTests : BaseIntegrationTest
         await TenantRepository.UpdateAsync(expectedTenant.Code, updateProperties, default);
 
         // Assert
-        var existingTenant = await TenantRepository.GetAsync(tenantToInsert.Code, default);
+        var existingTenant = await TenantRepository.GetByCodeAsync(tenantToInsert.Code, default);
 
         existingTenant!.Code.Should().Be(tenantToInsert.Code);
         existingTenant.CreatedAt.Should().Be(tenantToInsert.CreatedAt);
@@ -141,13 +141,13 @@ public class TenantRepositoryTests : BaseIntegrationTest
         // Arrange
         var tenantToInsert = await TenantRepository.CreateAsync(Fixture.Create<Tenant>(), default);
 
-        var updateProperties = new UpdateTenantProperties(isEnabled: !tenantToInsert.IsEnabled);
+        var updateProperties = new UpdateTenantFilter(isEnabled: !tenantToInsert.IsEnabled);
 
         // Act
         await TenantRepository.UpdateAsync(tenantToInsert.Code, updateProperties, default);
 
         // Assert
-        var existingTenant = await TenantRepository.GetAsync(tenantToInsert.Code, default);
+        var existingTenant = await TenantRepository.GetByCodeAsync(tenantToInsert.Code, default);
 
         existingTenant!.Code.Should().Be(tenantToInsert.Code);
         existingTenant.Name.Should().Be(tenantToInsert.Name);
@@ -162,13 +162,13 @@ public class TenantRepositoryTests : BaseIntegrationTest
         // Arrange
         var tenantToInsert = await TenantRepository.CreateAsync(Fixture.Create<Tenant>(), default);
 
-        var updateProperties = new UpdateTenantProperties(name: Fixture.Create<string>());
+        var updateProperties = new UpdateTenantFilter(name: Fixture.Create<string>());
 
         // Act
         await TenantRepository.UpdateAsync(tenantToInsert.Code, updateProperties, default);
 
         // Assert
-        var existingTenant = await TenantRepository.GetAsync(tenantToInsert.Code, default);
+        var existingTenant = await TenantRepository.GetByCodeAsync(tenantToInsert.Code, default);
 
         existingTenant!.Code.Should().Be(tenantToInsert.Code);
         existingTenant.CreatedAt.Should().Be(tenantToInsert.CreatedAt);

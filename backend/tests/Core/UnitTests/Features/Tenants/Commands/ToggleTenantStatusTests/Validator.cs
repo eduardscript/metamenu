@@ -1,4 +1,5 @@
 ﻿using Core.Features.Tenants.Commands;
+using Core.Features.Tenants.Commands.ToggleTenantStatus;
 
 namespace UnitTests.Features.Tenants.Commands.ToggleTenantStatusTests;
 

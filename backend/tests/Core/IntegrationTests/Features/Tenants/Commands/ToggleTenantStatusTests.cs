@@ -1,4 +1,5 @@
 ﻿using Core.Features.Tenants.Commands;
+using Core.Features.Tenants.Commands.ToggleTenantStatus;
 
 namespace IntegrationTests.Features.Tenants.Commands;
 
@@ -26,9 +27,9 @@ public class ToggleTenantStatusTests : BaseIntegrationTest
             default);
 
         // Assert
-        tenantStatusDto.StatusUpdated.Should().BeTrue();
+        tenantStatusDto.statusUpdated.Should().BeTrue();
         
-        var existingTenant = await TenantRepository.GetAsync(insertedTenant.Code, default);
+        var existingTenant = await TenantRepository.GetByCodeAsync(insertedTenant.Code, default);
         existingTenant.Should().NotBeNull();
         existingTenant!.IsEnabled.Should().Be(!isEnabled);
     }

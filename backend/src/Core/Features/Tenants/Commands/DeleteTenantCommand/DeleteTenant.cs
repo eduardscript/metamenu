@@ -1,4 +1,6 @@
-﻿namespace Core.Features.Tenants.Commands;
+﻿using Core.Features.Tenants.Commands.DeleteTenantCommand.Dtos.Responses;
+
+namespace Core.Features.Tenants.Commands.DeleteTenantCommand;
 
 public static class DeleteTenant
 {
@@ -12,22 +14,19 @@ public static class DeleteTenant
         }
     }
 
-    public class Command(int code) : IRequest<TenantDeletedDto>
+    public class Command(int code) : IRequest<DeleteTenantDto>
     {
         public int Code { get; set; } = code;
     }
 
-    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command, TenantDeletedDto>
+    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Command, DeleteTenantDto>
     {
-        public async Task<TenantDeletedDto> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<DeleteTenantDto> Handle(Command request, CancellationToken cancellationToken)
         {
             var tenantWasDeleted = await tenantRepository.DeleteAsync(request.Code, cancellationToken);
 
-            return new TenantDeletedDto(
+            return new DeleteTenantDto(
                 tenantWasDeleted);
         }
     }
-
-    public record TenantDeletedDto(
-        bool IsDeleted);
 }

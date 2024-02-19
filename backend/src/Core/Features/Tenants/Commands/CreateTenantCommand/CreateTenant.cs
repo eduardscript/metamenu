@@ -1,6 +1,7 @@
-﻿using Core.Features.Tenants.Shared;
+﻿using Core.Features.Tenants.Commands.CreateTenantCommand.Dtos.Responses;
+using Core.Features.Tenants.Commands.CreateTenantCommand.Extensions;
 
-namespace Core.Features.Tenants.Commands;
+namespace Core.Features.Tenants.Commands.CreateTenantCommand;
 
 public static class CreateTenant
 {
@@ -13,14 +14,14 @@ public static class CreateTenant
         }
     }
 
-    public class Command(string name) : IRequest<TenantDto>
+    public class Command(string name) : IRequest<CreateTenantResponse>
     {
         public string Name { get; set; } = name;
     }
 
-    public class Handler(ITenantRepository tenantRepository, TimeProvider timeProvider) : IRequestHandler<Command, TenantDto>
+    public class Handler(ITenantRepository tenantRepository, TimeProvider timeProvider) : IRequestHandler<Command, CreateTenantResponse>
     {
-        public async Task<TenantDto> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<CreateTenantResponse> Handle(Command request, CancellationToken cancellationToken)
         {
             var tenant = new Tenant(request.Name)
             {

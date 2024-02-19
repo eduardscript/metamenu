@@ -38,12 +38,12 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
             .ContinueWith(t => t.Result.AsEnumerable(), cancellationToken);
     }
 
-    public async Task<Tenant?> GetAsync(int tenantCode, CancellationToken cancellationToken)
+    public async Task<Tenant?> GetByCodeAsync(int tenantCode, CancellationToken cancellationToken)
     {
         var existingTenant = await collection
             .Find(t => t.Code == tenantCode)
             .FirstOrDefaultAsync(cancellationToken);
-        
+
         return existingTenant;
     }
 
@@ -54,29 +54,71 @@ public class TenantRepository(IMongoCollection<Tenant> collection) : ITenantRepo
             .AnyAsync(cancellationToken);
     }
 
-    public async Task<bool> UpdateAsync(int tenantCode, UpdateTenantProperties updateTenantProperties, CancellationToken cancellationToken)
+    public async Task<bool> UpdateAsync(int tenantCode, UpdateTenantFilter updateTenantFilter,
+        CancellationToken cancellationToken)
     {
         var updateDefinition = Builders<Tenant>.Update;
         var updates = new List<UpdateDefinition<Tenant>>();
 
-        if (updateTenantProperties.Name is not null)
+        if (updateTenantFilter.Name is not null)
         {
-            updates.Add(updateDefinition.Set(t => t.Name, updateTenantProperties.Name));
+            updates.Add(updateDefinition.Set(t => t.Name, updateTenantFilter.Name));
         }
-        
-        if (updateTenantProperties.IsEnabled is not null)
+
+        if (updateTenantFilter.DefaultTagCategory is not null)
         {
-            updates.Add(updateDefinition.Set(t => t.IsEnabled, updateTenantProperties.IsEnabled));
+            updates.Add(updateDefinition.Set(t => t.DefaultTagCategory, updateTenantFilter.DefaultTagCategory));
         }
-        
+
+        if (updateTenantFilter.IsEnabled is not null)
+        {
+            updates.Add(updateDefinition.Set(t => t.IsEnabled, updateTenantFilter.IsEnabled));
+        }
+
+        if (updateTenantFilter.Template is not null)
+        {
+            updates.Add(updateDefinition.Set(t => t.Template, updateTenantFilter.Template));
+        }
+
+        if (updateTenantFilter.Address is not null)
+        {
+            var address = new Address(updateTenantFilter.Address.Country,
+                updateTenantFilter.Address.Number,
+                updateTenantFilter.Address.City,
+                updateTenantFilter.Address.Country)
+            {
+            };
+
+            updates.Add(updateDefinition.Set(t => t.Address, address));
+        }
+
+        if (updateTenantFilter.WeekDays is not null)
+        {
+            var weekDays = new List<WeekDay>(updateTenantFilter.WeekDays.Count());
+
+            foreach (var weekDay in updateTenantFilter.WeekDays)
+            {
+                var weekDaySchedules = new List<Schedule>();
+
+                foreach (var schedule in weekDay.Schedules)
+                {
+                    weekDaySchedules.Add(new Schedule(schedule.Start, schedule.End));
+                }
+
+                weekDays.Add(new WeekDay(weekDay.Name, weekDaySchedules));
+            }
+
+            updates.Add(updateDefinition.Set(t => t.Weekdays, weekDays));
+        }
+
         var result = await collection.UpdateOneAsync(
             t => t.Code == tenantCode,
             updateDefinition.Combine(updates),
             cancellationToken: cancellationToken);
-        
+
         return result.ModifiedCount > 0;
     }
-    
+
     public Task<bool> DeleteAsync(int tenantCode, CancellationToken cancellationToken)
     {
         return collection

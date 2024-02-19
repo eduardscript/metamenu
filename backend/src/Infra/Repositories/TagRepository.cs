@@ -36,19 +36,19 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
     }
 
     public Task<bool> UpdateAsync(
-        TagFilter tagFilter, 
+        TagFilter tagFilter,
         UpdateTagFilter updateFilter,
         CancellationToken cancellationToken)
     {
         var updateDefinition = BuildUpdateDefinition(updateFilter);
-        
+
         if (updateDefinition is null)
         {
             return Task.FromResult(false);
         }
-        
+
         return collection
-            .UpdateOneAsync(BuildFilter(tagFilter), BuildUpdateDefinition(updateFilter),
+            .UpdateOneAsync(BuildFilter(tagFilter), updateDefinition,
                 cancellationToken: cancellationToken)
             .ContinueWith(t => t.Result.ModifiedCount > 0, cancellationToken);
     }
@@ -109,7 +109,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
     {
         var updateDefinitionBuilder = Builders<Tag>.Update;
         List<UpdateDefinition<Tag>> updateOperations = [];
-        
+
         if (updateFilter.NewTagCode is not null)
         {
             updateOperations.Add(updateDefinitionBuilder.Set(t => t.Code, updateFilter.NewTagCode));
@@ -119,7 +119,7 @@ public class TagRepository(IMongoCollection<Tag> collection) : ITagRepository
         {
             updateOperations.Add(updateDefinitionBuilder.Set(t => t.TagCategoryCode, updateFilter.NewTagCategoryCode));
         }
-        
+
         if (updateOperations.Count == 0)
         {
             return null;

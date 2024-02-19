@@ -1,20 +1,22 @@
 ﻿using Core.Authentication.Attributes;
-using Core.Features.Tenants.Shared;
+using Core.Features.Tenants.Queries.Dtos.Responses;
+using Core.Features.Tenants.Queries.Extensions;
 
 namespace Core.Features.Tenants.Queries;
 
 public static class GetAllTenants
 {
     [NeedsAdminPermission]
-    public record Query : IRequest<IEnumerable<TenantDto>>;
+    public record Query : IRequest<GetAllTenantsResponse>;
 
-    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Query, IEnumerable<TenantDto>>
+    public class Handler(ITenantRepository tenantRepository) : IRequestHandler<Query, GetAllTenantsResponse>
     {
-        public async Task<IEnumerable<TenantDto>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<GetAllTenantsResponse> Handle(Query request, CancellationToken cancellationToken)
         {
             var tenants = await tenantRepository.GetAllAsync(cancellationToken);
 
-            return tenants.ToDto();
+            var result = tenants.ToDto();
+            return result;
         }
     }
 }
