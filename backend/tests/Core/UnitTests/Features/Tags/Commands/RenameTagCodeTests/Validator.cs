@@ -35,9 +35,9 @@ public class Validator : TestBaseValidator<UpdateTag.Validator, UpdateTag.Comman
         // Arrange
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
 
-        Command.OldTagCode = oldTagCode;
+        Command.NewTagCode = oldTagCode;
         ExpectedErrorMessage =
-            CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.OldTagCode)
+            CustomValidatorsMessages.NotEmptyAndRequiredMessage(nameof(Command.NewTagCode)
                 .Humanize(LetterCasing.Title));
     }
 
@@ -48,7 +48,7 @@ public class Validator : TestBaseValidator<UpdateTag.Validator, UpdateTag.Comman
         TenantRepositoryMock.ExistsAsync(Command.TenantCode, default).Returns(true);
 
         ExpectedErrorMessage =
-            CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), Command.OldTagCode);
+            CustomValidatorsMessages.EntityNotFoundMessage(nameof(Tag), nameof(Tag.Code), Command.NewTagCode!);
     }
 
     [TestMethod]

@@ -7,6 +7,7 @@ public class ProductFilter(int tenantCode)
     public IEnumerable<string>? TagCodes { get; init; }
 
     public string? TagCode { get; set; }
+
 }
 
 public interface IProductRepository

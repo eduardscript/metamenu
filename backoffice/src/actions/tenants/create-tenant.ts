@@ -1,20 +1,15 @@
-"use server";
+'use server'
 
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
-import { createTenantMutation } from "@/server/queries/tenants";
-import { ApiError } from "@/server/errors/api-error";
-
-const createTenantSchema = z.object({
-  name: z.string().min(3),
-});
+import { revalidatePath } from 'next/cache'
+import { createTenantMutation } from '@/server/queries/tenants'
+import { ApiError } from '@/server/errors/api-error'
+import { redirect } from 'next/navigation'
 
 interface CreateTenantFormState {
   errors?: {
-    name?: string[];
-    _server?: string[];
-  };
-  success?: boolean;
+    name?: string[]
+    _server?: string[]
+  }
 }
 
 export default async function createTenant(
@@ -22,23 +17,22 @@ export default async function createTenant(
   formData: FormData
 ): Promise<CreateTenantFormState> {
   const fields = {
-    name: formData.get("name") as string,
-  };
+    name: formData.get('name') as string,
+  }
 
   try {
-    await createTenantMutation(fields.name);
+    await createTenantMutation(fields.name)
 
-    revalidatePath("/");
-
-    return { success: true };
+    revalidatePath('/')
   } catch (err: unknown) {
     if (err instanceof ApiError) {
-      return { errors: { name: err.errors["Name"] }, success: false };
+      return { errors: { name: err.errors['Name'] } }
     }
 
     return {
-      errors: { _server: ["Failed to create tenant."] },
-      success: false,
-    };
+      errors: { _server: ['Failed to create tenant.'] },
+    }
   }
+
+  redirect('/')
 }

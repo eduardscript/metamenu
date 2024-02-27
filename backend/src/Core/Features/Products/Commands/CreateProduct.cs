@@ -34,7 +34,7 @@ public static class CreateProduct
 
                     context.MessageFormatter.AppendArgument("InvalidTagCodes", string.Join(", ", invalidTagCodes));
 
-                    return codes.All(c => invalidTagCodes.Contains(c));
+                    return !invalidTagCodes.Any();
                 })
                 .WithMessage("The following tag codes are invalid: {InvalidTagCodes}");
 

@@ -40,12 +40,14 @@ builder.Services
     .AddErrorFilter<ErrorFilter>()
     .AddHttpRequestInterceptor<HttpContextUserAccessorInterceptor>();
 
+var hosts = builder.Configuration.GetRequiredSection("Hosts").Get<Hosts>();
+
 builder.Services
     .AddCors(options =>
     {
         options.AddPolicy(Clients.Admin,
             policy => policy
-                .WithOrigins("http://localhost:3000")
+                .WithOrigins(hosts!.Backoffice)
                 .WithMethods(HttpMethods.Post)
                 .AllowAnyHeader());
     });

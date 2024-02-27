@@ -19,7 +19,7 @@ public class DeleteTagTests : BaseIntegrationTest
 
         await _tagRepository.CreateAsync(tagToInsert, default);
 
-        var handler = new DeleteTag.Handler(_tagRepository);
+        var handler = new DeleteTag.Handler(TagRepository, ProductRepository);
 
         // Act
         var tagDeletedDto = await handler.Handle(

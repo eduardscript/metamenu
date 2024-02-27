@@ -19,7 +19,7 @@ public class RenameTagCategoryCodeTests : BaseIntegrationTest
 
         await TagCategoryRepository.CreateAsync(oldTagCategory, default);
 
-        var handler = new RenameTagCategoryCode.Handler(TagCategoryRepository);
+        var handler = new RenameTagCategoryCode.Handler(TagCategoryRepository, TagRepository);
 
         // Act
         await handler.Handle(

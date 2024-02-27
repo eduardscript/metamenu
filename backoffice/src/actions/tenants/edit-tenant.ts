@@ -1,52 +1,46 @@
-"use server";
+'use server'
 
-import prisma from "@/database";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
-import { z } from "zod";
-
-const updateTenantSchema = z.object({
-  id: z.string().transform((val) => parseInt(val)),
-  name: z.string().min(3),
-  isActive: z.optional(z.string()).transform((val) => !!val),
-});
+import paths from '@/paths'
+import { fetchGraphQL } from '@/utils'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
 interface EditTenantFormState {
   errors?: {
-    name?: string[];
-
-    _form?: string[];
-  };
-  success?: boolean | null;
+    name?: string[]
+    _server?: string[]
+  }
 }
 
 export default async function editTenant(
   formState: EditTenantFormState,
   formData: FormData
-) {
-  const fields = updateTenantSchema.safeParse(Object.fromEntries(formData));
-
-  if (!fields.success) {
-    console.error(fields.error);
-
-    return {
-      success: false,
-      errors: fields.error.flatten().fieldErrors,
-    };
-  }
-
+): Promise<EditTenantFormState> {
   try {
-    // TODO:EC: Implement the ability to update tenants in backend
-
-    revalidatePath("/");
-
-    return { success: true };
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      return { errors: { _form: [err.message] } };
+    const fields = {
+      code: parseInt(formData.get('code') as string),
+      name: formData.get('name') as string,
     }
 
-    return { errors: { _form: ["Failed to update tenant."] } };
+    await fetchGraphQL(
+      `
+      mutation UpdateTenant($code: Int!, $name: String!) {
+        updateTenant(code: $code, name: $name) {
+          code
+        }
+      }
+    `,
+      fields
+    )
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return { errors: { _server: [err.message] } }
+    }
+
+    return { errors: { _server: ['Failed to update tenant.'] } }
   }
+
+  revalidatePath('/')
+
+  redirect(paths.tenant.home())
 }

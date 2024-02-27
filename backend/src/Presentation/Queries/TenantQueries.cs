@@ -10,4 +10,9 @@ public class TenantQueries
     {
         return mediator.Send(new GetAllTenants.Query());
     }
+    
+    public Task<TenantDto> GetTenantByTenantCodeAsync([Service] IMediator mediator, int tenantCode)
+    {
+        return mediator.Send(new GetTenantByTenantCode.Query { TenantCode = tenantCode });
+    }
 }

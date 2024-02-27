@@ -26,7 +26,10 @@ public class UpdateTagTests : BaseIntegrationTest
 
         // Act
         await handler.Handle(
-            new UpdateTag.Command(tenant.Code, oldTag.Code, newTagCode),
+            new UpdateTag.Command(tenant.Code, oldTag.Code)
+            {
+                NewTagCode = newTagCode,
+            },
             default);
 
         // Assert
@@ -35,6 +38,7 @@ public class UpdateTagTests : BaseIntegrationTest
             {
                 Code = oldTag.Code
             }, default);
+
         oldTagCategoryExists.Should().BeFalse();
 
         var newTagCategoryExists =

@@ -1,4 +1,4 @@
 export interface TagCategory {
-  tenantCode: number;
-  code: string;
+  tenantCode: number
+  code: string
 }

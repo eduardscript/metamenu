@@ -1,5 +1,5 @@
-import { Tag } from "@/server/models/tag";
-import { fetchGraphQL } from "@/utils";
+import { Tag } from '@/server/models/tag'
+import { fetchGraphQL } from '@/utils'
 
 export async function getAllTagsByTagCategory(
   tenantCode: number,
@@ -14,14 +14,14 @@ export async function getAllTagsByTagCategory(
           code
        }
     }
-  `;
+  `
 
   const result = await fetchGraphQL<{
-    allTagsByTagCategoryCode: Tag[];
+    allTagsByTagCategoryCode: Tag[]
   }>(query, {
     tenantCode: tenantCode,
     tagCategoryCode: tagCategoryCode,
-  });
+  })
 
-  return result.allTagsByTagCategoryCode;
+  return result.allTagsByTagCategoryCode
 }

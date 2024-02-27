@@ -58,7 +58,7 @@ public class ProductRepository(IMongoCollection<Product> collection) : IProductR
                 }
             }));
         }
-
+        
         if (productFilter.TagCode is not null)
         {
             pipeline.Add(new("$match", new BsonDocument

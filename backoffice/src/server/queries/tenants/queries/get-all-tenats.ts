@@ -1,5 +1,5 @@
-import { Tenant } from "@/server/models";
-import { fetchGraphQL } from "@/utils";
+import { Tenant } from '@/server/models/tenant'
+import { fetchGraphQL } from '@/utils'
 
 export async function getAllTenantsQuery(): Promise<Tenant[]> {
   const query = ` { 
@@ -9,9 +9,9 @@ export async function getAllTenantsQuery(): Promise<Tenant[]> {
       isEnabled
       createdAt
       }
-    }`;
+    }`
 
-  const tenants = await fetchGraphQL<{ allTenants: Tenant[] }>(query);
+  const tenants = await fetchGraphQL<{ allTenants: Tenant[] }>(query)
 
-  return tenants.allTenants;
+  return tenants.allTenants
 }
